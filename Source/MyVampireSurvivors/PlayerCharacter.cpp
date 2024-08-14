@@ -7,7 +7,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
-APlayerCharacter::APlayerCharacter()
+APlayerCharacter::APlayerCharacter() : Directionality(FVector2D::ZeroVector)
 {
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -23,33 +23,23 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
-void APlayerCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (PlayerInputComponent != nullptr)
-	{
-		UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-		if (EnhancedInputComponent != nullptr)
-		{
-			APlayerController* PlayerController = Cast<APlayerController>(GetController());
-			if (PlayerController != nullptr)
-			{
-				UEnhancedInputLocalPlayerSubsystem* EnhancedSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
-				if (EnhancedSubsystem != nullptr)
-				{
-					EnhancedSubsystem->AddMappingContext(IMC_TopDownChar, 1);
-					EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-				}
-			}
-		}
-	}
+	if (PlayerInputComponent == nullptr) return;
+	
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+	if (EnhancedInputComponent == nullptr) return;
+	
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController == nullptr) return;
+
+	UEnhancedInputLocalPlayerSubsystem* EnhancedSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
+	if (EnhancedSubsystem == nullptr) return;
+	
+	EnhancedSubsystem->AddMappingContext(IMC_TopDownChar, 1);
+	EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 }
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
@@ -57,12 +47,12 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 	if (Controller != nullptr)
 	{
 		const FVector2D Direction = Value.Get<FVector2D>();
-		if (Direction.Size() > 0.0f)
+		if (Direction.SizeSquared() > 0.0f)
 		{
-			const float LeftRightValue = Direction.X;
-			AddMovementInput(FVector(1.0f, 0.0f, 0.0f), LeftRightValue);
-			const float UpDownValue = Direction.Y;
-			AddMovementInput(FVector(0.0f, -1.0f, 0.0f), UpDownValue);
+			const FVector RightDirection = FVector::ForwardVector * Direction.X;
+			const FVector UpDirection = -FVector::RightVector * Direction.Y;
+
+			AddMovementInput(RightDirection + UpDirection);
 
 			Directionality = Direction;
 		}

@@ -18,17 +18,16 @@ class MYVAMPIRESURVIVORS_API APlayerCharacter : public APaperZDCharacter
 public:
 	APlayerCharacter();
 
-	virtual void Tick(float DeltaTime) override;
-
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(BlueprintReadOnly)
-	FVector2D Directionality;
 
 private:
 	void Move(const FInputActionValue& Value);
+
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	FVector2D Directionality;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
