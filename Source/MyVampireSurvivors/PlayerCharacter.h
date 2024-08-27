@@ -21,7 +21,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	virtual void Tick(float DeltaSeconds) override;
 
 private:
 	void Move(const FInputActionValue& Value);
@@ -40,4 +40,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	class UInputAction* IA_Move;
+
+	FBox CameraViewBox;
 };
