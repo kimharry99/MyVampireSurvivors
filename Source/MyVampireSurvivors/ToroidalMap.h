@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "PaperTileMapComponent.h"
 #include "ToroidalMap.generated.h"
 
 UCLASS()
@@ -23,13 +24,24 @@ public:
 	void HandleMapBoundary(AActor* PlayerCharacter, FBox& ViewBox) const;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Map")
-	UStaticMeshComponent* Plane;
+	/// <summary>
+	/// Tile map component for the background
+	/// </summary>
+	UPROPERTY(EditAnywhere, Category = "Background")
+	UPaperTileMapComponent* Background;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	virtual void OnConstruction(const FTransform& Transform) override;
+
+#if WITH_EDITOR
+	/// <summary>
+	/// Create margin tile map from original tile map
+	/// </summary>
+	UFUNCTION(CallInEditor, Category = "Background")
+	void CreateMarginTileMap();
+#endif // WITH_EDITOR
 
 private:
 	/// <summary>

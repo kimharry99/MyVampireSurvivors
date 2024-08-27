@@ -2,51 +2,80 @@
 
 
 #include "ToroidalMap.h"
+#include "PaperTileMap.h"
+#include "Engine/Engine.h"
 
 // Sets default values
-AToroidalMap::AToroidalMap() : XMargin(0.0f), YMargin(0.0f)
+AToroidalMap::AToroidalMap() : XMargin(0.0f), YMargin(0.0f), MapRange(FBox(EForceInit::ForceInitToZero))
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	float Width = 2000.0f;
-	float Height = 2000.0f;
-	MapRange = FBox(FVector(0, 0, -100.0f), FVector(Width, Height, 100.0f));
-
-	Plane = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Plane"));
-	Plane->SetCollisionProfileName(TEXT("BlockAll"));
+	Background = CreateDefaultSubobject<UPaperTileMapComponent>(TEXT("Background"));
+	// Set the background to the XY plane
+	Background->SetRelativeRotation(FRotator(0.0f, 0.0f, -90.0f));
+	RootComponent = Background;
 }
 
 void AToroidalMap::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	FVector Location = GetActorLocation();
-	MapRange = MapRange.ShiftBy(Location - MapRange.GetCenter());
+	//if (Plane->GetStaticMesh() != nullptr)
+	//{
+	//	float Width = MapRange.Max.X - MapRange.Min.X;
+	//	float Height = MapRange.Max.Y - MapRange.Min.Y;
 
-	//float OrthoWidth = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetOrthoWidth();
-	//float Aspect = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraCachePOV().AspectRatio;
-	float OrthoWidth = 1024.0f;
-	float Aspect = 1.77778f;
-	XMargin = OrthoWidth / 2.0f;
-	YMargin = OrthoWidth / Aspect / 2.0f ;
-
-	if (Plane->GetStaticMesh() != nullptr)
-	{
-		float Width = MapRange.Max.X - MapRange.Min.X;
-		float Height = MapRange.Max.Y - MapRange.Min.Y;
-
-		FVector PlaneExtent = Plane->GetStaticMesh()->GetBounds().BoxExtent;
-		FVector PlaneSizeCM = PlaneExtent * 2.0f;
-		FVector ScaleFactor = FVector((Width + XMargin * 2.0f) / PlaneSizeCM.X, (Height + YMargin * 2.0f) / PlaneSizeCM.Y, 1.0f);
-		Plane->SetWorldScale3D(ScaleFactor);
-	}
+	//	FVector PlaneExtent = Plane->GetStaticMesh()->GetBounds().BoxExtent;
+	//	FVector PlaneSizeCM = PlaneExtent * 2.0f;
+	//	FVector ScaleFactor = FVector((Width + XMargin * 2.0f) / PlaneSizeCM.X, (Height + YMargin * 2.0f) / PlaneSizeCM.Y, 1.0f);
+	//	Plane->SetWorldScale3D(ScaleFactor);
+	//}
 }
+
+#if WITH_EDITOR
+void AToroidalMap::CreateMarginTileMap()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("CreateMarginTileMap"));
+}
+#endif // WITH_EDITOR
 
 // Called when the game starts or when spawned
 void AToroidalMap::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (Background == nullptr)
+	{
+		return;
+	}
+
+	// Get size of the tile map
+	UPaperTileMap* TileMap = Background->TileMap;
+	if (TileMap == nullptr)
+	{
+		return;
+	}
+	if (TileMap->TileWidth != TileMap->TileHeight)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TileWidth and TileHeight should be the same, TileWidth: %f, TileHeight: %f"), TileMap->TileWidth, TileMap->TileHeight)
+		return;
+	}
+	FVector TileCMSize(TileMap->TileWidth / TileMap->PixelsPerUnrealUnit, TileMap->TileHeight / TileMap->PixelsPerUnrealUnit, 0.0f);
+
+	// Initialize MapRange
+	float Width = TileMap->MapWidth * TileCMSize.X;
+	float Height = TileMap->MapHeight * TileCMSize.Y;
+	FVector RangeMin = Background->GetComponentLocation() - TileCMSize * 0.5f; // Shift map range min to left top of tile map
+	FVector RangeMax = FVector(RangeMin.X + Width, RangeMin.Y + Height, RangeMin.Z);
+	MapRange = FBox(RangeMin, RangeMax);
+
+	DrawDebugBox(GetWorld(), MapRange.GetCenter(), MapRange.GetExtent(), FColor::Red, true, -1, 0, 10.0f);
+
+	float OrthoWidth = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetOrthoWidth();
+	float Aspect = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraCachePOV().AspectRatio;
+	XMargin = OrthoWidth / 2.0f;
+	YMargin = OrthoWidth / Aspect / 2.0f;
 }
 
 void AToroidalMap::HandleMapBoundary(AActor* PlayerCharacter, FBox& ViewBox) const
@@ -152,7 +181,7 @@ void AToroidalMap::TransferObjectsFromMultiSource(const TArray<FBox>& SourceRegi
 	// Traverse all source regions
 	for (const FBox& Source : SourceRegions)
 	{
-		DrawDebugBox(GetWorld(), Source.GetCenter(), Source.GetExtent(), FColor::Red, false, -1, 0, 5.0f);
+		DrawDebugBox(GetWorld(), Source.GetCenter(), Source.GetExtent(), FColor::Green, false, -1, 0, 5.0f);
 		TransferObjects(Source, Destination, ECollisionChannel::ECC_GameTraceChannel2); // Use ToroidalWorld channel
 	}
 }
