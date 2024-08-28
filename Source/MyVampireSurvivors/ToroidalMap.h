@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/SceneComponent.h"
 #include "GameFramework/Actor.h"
+#include "PaperTileMapComponent.h"
 #include "ToroidalMap.generated.h"
 
 UCLASS()
@@ -23,27 +25,48 @@ public:
 	void HandleMapBoundary(AActor* PlayerCharacter, FBox& ViewBox) const;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Map")
-	UStaticMeshComponent* Plane;
+	/// <summary>
+	/// Root component of the actor
+	/// </summary>
+	UPROPERTY(BlueprintReadOnly, Category = "Background")
+	USceneComponent* BackgroundRoot;
+
+	/// <summary>
+	/// Tile map component for the background
+	/// </summary>
+	UPROPERTY(EditAnywhere, Category = "Background")
+	UPaperTileMapComponent* Background;
+
+	/// <summary>
+	/// Tile map component for margin
+	/// </summary>
+	UPROPERTY(EditAnywhere, Category = "Background")
+	UPaperTileMapComponent* MarginTileMap;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual void OnConstruction(const FTransform& Transform) override;
+#if WITH_EDITOR
+	/// <summary>
+	/// Create margin tile map from original tile map
+	/// </summary>
+	UFUNCTION(CallInEditor, Category = "Background")
+	void CreateMarginTileMap();
+#endif // WITH_EDITOR
 
 private:
 	/// <summary>
 	/// Margin of the map
 	/// </summary>
-	float XMargin;
+	float XMargin = 0.0f;
 	/// <summary>
 	/// Margin of the map
 	/// </summary>
-	float YMargin;
+	float YMargin = 0.0f;
 	/// <summary>
 	/// Range of the map
 	/// </summary>
-	FBox MapRange;
+	FBox MapRange = FBox(EForceInit::ForceInitToZero);
 
 	/// <summary>
 	/// Returns corresponding regions of given box in the toroidal map.
@@ -66,4 +89,9 @@ private:
 	/// <param name="Destination">Region to which actors will be moved.</param>
 	/// <param name="QueryChannel">Collision channel for the query.</param>
 	void TransferObjects(const FBox& Source, const FBox& Destination, const ECollisionChannel& QueryChannel = ECollisionChannel::ECC_Pawn) const;
+
+	/**
+	 * Set margin value member from camera setting.
+	 */
+	void SetUpMarginFromCameraSetting();
 };

@@ -77,6 +77,16 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 }
 
+float APlayerCharacter::GetCameraOrthoWidth() const
+{
+	return FollowCamera->OrthoWidth;
+}
+
+float APlayerCharacter::GetCameraAspectRatio() const
+{
+	return FollowCamera->AspectRatio;
+}
+
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	if (Controller != nullptr)

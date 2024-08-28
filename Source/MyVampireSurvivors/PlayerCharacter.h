@@ -18,6 +18,20 @@ class MYVAMPIRESURVIVORS_API APlayerCharacter : public APaperZDCharacter
 public:
 	APlayerCharacter();
 
+	/**
+	 * Get the width of the camera's orthographic view
+	 *
+	 * @return The width of the camera's orthographic view
+	 */
+	float GetCameraOrthoWidth() const;
+
+	/**
+	 * Get the aspect ratio of the camera
+	 * 
+	 * @return The aspect ratio of the camera
+	 */
+	float GetCameraAspectRatio() const;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

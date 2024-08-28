@@ -2,51 +2,182 @@
 
 
 #include "ToroidalMap.h"
+#include "GameFramework/GameModeBase.h"
+#include "Engine/Engine.h"
+#include "PlayerCharacter.h"
+#include "PaperTileMap.h"
+#include "PaperTileLayer.h"
+#include "FileHelpers.h"
 
 // Sets default values
-AToroidalMap::AToroidalMap() : XMargin(0.0f), YMargin(0.0f)
+AToroidalMap::AToroidalMap()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	float Width = 2000.0f;
-	float Height = 2000.0f;
-	MapRange = FBox(FVector(0, 0, -100.0f), FVector(Width, Height, 100.0f));
+	BackgroundRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Background Root"));
+	// Set the background to the XY plane
+	BackgroundRoot->SetRelativeRotation(FRotator(0.0f, 0.0f, -90.0f));
+	// Set the background to static
+	BackgroundRoot->SetMobility(EComponentMobility::Static);
+	RootComponent = BackgroundRoot;
 
-	Plane = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Plane"));
-	Plane->SetCollisionProfileName(TEXT("BlockAll"));
+	Background = CreateDefaultSubobject<UPaperTileMapComponent>(TEXT("Background"));
+	Background->SetupAttachment(RootComponent);
+
+	MarginTileMap = CreateDefaultSubobject<UPaperTileMapComponent>(TEXT("Margin Tile Map"));
+	MarginTileMap->SetupAttachment(RootComponent);
 }
 
-void AToroidalMap::OnConstruction(const FTransform& Transform)
+#if WITH_EDITOR
+void AToroidalMap::CreateMarginTileMap()
 {
-	Super::OnConstruction(Transform);
-
-	FVector Location = GetActorLocation();
-	MapRange = MapRange.ShiftBy(Location - MapRange.GetCenter());
-
-	//float OrthoWidth = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetOrthoWidth();
-	//float Aspect = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraCachePOV().AspectRatio;
-	float OrthoWidth = 1024.0f;
-	float Aspect = 1.77778f;
-	XMargin = OrthoWidth / 2.0f;
-	YMargin = OrthoWidth / Aspect / 2.0f ;
-
-	if (Plane->GetStaticMesh() != nullptr)
+	if (MarginTileMap == nullptr)
 	{
-		float Width = MapRange.Max.X - MapRange.Min.X;
-		float Height = MapRange.Max.Y - MapRange.Min.Y;
+		return;
+	}
 
-		FVector PlaneExtent = Plane->GetStaticMesh()->GetBounds().BoxExtent;
-		FVector PlaneSizeCM = PlaneExtent * 2.0f;
-		FVector ScaleFactor = FVector((Width + XMargin * 2.0f) / PlaneSizeCM.X, (Height + YMargin * 2.0f) / PlaneSizeCM.Y, 1.0f);
-		Plane->SetWorldScale3D(ScaleFactor);
+	UPaperTileMap* TileMap = MarginTileMap->TileMap;
+	if (TileMap == nullptr)
+	{
+		return;
+	}
+
+	// Set tile format
+	const float TileWidth = Background->TileMap->TileWidth;
+	const float TileHeight = Background->TileMap->TileHeight;
+	const float PixelsPerUnrealUnit = Background->TileMap->PixelsPerUnrealUnit;
+	TileMap->TileWidth = TileWidth;
+	TileMap->TileHeight = TileHeight;
+	TileMap->PixelsPerUnrealUnit = PixelsPerUnrealUnit;
+
+	// Get number of margin tiles
+	SetUpMarginFromCameraSetting();
+	const float XMarginPixel = XMargin * PixelsPerUnrealUnit;
+	const int XMarginTile = int(XMarginPixel / TileWidth + 1);
+	const float YMarginPixel = YMargin * PixelsPerUnrealUnit;
+	const int YMarginTile = int(YMarginPixel / TileHeight + 1);
+
+	// Set location of the margin tile map
+	FVector BackgroundOrigin = Background->GetComponentLocation();
+	FVector MartinTileMapOffset = FVector(-XMarginTile * TileWidth, -YMarginTile * TileHeight, 0.0f) / PixelsPerUnrealUnit;
+	FVector MarginOrigin = BackgroundOrigin + MartinTileMapOffset;
+	MarginTileMap->SetWorldLocation(MarginOrigin);
+
+	// Setup tile map asset
+	// Set tile map size
+	TileMap->MapWidth = Background->TileMap->MapWidth + XMarginTile * 2;
+	TileMap->MapHeight = Background->TileMap->MapHeight + YMarginTile * 2;
+
+	// Initialize layer of the margin tile map
+	if (TileMap->TileLayers.Num() > 1)
+	{
+		// Clear all layers
+		TileMap->TileLayers.Empty();
+	}
+	if (TileMap->TileLayers.Num() == 0)
+	{
+		// Create a new layer
+		UPaperTileLayer* NewLayer = NewObject<UPaperTileLayer>(TileMap);
+		if (NewLayer != nullptr)
+		{
+			TileMap->TileLayers.Add(NewLayer);
+		}
+	}
+
+	// Fill margin tile map with the original tile map
+	UPaperTileLayer* Layer = TileMap->TileLayers[0];
+	TArray<int> DestinationStartXs = { 0, XMarginTile + Background->TileMap->MapWidth, 0, 0 }; // Left, Right, Top, Bottom
+	TArray<int> DestinationStartYs = { YMarginTile, YMarginTile, 0, YMarginTile + Background->TileMap->MapHeight };
+	TArray<int> DestinationEndXs = {
+		XMarginTile,
+		XMarginTile * 2 + Background->TileMap->MapWidth,
+		XMarginTile * 2 + Background->TileMap->MapWidth,
+		XMarginTile * 2 + Background->TileMap->MapWidth
+	};
+	TArray<int> DestinationEndYs = {
+		YMarginTile + Background->TileMap->MapHeight,
+		YMarginTile + Background->TileMap->MapHeight,
+		YMarginTile,
+		YMarginTile * 2 + Background->TileMap->MapHeight
+	};
+
+	for (int i = 0; i < 4; ++i)
+	{
+		int DestinationStartX = DestinationStartXs[i];
+		int DestinationStartY = DestinationStartYs[i];
+		int DestinationEndX = DestinationEndXs[i];
+		int DestinationEndY = DestinationEndYs[i];
+		// Copy tiles
+		for (int y = DestinationStartY; y < DestinationEndY; ++y)
+		{
+			for (int x = DestinationStartX; x < DestinationEndX; ++x)
+			{
+				// Get tile
+				int SourceX = (x - XMarginTile) % Background->TileMap->MapWidth;
+				SourceX = SourceX < 0 ? SourceX + Background->TileMap->MapWidth : SourceX;
+				int SourceY = (y - YMarginTile) % Background->TileMap->MapHeight;
+				SourceY = SourceY < 0 ? SourceY + Background->TileMap->MapHeight : SourceY;
+				FPaperTileInfo Tile = Background->GetTile(SourceX, SourceY, 0);
+
+				// Set tile
+				Layer->SetCell(x, y, Tile);
+			}
+		}
+	}
+	MarginTileMap->MarkRenderStateDirty();
+
+	// Save modifyed tile map asset
+	TileMap->MarkPackageDirty();
+	TileMap->PostEditChange();
+
+	FSoftObjectPath MarginTileMapPath = FSoftObjectPath(TileMap);
+	FString AssetPath = MarginTileMapPath.ToString();
+
+	FString PackagePath = FPackageName::ObjectPathToPackageName(AssetPath);
+	UPackage* Package = TileMap->GetPackage();
+	if (Package != nullptr)
+	{
+		TArray<UPackage*> PackagesToSave;
+		PackagesToSave.Add(Package);
+		bool bSaveSuccess = UEditorLoadingAndSavingUtils::SavePackages(PackagesToSave, true);
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("save successed %b"), bSaveSuccess));
 	}
 }
+#endif // WITH_EDITOR
 
 // Called when the game starts or when spawned
 void AToroidalMap::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (Background == nullptr)
+	{
+		return;
+	}
+
+	// Get size of the tile map
+	UPaperTileMap* TileMap = Background->TileMap;
+	if (TileMap == nullptr)
+	{
+		return;
+	}
+	if (TileMap->TileWidth != TileMap->TileHeight)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TileWidth and TileHeight should be the same, TileWidth: %f, TileHeight: %f"), TileMap->TileWidth, TileMap->TileHeight)
+		return;
+	}
+	FVector TileCMSize(TileMap->TileWidth / TileMap->PixelsPerUnrealUnit, TileMap->TileHeight / TileMap->PixelsPerUnrealUnit, 0.0f);
+
+	// Initialize MapRange
+	float Width = TileMap->MapWidth * TileCMSize.X;
+	float Height = TileMap->MapHeight * TileCMSize.Y;
+	FVector RangeMin = Background->GetComponentLocation() - TileCMSize * 0.5f; // Shift map range min to left top of tile map
+	FVector RangeMax = FVector(RangeMin.X + Width, RangeMin.Y + Height, RangeMin.Z);
+	MapRange = FBox(RangeMin, RangeMax);
+
+	DrawDebugBox(GetWorld(), MapRange.GetCenter(), MapRange.GetExtent(), FColor::Red, true, -1, 0, 10.0f);
+	SetUpMarginFromCameraSetting();
 }
 
 void AToroidalMap::HandleMapBoundary(AActor* PlayerCharacter, FBox& ViewBox) const
@@ -152,7 +283,7 @@ void AToroidalMap::TransferObjectsFromMultiSource(const TArray<FBox>& SourceRegi
 	// Traverse all source regions
 	for (const FBox& Source : SourceRegions)
 	{
-		DrawDebugBox(GetWorld(), Source.GetCenter(), Source.GetExtent(), FColor::Red, false, -1, 0, 5.0f);
+		DrawDebugBox(GetWorld(), Source.GetCenter(), Source.GetExtent(), FColor::Green, false, -1, 0, 5.0f);
 		TransferObjects(Source, Destination, ECollisionChannel::ECC_GameTraceChannel2); // Use ToroidalWorld channel
 	}
 }
@@ -185,4 +316,44 @@ void AToroidalMap::TransferObjects(const FBox& Source, const FBox& Destination, 
 			OverlappedActor->SetActorLocation(NewLocation);
 		}
 	}
+}
+
+void AToroidalMap::SetUpMarginFromCameraSetting()
+{
+	UWorld* World = GetWorld();
+	if (World == nullptr)
+	{
+		return;
+	}
+
+	AWorldSettings* WorldSettings = World->GetWorldSettings();
+	if (WorldSettings == nullptr)
+	{
+		return;
+	}
+
+	AGameModeBase* GameMode = WorldSettings->DefaultGameMode.GetDefaultObject();
+	if (GameMode == nullptr)
+	{
+		return;
+	}
+
+	APawn* Pawn = GameMode->DefaultPawnClass.GetDefaultObject();
+	if (Pawn == nullptr)
+	{
+		return;
+	}
+
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(Pawn);
+	if (PlayerCharacter == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Cannot cast DefaultPawnClass to APlayerCharacter"))
+		return;
+	}
+
+	float OrthoWidth = PlayerCharacter->GetCameraOrthoWidth();
+	float Aspect = PlayerCharacter->GetCameraAspectRatio();
+
+	XMargin = OrthoWidth / 2.0f;
+	YMargin = OrthoWidth / Aspect / 2.0f;
 }
