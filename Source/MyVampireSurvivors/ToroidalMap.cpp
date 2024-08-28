@@ -2,15 +2,15 @@
 
 
 #include "ToroidalMap.h"
+#include "GameFramework/GameModeBase.h"
+#include "Engine/Engine.h"
+#include "PlayerCharacter.h"
 #include "PaperTileMap.h"
 #include "PaperTileLayer.h"
 #include "FileHelpers.h"
-#include "GameFramework/GameModeBase.h"
-#include "PlayerCharacter.h"
-#include "Engine/Engine.h"
 
 // Sets default values
-AToroidalMap::AToroidalMap() : XMargin(0.0f), YMargin(0.0f), MapRange(FBox(EForceInit::ForceInitToZero))
+AToroidalMap::AToroidalMap()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;

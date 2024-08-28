@@ -28,7 +28,7 @@ protected:
 	/// <summary>
 	/// Root component of the actor
 	/// </summary>
-	UPROPERTY(EditAnywhere, Category = "Background")
+	UPROPERTY(BlueprintReadOnly, Category = "Background")
 	USceneComponent* BackgroundRoot;
 
 	/// <summary>
@@ -58,15 +58,15 @@ private:
 	/// <summary>
 	/// Margin of the map
 	/// </summary>
-	float XMargin;
+	float XMargin = 0.0f;
 	/// <summary>
 	/// Margin of the map
 	/// </summary>
-	float YMargin;
+	float YMargin = 0.0f;
 	/// <summary>
 	/// Range of the map
 	/// </summary>
-	FBox MapRange;
+	FBox MapRange = FBox(EForceInit::ForceInitToZero);
 
 	/// <summary>
 	/// Returns corresponding regions of given box in the toroidal map.
