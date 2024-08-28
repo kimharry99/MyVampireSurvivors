@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/SceneComponent.h"
 #include "GameFramework/Actor.h"
 #include "PaperTileMapComponent.h"
 #include "ToroidalMap.generated.h"
@@ -25,15 +26,25 @@ public:
 
 protected:
 	/// <summary>
+	/// Root component of the actor
+	/// </summary>
+	UPROPERTY(EditAnywhere, Category = "Background")
+	USceneComponent* BackgroundRoot;
+
+	/// <summary>
 	/// Tile map component for the background
 	/// </summary>
 	UPROPERTY(EditAnywhere, Category = "Background")
 	UPaperTileMapComponent* Background;
 
+	/// <summary>
+	/// Tile map component for margin
+	/// </summary>
+	UPROPERTY(EditAnywhere, Category = "Background")
+	UPaperTileMapComponent* MarginTileMap;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	virtual void OnConstruction(const FTransform& Transform) override;
 
 #if WITH_EDITOR
 	/// <summary>
@@ -78,4 +89,9 @@ private:
 	/// <param name="Destination">Region to which actors will be moved.</param>
 	/// <param name="QueryChannel">Collision channel for the query.</param>
 	void TransferObjects(const FBox& Source, const FBox& Destination, const ECollisionChannel& QueryChannel = ECollisionChannel::ECC_Pawn) const;
+
+	/**
+	 * Set margin value member from camera setting.
+	 */
+	void SetUpMarginFromCameraSetting();
 };
