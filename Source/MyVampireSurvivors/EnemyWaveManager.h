@@ -67,5 +67,5 @@ private:
 	 * The period(sec) between enemy waves.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	float WavePeriod = 5.0f;
+	float WavePeriod = 3.0f;
 };

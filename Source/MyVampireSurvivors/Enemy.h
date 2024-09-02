@@ -7,7 +7,9 @@
 #include "Enemy.generated.h"
 
 /**
+ * The base class for all enemies in the game.
  * 
+ * Chase the player by default.
  */
 UCLASS()
 class MYVAMPIRESURVIVORS_API AEnemy : public APaperCharacter
@@ -19,4 +21,16 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	/**
+	 * Kill the enemy.
+	 */
+	virtual void TriggerDeath();
+
+private:
+	/**
+	 * FIXME: Temporary implementation.
+	 * Handle for the death timer.
+	 */
+	FTimerHandle DeathHandle;
 };
