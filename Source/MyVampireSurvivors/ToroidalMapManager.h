@@ -22,6 +22,11 @@ public:
 	/// <param name="ViewBox"></param>
 	void HandleMapBoundary(AActor* PlayerCharacter, FBox& ViewBox) const;
 
+	/**
+	 * Get the map range from the toroidal map.
+	 */
+	const FBox& GetMapRange() const;
+
 private:
 	ToroidalMapManager() = default;
 

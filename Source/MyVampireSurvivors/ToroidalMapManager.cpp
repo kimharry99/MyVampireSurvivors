@@ -18,3 +18,8 @@ void ToroidalMapManager::HandleMapBoundary(AActor* PlayerCharacter, FBox& ViewBo
 {
 	Map->HandleMapBoundary(PlayerCharacter, ViewBox);
 }
+
+const FBox& ToroidalMapManager::GetMapRange() const
+{
+	return Map->GetMapRange();
+}

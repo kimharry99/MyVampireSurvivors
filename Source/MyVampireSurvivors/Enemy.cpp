@@ -2,14 +2,18 @@
 
 
 #include "Enemy.h"
-#include "ChasingEnemyAI.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "ChasingEnemyAI.h"
 
 AEnemy::AEnemy()
 {
 	AIControllerClass = AChasingEnemyAI::StaticClass();
+	AutoPossessAI = EAutoPossessAI::Spawned;
 	bUseControllerRotationYaw = false;
+
+	// Set the collision handling method to always spawn
+	SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ToroidalActor"));
 
