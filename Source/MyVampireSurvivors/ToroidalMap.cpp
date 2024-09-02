@@ -224,6 +224,11 @@ void AToroidalMap::HandleMapBoundary(AActor* PlayerCharacter, FBox& ViewBox) con
 	}
 }
 
+const FBox& AToroidalMap::GetMapRange() const
+{
+	return MapRange;
+}
+
 void AToroidalMap::GetCorrespondingRegions(TArray<FBox>& OutRegions, const FBox& Box) const
 {
 	OutRegions.Empty();

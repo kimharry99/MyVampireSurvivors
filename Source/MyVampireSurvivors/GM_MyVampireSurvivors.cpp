@@ -6,9 +6,7 @@
 #include "ToroidalMap.h"
 #include "Kismet/GameplayStatics.h"
 
-/// <summary>
-/// Find a toroidal map in the level and initialize the toroidal map manager
-/// </summary>
+
 void AGM_MyVampireSurvivors::StartPlay()
 {
 	Super::StartPlay();

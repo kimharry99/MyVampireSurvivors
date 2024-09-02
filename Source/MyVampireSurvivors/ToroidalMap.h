@@ -24,6 +24,11 @@ public:
 	/// <param name="ViewBox">View range of the main camera</param>
 	void HandleMapBoundary(AActor* PlayerCharacter, FBox& ViewBox) const;
 
+	/**
+	 * Return the range of the map. 
+	 */
+	const FBox& GetMapRange() const;
+
 protected:
 	/// <summary>
 	/// Root component of the actor
