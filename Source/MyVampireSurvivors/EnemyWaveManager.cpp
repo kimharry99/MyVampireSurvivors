@@ -2,6 +2,8 @@
 
 
 #include "EnemyWaveManager.h"
+#include "WaveDataAsset.h"
+#include "EnemyWaveDataAsset.h"
 
 AEnemyWaveManager::AEnemyWaveManager()
 {
@@ -20,11 +22,11 @@ void AEnemyWaveManager::BeginPlay()
 
 void AEnemyWaveManager::StartWave()
 {
-	if (EnemyWaveDataTable == nullptr) return;
+	if (WaveDataTable == nullptr) return;
 
 	// Load all enemy wave data
-	static const FString ContextString(TEXT("Enemy Wave Data"));
-	EnemyWaveDataTable->GetAllRows<FEnemyWaveInfo>(ContextString, WaveInfos);
+	static const FString ContextString(TEXT("Wave Data"));
+	WaveDataTable->GetAllRows<FWaveTableRow>(ContextString, WaveRecords);
 
 	// Call TriggerNextWave method after the wave period
 	CurrentWaveIndex = -1;
@@ -48,17 +50,18 @@ void AEnemyWaveManager::TriggerNextWave()
 	CurrentWaveIndex++;
 
 	// Check if the current wave index is valid
-	if (CurrentWaveIndex >= WaveInfos.Num())
+	if (CurrentWaveIndex >= WaveRecords.Num())
 	{
 		// No more waves to trigger
 		return;
 	}
 
 	// Get the current wave info
-	FEnemyWaveInfo* WaveInfo = WaveInfos[CurrentWaveIndex];
+	UWaveDataAsset* WaveRecord = WaveRecords[CurrentWaveIndex]->WaveDataAsset;
 
 	// Spawn enemies according to the wave info
-	EnemySpawner->SpawnEnemyWave(*WaveInfo);
+	UEnemyWaveDataAsset* EnemyWaveDataAsset = Cast<UEnemyWaveDataAsset>(WaveRecord);
+	EnemySpawner->SpawnEnemyWave(EnemyWaveDataAsset);
 
 	// Set a timer to trigger the next wave
 	if (World)

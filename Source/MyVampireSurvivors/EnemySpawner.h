@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "EnemyWaveInfo.h"
-#include "EnemySpawnInfo.h"
+#include "EnemyWaveDataAsset.h"
+#include "EnemySpawnRecord.h"
 #include "EnemySpawner.generated.h"
 
 /**
@@ -20,14 +20,14 @@ public:
 	/**
 	 * Spawn an enemy wave according to the enemy wave info.
 	 *
-	 * @param EnemyWaveInfo The enemy wave info.
+	 * @param EnemyWaveRecord The enemy wave info.
 	 */
-	void SpawnEnemyWave(const FEnemyWaveInfo& EnemyWaveInfo);
+	void SpawnEnemyWave(const UEnemyWaveDataAsset* EnemyWaveRecord);
 
 	/**
-	 * Spawn enemies according to the enemy spawn info.
+	 * Spawn enemies according to the enemy spawn data.
 	 * 
-	 * @param EnemySpawnInfo The enemy spawn info.
+	 * @param EnemySpawnRecord The enemy spawn data.
 	 */
-	void SpawnEnemies(const FEnemySpawnInfo& EnemySpawnInfo);
+	void SpawnEnemies(const FEnemySpawnRecord& EnemySpawnRecord);
 };

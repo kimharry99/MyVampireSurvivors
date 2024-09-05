@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "EnemyWaveInfo.h"
+#include "WaveTableRow.h"
 #include "EnemySpawner.h"
 #include "EnemyWaveManager.generated.h"
 
@@ -40,7 +40,7 @@ private:
 	 * A data table containing ordered enemy wave data.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UDataTable* EnemyWaveDataTable = nullptr;
+	UDataTable* WaveDataTable = nullptr;
 
 	/**
 	 * The enemy spawner that will spawn enemies according to the enemy wave data.
@@ -49,9 +49,9 @@ private:
 	UEnemySpawner* EnemySpawner;
 
 	/**
-	 * A list of enemy wave data loaded from the data table.
+	 * Container of wave record loaded from the data table.
 	 */
-	TArray<FEnemyWaveInfo*> WaveInfos;
+	TArray<FWaveTableRow*> WaveRecords;
 
 	/**
 	 * The index of the current enemy wave.
