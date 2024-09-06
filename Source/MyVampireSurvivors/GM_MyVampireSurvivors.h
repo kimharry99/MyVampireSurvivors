@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "EnemyWaveManager.h"
 #include "GM_MyVampireSurvivors.generated.h"
 
 /**

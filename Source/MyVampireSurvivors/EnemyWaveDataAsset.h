@@ -17,6 +17,7 @@ class MYVAMPIRESURVIVORS_API UEnemyWaveDataAsset : public UWaveDataAsset
 	GENERATED_BODY()
 
 public:
+	UEnemyWaveDataAsset();
 	/**
 	 * Return the enemy spawn record group.
 	 */

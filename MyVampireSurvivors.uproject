@@ -13,7 +13,8 @@
 				"PaperZD",
 				"Paper2D",
 				"AIModule",
-				"CoreUObject"
+				"CoreUObject",
+				"UnrealEd"
 			]
 		}
 	],

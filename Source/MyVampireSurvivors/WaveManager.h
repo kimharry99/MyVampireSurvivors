@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Wave.h"
 #include "WaveManager.generated.h"
 
 /**
@@ -27,12 +28,46 @@ protected:
 
 private:
 	/**
-	 * Trigger the first enemy wave.
+	 * Load all wave records from data table.
 	 */
-	void StartWave();
+	void LoadWaveRecords();
 
-	/*
-	 * Trigger the next enemy wave.
+	/**
+	 * Trigger current wave.
 	 */
-	void TriggerNextWave();
+	void TriggerCurrentWave();
+
+	/**
+	 * Called when the current wave is triggered.
+	 */
+	void PostCurrentWaveTriggerd();
+
+	/**
+	 * Set a timer to trigger next wave after duration.
+	 */
+	void ReserveNextWave();
+
+	/**
+	 * A data table containing ordered enemy wave data.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UDataTable* WaveDataTable = nullptr;
+
+	/**
+	 * Container of waves.
+	 */
+	TArray<UWave*> Waves;
+
+	int CurrentWaveIndex = -1;
+
+	/**
+	 * A timer handle to trigger the next enemy wave.
+	 */
+	FTimerHandle WaveHandle;
+
+	/**
+	 * The period(sec) between enemy waves.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float WavePeriod = 3.0f;;
 };
