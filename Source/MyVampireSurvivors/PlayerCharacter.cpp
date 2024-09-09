@@ -24,20 +24,6 @@ APlayerCharacter::APlayerCharacter() : Directionality(FVector2D::ZeroVector)
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->SetProjectionMode(ECameraProjectionMode::Orthographic);
 	FollowCamera->SetOrthoWidth(1024.0f);
-
-	// Initialize the camera view box
-	float OrthoWidth = FollowCamera->OrthoWidth;
-	float AspectRatio = FollowCamera->AspectRatio;
-
-	float HalfHeight = OrthoWidth / (2.0f * AspectRatio);
-	float HalfWidth = OrthoWidth / 2.0f;
-
-	FVector Right = GetActorForwardVector();
-	FVector Up = GetActorRightVector();
-	FVector TopRight = (Right * HalfWidth) + (Up * HalfHeight) + (GetActorUpVector() * 100.0f); // Define z range of the box to +-100.0f
-	FVector BottomLeft = -(Right * HalfWidth) - (Up * HalfHeight) - (GetActorUpVector() * 100.0f);
-
-	CameraViewBox = FBox(BottomLeft, TopRight);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -49,13 +35,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector ActorLocation = GetActorLocation();
-	FVector CurrentBoxCenter = CameraViewBox.GetCenter();
-	FVector BoxOffset = ActorLocation - CurrentBoxCenter;
-
-	CameraViewBox = CameraViewBox.ShiftBy(BoxOffset);
-
-	ToroidalMapManager::GetInstance()->HandleMapBoundary(this, CameraViewBox);
+	ToroidalMapManager::GetInstance()->HandleMapBoundary(this);
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -77,6 +57,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 }
 
+const UCameraComponent* APlayerCharacter::GetFollowCamera() const
+{
+	return FollowCamera;
+}
+
 float APlayerCharacter::GetCameraOrthoWidth() const
 {
 	return FollowCamera->OrthoWidth;
@@ -85,6 +70,19 @@ float APlayerCharacter::GetCameraOrthoWidth() const
 float APlayerCharacter::GetCameraAspectRatio() const
 {
 	return FollowCamera->AspectRatio;
+}
+
+const FBox APlayerCharacter::GetViewBox() const
+{
+	float HalfHeight = GetCameraOrthoWidth() / (2.0f * GetCameraAspectRatio());
+	float HalfWidth = GetCameraOrthoWidth() / 2.0f;
+
+	const FVector Right = GetActorForwardVector();
+	const FVector Up = GetActorRightVector();
+	const FVector TopRight = (Right * HalfWidth) + (Up * HalfHeight) + (GetActorUpVector() * 100.0f); // Define z range of the box to +-100.0f
+	const FVector BottomLeft = -(Right * HalfWidth) - (Up * HalfHeight) - (GetActorUpVector() * 100.0f);
+
+	return FBox(BottomLeft + GetActorLocation(), TopRight + GetActorLocation());
 }
 
 void APlayerCharacter::Move(const FInputActionValue& Value)

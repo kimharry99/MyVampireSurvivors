@@ -7,9 +7,9 @@
 #include "Kismet/GameplayStatics.h"
 
 
-void AGM_MyVampireSurvivors::StartPlay()
+void AGM_MyVampireSurvivors::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
-	Super::StartPlay();
+	Super::InitGame(MapName, Options, ErrorMessage);
 
 	// Get map in level
 	AToroidalMap* Map = Cast<AToroidalMap>(UGameplayStatics::GetActorOfClass(GetWorld(), AToroidalMap::StaticClass()));

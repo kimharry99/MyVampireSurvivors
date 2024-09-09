@@ -38,7 +38,7 @@ void AWaveManager::LoadWaveRecords()
 	WaveDataTable->GetAllRows<FWaveTableRow>(ContextString, WaveRecords);
 
 	// Create wave instances from the wave records
-	UWaveFactory* WaveFactory = NewObject<UWaveFactory>();
+	UWaveFactory* WaveFactory = NewObject<UWaveFactory>(GetWorld());
 	for (FWaveTableRow* WaveRecord : WaveRecords)
 	{
 		UWave* Wave = WaveFactory->CreateWave(WaveRecord->WaveDataAsset);

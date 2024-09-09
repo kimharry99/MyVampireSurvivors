@@ -22,7 +22,7 @@ public:
 	 * @param WaveDataAsset Wave data asset to create enemy wave from. It must be EnemyWaveDataAsset.
 	 * @return Created enemy wave.
 	 */
-	static UEnemyWave* CreateEnemyWave(const UWaveDataAsset* WaveDataAsset);
+	static UEnemyWave* CreateEnemyWave(UWorld* World, const UWaveDataAsset* WaveDataAsset);
 
 protected:
 	/**

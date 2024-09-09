@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "PlayerCharacter.h"
 #include "GM_MyVampireSurvivors.generated.h"
 
 /**
@@ -18,5 +19,5 @@ protected:
 	/**
 	 * Find a toroidal map in the level and initialize the toroidal map manager.
 	 */
-	virtual void StartPlay() override;
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 };

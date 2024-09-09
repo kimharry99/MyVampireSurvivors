@@ -14,7 +14,7 @@ UWave* UWaveFactory::CreateWave(const UWaveDataAsset* WaveDataAsset) const
 	switch (WaveDataAsset->WaveType)
 	{
 		case EWaveType::Enemy:
-			return UEnemyWave::CreateEnemyWave(WaveDataAsset);
+			return UEnemyWave::CreateEnemyWave(GetWorld(), WaveDataAsset);
 		break;
 		default:
 			UE_LOG(LogTemp, Error, TEXT("Unknown wave type"))

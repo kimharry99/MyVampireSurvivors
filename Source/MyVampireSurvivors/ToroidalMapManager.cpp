@@ -2,6 +2,8 @@
 
 
 #include "ToroidalMapManager.h"
+#include "Engine/Engine.h"
+#include "Kismet/GameplayStatics.h"
 
 ToroidalMapManager* ToroidalMapManager::GetInstance()
 {
@@ -14,12 +16,12 @@ void ToroidalMapManager::Initialize(AToroidalMap* NewMap)
 	Map = NewMap;
 }
 
-void ToroidalMapManager::HandleMapBoundary(AActor* PlayerCharacter, FBox& ViewBox) const
+void ToroidalMapManager::HandleMapBoundary(APlayerCharacter* PlayerCharacter) const
 {
-	Map->HandleMapBoundary(PlayerCharacter, ViewBox);
+	Map->HandleMapBoundary(PlayerCharacter);
 }
 
-const FBox& ToroidalMapManager::GetMapRange() const
+const FBox ToroidalMapManager::GetMapRange() const
 {
 	return Map->GetMapRange();
 }

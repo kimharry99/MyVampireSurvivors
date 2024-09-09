@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PaperZDCharacter.h"
+#include "Camera/CameraComponent.h"
 #include "InputActionValue.h"
+#include "PaperZDCharacter.h"
 #include "PlayerCharacter.generated.h"
 
 /**
@@ -32,6 +33,20 @@ public:
 	 */
 	float GetCameraAspectRatio() const;
 
+	/**
+	 * Get camera attached to the player character.
+	 * 
+	 * @return Camera attached to the player character.
+	 */
+	const UCameraComponent* GetFollowCamera() const;
+
+	/**
+	 * Get the view box of the camera.
+	 * 
+	 * @return The view box of the camera.
+	 */
+	const FBox GetViewBox() const;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -54,6 +69,4 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	class UInputAction* IA_Move;
-
-	FBox CameraViewBox;
 };
