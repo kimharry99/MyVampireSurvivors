@@ -43,25 +43,15 @@ protected:
 	/**
 	 * Background component for toroidal map.
 	 */
-	UPROPERTY(EditAnywhere, Category = "Background")
+	UPROPERTY(VisibleDefaultsOnly, Category = "Background")
 	UToroidalMapBackgroundComponent* BackgroundComponent;
 
 	/**
 	 * Toroidal space component for toroidal map.
 	 */
-	UPROPERTY(EditAnywhere, Category = "ToroidalSpace")
+	UPROPERTY(VisibleDefaultsOnly, Category = "ToroidalSpace")
 	UToroidalSpaceComponent* ToroidalSpaceComponent;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-private:
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-
-	/**
-	 * Check if background tile map asset is changed.
-	 * 
-	 * @param PropertyChangedEvent - Property changed event
-	 */
-	bool IsBackgroundTileMapChanged(FPropertyChangedEvent& PropertyChangedEvent) const;
 };

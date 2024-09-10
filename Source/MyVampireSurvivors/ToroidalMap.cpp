@@ -23,13 +23,14 @@ AToroidalMap::AToroidalMap()
 	RootComponent = BackgroundComponent;
 
 	ToroidalSpaceComponent = CreateDefaultSubobject<UToroidalSpaceComponent>(TEXT("Toroidal Space Component"));
-	ToroidalSpaceComponent->SetSpaceBoundary(BackgroundComponent->GetBackgroundBoundingBox());
 }
 
 // Called when the game starts or when spawned
 void AToroidalMap::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ToroidalSpaceComponent->SetSpaceBoundary(BackgroundComponent->GetBackgroundBoundingBox());
 }
 
 void AToroidalMap::HandleMapBoundary(APlayerCharacter* PlayerCharacter) const
@@ -40,26 +41,4 @@ void AToroidalMap::HandleMapBoundary(APlayerCharacter* PlayerCharacter) const
 const FBox AToroidalMap::GetMapRange() const
 {
 	return BackgroundComponent->GetBackgroundBoundingBox();
-}
-
-void AToroidalMap::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-{
-	Super::PostEditChangeProperty(PropertyChangedEvent);
-
-	if (IsBackgroundTileMapChanged(PropertyChangedEvent))
-	{
-		BackgroundComponent->SetBackgroundTileMap(BackgroundTileMap);
-		ToroidalSpaceComponent->SetSpaceBoundary(BackgroundComponent->GetBackgroundBoundingBox());
-	}
-}
-
-bool AToroidalMap::IsBackgroundTileMapChanged(FPropertyChangedEvent& PropertyChangedEvent) const
-{
-	if (PropertyChangedEvent.Property == nullptr)
-	{
-		return false;
-	}
-
-	const FName PropertyName = PropertyChangedEvent.Property->GetFName();
-	return PropertyName == GET_MEMBER_NAME_CHECKED(AToroidalMap, BackgroundTileMap);
 }

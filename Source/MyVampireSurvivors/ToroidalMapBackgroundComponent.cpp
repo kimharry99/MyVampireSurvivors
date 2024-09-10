@@ -10,8 +10,12 @@ UToroidalMapBackgroundComponent::UToroidalMapBackgroundComponent()
 	// Set the background to static
 	SetMobility(EComponentMobility::Static);
 
+	bEditableWhenInherited = false;
+
 	BackgroundTileMapComponent = CreateDefaultSubobject<UPaperTileMapComponent>(TEXT("BackgroundTileMapComponent"));
+	BackgroundTileMapComponent->bEditableWhenInherited = false;
 	BackgroundMarginTileMapComponent = CreateDefaultSubobject<UPaperTileMapComponent>(TEXT("BackgroundMarginTileMapComponent"));
+	BackgroundMarginTileMapComponent->bEditableWhenInherited = false;
 }
 
 void UToroidalMapBackgroundComponent::OnComponentCreated()
@@ -45,10 +49,11 @@ const FBox UToroidalMapBackgroundComponent::GetBackgroundBoundingBox() const
 
 	float Width = TileMap->MapWidth * TileCMSize.X;
 	float Height = TileMap->MapHeight * TileCMSize.Y;
-	FVector RangeMin = BackgroundTileMapComponent->GetComponentLocation() - TileCMSize * 0.5f; // Shift map range min to left top of tile map
+	FVector RangeMin = BackgroundTileMapComponent->GetTileCornerPosition(0, 0, 0, true);
 	FVector RangeMax = FVector(RangeMin.X + Width, RangeMin.Y + Height, RangeMin.Z);
 
-	return FBox(RangeMin, RangeMax);
+	FBox Result = FBox(RangeMin, RangeMax);
+	return Result;
 }
 
 void UToroidalMapBackgroundComponent::SetBackgroundTileMap(UPaperTileMap* BackgroundTileMap)
