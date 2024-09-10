@@ -2,32 +2,22 @@
 
 
 #include "EnemySpawner.h"
-#include "Enemy.h"
 #include "ToroidalMapManager.h"
 
-void UEnemySpawner::SpawnEnemyWave(const UEnemyWaveDataAsset* EnemyWaveRecord)
-{
-	const TArray<FEnemySpawnRecord>& SpawningEnemyGroup = EnemyWaveRecord->GetSpawningEnemyGroup();
-	// Spawn enemies set in the enemy wave info
-	for(const FEnemySpawnRecord& EnemySpawnInfo : SpawningEnemyGroup)
-	{
-		SpawnEnemies(EnemySpawnInfo);
-	}
-}
-
-void UEnemySpawner::SpawnEnemies(const FEnemySpawnRecord& EnemySpawnRecord)
+void UEnemySpawner::SpawnEnemies(TSubclassOf<AEnemy> EnemyClass, int EnemyCount) const
 {
 	UWorld* World = GetWorld();
-	if (World == nullptr) return;
-
-	for (int i = 0; i < EnemySpawnRecord.EnemyCount; ++i)
+	if (World != nullptr)
 	{
-		// Set spawn location
 		const FBox& SpawnBoundary = ToroidalMapManager::GetInstance()->GetMapRange();
-		FVector SpawnLocation = FMath::RandPointInBox(SpawnBoundary);
-		SpawnLocation.Z = 50.0f;
+		for (int i = 0; i < EnemyCount; ++i)
+		{
+			// Set spawn location
+			FVector SpawnLocation = FMath::RandPointInBox(SpawnBoundary);
+			SpawnLocation.Z = 50.0f;
 
-		// Spawn an enemy
-		AEnemy* Enemy = World->SpawnActor<AEnemy>(EnemySpawnRecord.EnemyClass, SpawnLocation, FRotator::ZeroRotator);
+			// Spawn an enemy
+			AEnemy* Enemy = World->SpawnActor<AEnemy>(EnemyClass, SpawnLocation, FRotator::ZeroRotator);
+		}
 	}
 }

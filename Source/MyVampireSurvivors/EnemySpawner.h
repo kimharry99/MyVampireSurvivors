@@ -4,8 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "EnemyWaveDataAsset.h"
-#include "EnemySpawnRecord.h"
+#include "Enemy.h"
 #include "EnemySpawner.generated.h"
 
 /**
@@ -18,16 +17,10 @@ class MYVAMPIRESURVIVORS_API UEnemySpawner : public UObject
 
 public:
 	/**
-	 * Spawn an enemy wave according to the enemy wave info.
-	 *
-	 * @param EnemyWaveRecord The enemy wave info.
-	 */
-	void SpawnEnemyWave(const UEnemyWaveDataAsset* EnemyWaveRecord);
-
-	/**
-	 * Spawn enemies according to the enemy spawn data.
+	 * Spawn enemies at random locations in map.
 	 * 
-	 * @param EnemySpawnRecord The enemy spawn data.
+	 * @param EnemyClass - Enemy class to spawn
+	 * @param EnemyCount - Number of enemies to spawn
 	 */
-	void SpawnEnemies(const FEnemySpawnRecord& EnemySpawnRecord);
+	void SpawnEnemies(TSubclassOf<AEnemy> EnemyClass, int EnemyCount) const;
 };

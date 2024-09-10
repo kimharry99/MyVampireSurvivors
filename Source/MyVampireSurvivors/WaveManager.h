@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Wave.h"
+#include "WaveFactory.h"
 #include "WaveManager.generated.h"
 
 /**
  * WaveManager handles ordered waves.
  *
- * It triggers an initial enemy wave when the game starts.
+ * It triggers an initial wave when the game starts.
  * After a cooldown period in the wave has passed, the class will trigger the next wave.
  */
 UCLASS()
@@ -27,6 +28,16 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	/**
+	 * A data table containing ordered enemy wave data.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UDataTable* WaveDataTable = nullptr;
+
+	/** Create UWave instance from wave data table row. */
+	UPROPERTY()
+	UWaveFactory* WaveFactory;
+
 	/**
 	 * Load all wave records from data table.
 	 */
@@ -48,12 +59,6 @@ private:
 	void ReserveNextWave();
 
 	/**
-	 * A data table containing ordered enemy wave data.
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UDataTable* WaveDataTable = nullptr;
-
-	/**
 	 * Container of waves.
 	 */
 	TArray<UWave*> Waves;
@@ -69,5 +74,5 @@ private:
 	 * The period(sec) between enemy waves.
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	float WavePeriod = 3.0f;;
+	float WavePeriod = 3.0f;
 };

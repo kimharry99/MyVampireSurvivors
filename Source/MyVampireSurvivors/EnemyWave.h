@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Wave.h"
 #include "EnemyWaveDataAsset.h"
+#include "EnemySpawner.h"
 #include "EnemyWave.generated.h"
 
 /**
@@ -19,10 +20,11 @@ public:
 	/**
 	 * Create an enemy wave from the given enemy wave data asset.
 	 *
-	 * @param WaveDataAsset Wave data asset to create enemy wave from. It must be EnemyWaveDataAsset.
+	 * @param WaveDataAsset - Wave data asset to create enemy wave from. It must be EnemyWaveDataAsset.
+	 * @param EnemySpawner - Enemy spawner to spawn enemies.
 	 * @return Created enemy wave.
 	 */
-	static UEnemyWave* CreateEnemyWave(UWorld* World, const UWaveDataAsset* WaveDataAsset);
+	static UEnemyWave* CreateEnemyWave(const UWaveDataAsset* WaveDataAsset, const UEnemySpawner* EnemySpawner);
 
 protected:
 	/**
@@ -35,6 +37,9 @@ protected:
 private:
 	UEnemyWave() = default;
 
-	/** Enemy wave data asset. */
+	/** Enemy wave data asset */
 	const UEnemyWaveDataAsset* EnemyWaveDataAsset;
+
+	/** Enemy spawner to spawn enemies */
+	const UEnemySpawner* EnemySpawner;
 };

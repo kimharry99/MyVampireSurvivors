@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "WaveDataAsset.h"
 #include "Wave.h"
+#include "EnemySpawner.h"
 #include "WaveFactory.generated.h"
 
 /**
@@ -23,4 +24,8 @@ public:
 	 * Create a wave from the given wave data asset.
 	 */
 	UWave* CreateWave(const UWaveDataAsset* WaveDataAsset) const;
+
+private:
+	/** Set as member of UEnemyWave. */
+	UEnemySpawner* EnemySpawner;
 };

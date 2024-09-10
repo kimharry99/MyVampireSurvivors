@@ -11,6 +11,7 @@ AWaveManager::AWaveManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+	WaveFactory = CreateDefaultSubobject<UWaveFactory>(TEXT("WaveFactory"));
 }
 
 // Called when the game starts or when spawned
@@ -38,7 +39,6 @@ void AWaveManager::LoadWaveRecords()
 	WaveDataTable->GetAllRows<FWaveTableRow>(ContextString, WaveRecords);
 
 	// Create wave instances from the wave records
-	UWaveFactory* WaveFactory = NewObject<UWaveFactory>(GetWorld());
 	for (FWaveTableRow* WaveRecord : WaveRecords)
 	{
 		UWave* Wave = WaveFactory->CreateWave(WaveRecord->WaveDataAsset);
