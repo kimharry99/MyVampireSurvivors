@@ -18,7 +18,7 @@ public:
 	/**
 	 * Trigger the wave
 	 */
-	virtual void Trigger();
+	virtual void Trigger() const;
 
 protected:
 	/**

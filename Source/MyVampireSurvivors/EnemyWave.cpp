@@ -6,7 +6,7 @@
 #include "EnemySpawnRecord.h"
 #include "ToroidalMapManager.h"
 
-UEnemyWave* UEnemyWave::CreateEnemyWave(const UWaveDataAsset* WaveDataAsset, const UEnemySpawner* EnemySpawner)
+UEnemyWave* UEnemyWave::CreateEnemyWave(const UWaveDataAsset* WaveDataAsset, UEnemySpawner* EnemySpawner)
 {
 	const UEnemyWaveDataAsset* EnemyWaveDataAsset = Cast<UEnemyWaveDataAsset>(WaveDataAsset);
 	if (EnemyWaveDataAsset == nullptr)
@@ -21,7 +21,7 @@ UEnemyWave* UEnemyWave::CreateEnemyWave(const UWaveDataAsset* WaveDataAsset, con
 	return EnemyWave;
 }
 
-void UEnemyWave::Trigger()
+void UEnemyWave::Trigger() const
 {
 	for (const FEnemySpawnRecord& EnemySpawnRecord : EnemyWaveDataAsset->GetSpawningEnemyGroup())
 	{

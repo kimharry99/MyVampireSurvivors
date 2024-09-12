@@ -24,7 +24,7 @@ public:
 	 * @param EnemySpawner - Enemy spawner to spawn enemies.
 	 * @return Created enemy wave.
 	 */
-	static UEnemyWave* CreateEnemyWave(const UWaveDataAsset* WaveDataAsset, const UEnemySpawner* EnemySpawner);
+	static UEnemyWave* CreateEnemyWave(const UWaveDataAsset* WaveDataAsset, UEnemySpawner* EnemySpawner);
 
 protected:
 	/**
@@ -32,14 +32,16 @@ protected:
 	 *
 	 * Spawn enemies based on enemy wave data asset.
 	 */
-	virtual void Trigger() override;
+	virtual void Trigger() const override;
 
 private:
 	UEnemyWave() = default;
 
 	/** Enemy wave data asset */
-	const UEnemyWaveDataAsset* EnemyWaveDataAsset;
+	UPROPERTY()
+	TObjectPtr<const UEnemyWaveDataAsset> EnemyWaveDataAsset;
 
 	/** Enemy spawner to spawn enemies */
-	const UEnemySpawner* EnemySpawner;
+	UPROPERTY()
+	TObjectPtr<UEnemySpawner> EnemySpawner;
 };

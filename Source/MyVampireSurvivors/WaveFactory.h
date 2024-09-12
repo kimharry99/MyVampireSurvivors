@@ -27,5 +27,6 @@ public:
 
 private:
 	/** Set as member of UEnemyWave. */
-	UEnemySpawner* EnemySpawner;
+	UPROPERTY()
+	TObjectPtr<UEnemySpawner> EnemySpawner;
 };

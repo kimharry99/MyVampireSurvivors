@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Wave.h"
-#include "WaveFactory.h"
+#include "WaveLoaderComponent.h"
+#include "WaveTriggerComponent.h"
 #include "WaveManager.generated.h"
 
 /**
@@ -19,7 +19,7 @@ class MYVAMPIRESURVIVORS_API AWaveManager : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
 	// Sets default values for this actor's properties
 	AWaveManager();
 
@@ -28,51 +28,10 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	/**
-	 * A data table containing ordered enemy wave data.
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UDataTable* WaveDataTable = nullptr;
+	/** Wave data loader from a data table */
+	UPROPERTY(EditDefaultsOnly, meta = (PrivateAllowAccess = "true"))
+	TObjectPtr<UWaveLoaderComponent> WaveLoader;
 
-	/** Create UWave instance from wave data table row. */
-	UPROPERTY()
-	UWaveFactory* WaveFactory;
-
-	/**
-	 * Load all wave records from data table.
-	 */
-	void LoadWaveRecords();
-
-	/**
-	 * Trigger current wave.
-	 */
-	void TriggerCurrentWave();
-
-	/**
-	 * Called when the current wave is triggered.
-	 */
-	void PostCurrentWaveTriggerd();
-
-	/**
-	 * Set a timer to trigger next wave after duration.
-	 */
-	void ReserveNextWave();
-
-	/**
-	 * Container of waves.
-	 */
-	TArray<UWave*> Waves;
-
-	int CurrentWaveIndex = -1;
-
-	/**
-	 * A timer handle to trigger the next enemy wave.
-	 */
-	FTimerHandle WaveHandle;
-
-	/**
-	 * The period(sec) between enemy waves.
-	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	float WavePeriod = 3.0f;
+	UPROPERTY(EditDefaultsOnly, meta = (PrivateAllowAccess = "true"))
+	TObjectPtr<UWaveTriggerComponent> WaveTrigger;
 };

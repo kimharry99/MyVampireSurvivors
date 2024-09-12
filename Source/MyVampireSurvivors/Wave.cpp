@@ -8,7 +8,7 @@ UWave::UWave()
 
 }
 
-void UWave::Trigger()
+void UWave::Trigger() const
 {
 
 }
