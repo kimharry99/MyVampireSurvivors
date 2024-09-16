@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Wave.h"
+#include "WaveFactory.h"
 #include "EnemyWaveDataAsset.h"
 #include "EnemySpawner.h"
 #include "EnemyWave.generated.h"
@@ -16,16 +17,6 @@ class MYVAMPIRESURVIVORS_API UEnemyWave : public UWave
 {
 	GENERATED_BODY()
 
-public:
-	/**
-	 * Create an enemy wave from the given enemy wave data asset.
-	 *
-	 * @param WaveDataAsset - Wave data asset to create enemy wave from. It must be EnemyWaveDataAsset.
-	 * @param EnemySpawner - Enemy spawner to spawn enemies.
-	 * @return Created enemy wave.
-	 */
-	static UEnemyWave* CreateEnemyWave(const UWaveDataAsset* WaveDataAsset, UEnemySpawner* EnemySpawner);
-
 protected:
 	/**
 	 * Trigger the wave.
@@ -35,7 +26,7 @@ protected:
 	virtual void Trigger() const override;
 
 private:
-	UEnemyWave() = default;
+	friend UWaveFactory;
 
 	/** Enemy wave data asset */
 	UPROPERTY()
@@ -43,5 +34,5 @@ private:
 
 	/** Enemy spawner to spawn enemies */
 	UPROPERTY()
-	TObjectPtr<UEnemySpawner> EnemySpawner;
+	TObjectPtr<AEnemySpawner> EnemySpawner;
 };

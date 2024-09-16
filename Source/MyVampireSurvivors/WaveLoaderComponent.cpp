@@ -2,6 +2,8 @@
 
 
 #include "WaveLoaderComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "EnemySpawner.h"
 #include "WaveTableRow.h"
 
 // Sets default values for this component's properties
@@ -16,6 +18,19 @@ void UWaveLoaderComponent::OnRegister()
 
 	// Create subobject after Actor that owns this component is created
 	WaveFactory = NewObject<UWaveFactory>(this, TEXT("WaveFactory"));
+}
+
+void UWaveLoaderComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Find EnemySpawner in the level
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemySpawner::StaticClass(), FoundActors);
+	check(FoundActors.Num() > 0);
+
+	AEnemySpawner* EnemySpawner = Cast<AEnemySpawner>(FoundActors[0]);
+	WaveFactory->SetEnemySpawner(EnemySpawner);
 }
 
 void UWaveLoaderComponent::AppendAllWaveToSchedule(FWaveSchedule& OutWaveSchedule)

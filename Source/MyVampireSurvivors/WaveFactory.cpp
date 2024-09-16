@@ -4,9 +4,9 @@
 #include "WaveFactory.h"
 #include "EnemyWave.h"
 
-UWaveFactory::UWaveFactory()
+void UWaveFactory::SetEnemySpawner(AEnemySpawner* InEnemySpawner)
 {
-	EnemySpawner = CreateDefaultSubobject<UEnemySpawner>(TEXT("EnemySpawner"));
+	EnemySpawner = InEnemySpawner;
 }
 
 UWave* UWaveFactory::CreateWave(const UWaveDataAsset* WaveDataAsset) const
@@ -14,8 +14,12 @@ UWave* UWaveFactory::CreateWave(const UWaveDataAsset* WaveDataAsset) const
 	switch (WaveDataAsset->WaveType)
 	{
 		case EWaveType::Enemy:
-			return UEnemyWave::CreateEnemyWave(WaveDataAsset, EnemySpawner);
-		break;
+		{
+			UEnemyWave* EnemyWave = NewObject<UEnemyWave>();
+			EnemyWave->EnemyWaveDataAsset = Cast<UEnemyWaveDataAsset>(WaveDataAsset);
+			EnemyWave->EnemySpawner = EnemySpawner;
+			return EnemyWave;
+		}
 		default:
 			UE_LOG(LogTemp, Error, TEXT("Unknown wave type"))
 			return nullptr;

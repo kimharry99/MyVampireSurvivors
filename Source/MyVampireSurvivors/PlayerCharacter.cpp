@@ -7,7 +7,6 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "ToroidalMapManager.h"
 
 APlayerCharacter::APlayerCharacter() : Directionality(FVector2D::ZeroVector)
 {
@@ -34,8 +33,6 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	ToroidalMapManager::GetInstance()->HandleMapBoundary(this);
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

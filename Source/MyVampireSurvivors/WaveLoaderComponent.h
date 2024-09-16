@@ -26,6 +26,7 @@ public:
 	void AppendAllWaveToSchedule(FWaveSchedule& OutWaveSchedule);
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void OnRegister() override;
 
 private:

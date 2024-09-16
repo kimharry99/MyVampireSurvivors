@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SceneComponent.h"
 #include "GameFramework/Actor.h"
 #include "PaperTileMap.h"
 #include "PlayerCharacter.h"
@@ -18,13 +17,6 @@ class MYVAMPIRESURVIVORS_API AToroidalMap : public AActor
 	
 public:
 	AToroidalMap();
-
-	/**
-	 * Check if the player and the view box escape the map and move them to the other side if they are.
-	 * 
-	 * @param PlayerCharacter - Player character
-	 */
-	void HandleMapBoundary(APlayerCharacter* PlayerCharacter) const;
 
 	/**
 	 * Return the range of the map. 
@@ -52,6 +44,15 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = "ToroidalSpace")
 	UToroidalSpaceComponent* ToroidalSpaceComponent;
 
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
+
+private:
+	/**
+	 * Check if the player and the view box escape the map and move them to the other side if they are.
+	 */
+	void HandleActorsOnToroidalMap() const;
+
+	UPROPERTY()
+	TObjectPtr<APlayerCharacter> PlayerCharacter;
 };

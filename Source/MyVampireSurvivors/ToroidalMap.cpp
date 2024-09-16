@@ -2,18 +2,13 @@
 
 
 #include "ToroidalMap.h"
-#include "GameFramework/GameModeBase.h"
-#include "Engine/Engine.h"
-#include "PlayerCharacter.h"
-#include "PaperTileMap.h"
-#include "PaperTileLayer.h"
-#include "FileHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AToroidalMap::AToroidalMap()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	BackgroundComponent = CreateDefaultSubobject<UToroidalMapBackgroundComponent>(TEXT("Background Component"));
 
@@ -30,10 +25,24 @@ void AToroidalMap::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Cache player character reference
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if(PlayerController)
+	{
+		PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPawn());
+	}
+
 	ToroidalSpaceComponent->SetSpaceBoundary(BackgroundComponent->GetBackgroundBoundingBox());
 }
 
-void AToroidalMap::HandleMapBoundary(APlayerCharacter* PlayerCharacter) const
+void AToroidalMap::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	HandleActorsOnToroidalMap();
+}
+
+void AToroidalMap::HandleActorsOnToroidalMap() const
 {
 	ToroidalSpaceComponent->RepositionActorsInToroidalSpace(PlayerCharacter);
 }
