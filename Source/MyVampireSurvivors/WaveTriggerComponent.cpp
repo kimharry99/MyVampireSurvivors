@@ -20,7 +20,7 @@ FWaveSchedule& UWaveTriggerComponent::GetWaveSchedule()
 
 void UWaveTriggerComponent::TriggerCurrentWave()
 {
-	const UWave* CurrentWave = WaveSchedule.GetCurrentWave();
+	UWave* CurrentWave = WaveSchedule.GetCurrentWave();
 	if (CurrentWave)
 	{
 		CurrentWave->Trigger();

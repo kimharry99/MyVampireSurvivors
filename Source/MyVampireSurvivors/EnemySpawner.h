@@ -17,12 +17,12 @@ class MYVAMPIRESURVIVORS_API AEnemySpawner : public AActor
 
 public:
 	/**
-	 * Spawn enemies at random locations in map.
+	 * Spawn an enemy at random location in spawn boundary.
 	 * 
 	 * @param EnemyClass - Enemy class to spawn
-	 * @param EnemyCount - Number of enemies to spawn
+	 * @return Spawned enemy
 	 */
-	void SpawnEnemies(TSubclassOf<AEnemy> EnemyClass, int EnemyCount) const;
+	AEnemy* SpawnEnemy(TSubclassOf<AEnemy> EnemyClass) const;
 
 protected:
 	virtual void BeginPlay() override;

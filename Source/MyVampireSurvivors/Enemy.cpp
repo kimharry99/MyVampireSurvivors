@@ -36,6 +36,7 @@ void AEnemy::BeginPlay()
 
 void AEnemy::TriggerDeath()
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s is dead!"), *GetName())
+	UE_LOG(LogTemp, Warning, TEXT("%s is dead!"), *GetName());
+	OnEnemyDied.Broadcast();
 	Destroy();
 }

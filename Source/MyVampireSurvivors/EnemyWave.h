@@ -23,7 +23,7 @@ protected:
 	 *
 	 * Spawn enemies based on enemy wave data asset.
 	 */
-	virtual void Trigger() const override;
+	virtual void Trigger() override;
 
 private:
 	friend UWaveFactory;
@@ -35,4 +35,17 @@ private:
 	/** Enemy spawner to spawn enemies */
 	UPROPERTY()
 	TObjectPtr<AEnemySpawner> EnemySpawner;
+
+	/** The number of remain enemies spawned by the enemy wave. */
+	int RemainEnemiesCount = 0;
+
+	/**
+	 * Post spawned enemy death event handler.
+	 */
+	void PostSpawnedEnemyDie();
+
+	/**
+	 * Complete the enemy wave.
+	 */
+	void CompleteEnemyWave();
 };

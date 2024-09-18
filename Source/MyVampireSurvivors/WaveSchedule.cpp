@@ -3,12 +3,12 @@
 
 #include "WaveSchedule.h"
 
-void FWaveSchedule::Add(const UWave& Wave)
+void FWaveSchedule::Add(UWave& Wave)
 {
 	ScheduledWaves.Add(&Wave);
 }
 
-const UWave* FWaveSchedule::GetCurrentWave() const
+UWave* FWaveSchedule::GetCurrentWave() const
 {
 	if (CurrentWaveIndex >= ScheduledWaves.Num())
 	{

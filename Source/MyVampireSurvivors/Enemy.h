@@ -6,6 +6,8 @@
 #include "PaperCharacter.h"
 #include "Enemy.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnEnemyDied);
+
 /**
  * The base class for all enemies in the game.
  * 
@@ -18,6 +20,9 @@ class MYVAMPIRESURVIVORS_API AEnemy : public APaperCharacter
 
 public:
 	AEnemy();
+
+	/** Multicast delegate called when the enemy die.*/
+	FOnEnemyDied OnEnemyDied;
 
 protected:
 	virtual void BeginPlay() override;

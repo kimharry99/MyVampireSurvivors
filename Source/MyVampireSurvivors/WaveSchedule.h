@@ -15,14 +15,14 @@ public:
 	/**
 	 * Add a wave to the schedule.
 	 */
-	void Add(const UWave& Wave);
+	void Add(UWave& Wave);
 
 	/**
 	 * Get current wave in the schedule.
 	 * 
 	 * @return The current wave in the schedule, or nullptr if there are no more waves.
 	 */
-	const UWave* GetCurrentWave() const;
+	UWave* GetCurrentWave() const;
 
 	/**
 	 * Move to the next wave in the schedule.
@@ -31,7 +31,7 @@ public:
 
 private:
 	UPROPERTY()
-	TArray<TObjectPtr<const UWave>> ScheduledWaves;
+	TArray<TObjectPtr<UWave>> ScheduledWaves;
 
 	int CurrentWaveIndex = 0;
 };

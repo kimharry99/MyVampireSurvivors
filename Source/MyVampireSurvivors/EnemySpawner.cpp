@@ -20,19 +20,18 @@ void AEnemySpawner::BeginPlay()
 	SpawnBoundary = ToroidalMap->GetMapRange();
 }
 
-void AEnemySpawner::SpawnEnemies(TSubclassOf<AEnemy> EnemyClass, int EnemyCount) const
+AEnemy* AEnemySpawner::SpawnEnemy(TSubclassOf<AEnemy> EnemyClass) const
 {
 	UWorld* World = GetWorld();
 	if (World != nullptr)
 	{
-		for (int i = 0; i < EnemyCount; ++i)
-		{
-			// Set spawn location
-			FVector SpawnLocation = FMath::RandPointInBox(SpawnBoundary);
-			SpawnLocation.Z = 50.0f;
+		// Set spawn location
+		FVector SpawnLocation = FMath::RandPointInBox(SpawnBoundary);
+		SpawnLocation.Z = 50.0f;
 
-			// Spawn an enemy
-			AEnemy* Enemy = World->SpawnActor<AEnemy>(EnemyClass, SpawnLocation, FRotator::ZeroRotator);
-		}
+		// Spawn an enemy
+		return World->SpawnActor<AEnemy>(EnemyClass, SpawnLocation, FRotator::ZeroRotator);
 	}
+
+	return nullptr;
 }
