@@ -33,22 +33,23 @@ void UWaveLoaderComponent::BeginPlay()
 	WaveFactory->SetEnemySpawner(EnemySpawner);
 }
 
-void UWaveLoaderComponent::AppendAllWaveToSchedule(FWaveSchedule& OutWaveSchedule)
+UWaveList* UWaveLoaderComponent::LoadWavesFromDataTable(UDataTable* InWaveDataTable) const
 {
-	if (WaveDataTable == nullptr)
-	{
-		UE_LOG(LogTemp, Error, TEXT("WaveDataTable is not set in WaveLoader."))
-		return;
-	}
+	check(InWaveDataTable);
+	UWaveList* WaveList = NewObject<UWaveList>(this->GetOwner());
 
-	// Create wave instances from the wave records
-	for (TMap<FName, uint8*>::TConstIterator RowMapIter(WaveDataTable->GetRowMap().CreateConstIterator()); RowMapIter; ++RowMapIter)
+	// Use UE5 source code
+	for (TMap<FName, uint8*>::TConstIterator RowMapIter(InWaveDataTable->GetRowMap().CreateConstIterator()); RowMapIter; ++RowMapIter)
 	{
 		FWaveTableRow* WaveRecord = reinterpret_cast<FWaveTableRow*>(RowMapIter.Value());
+
+		check(WaveRecord->WaveDataAsset != nullptr);
 		UWave* Wave = WaveFactory->CreateWave(WaveRecord->WaveDataAsset);
 		if (Wave)
 		{
-			OutWaveSchedule.Add(*Wave);
+			WaveList->Add(Wave);
 		}
 	}
+
+	return WaveList;
 }

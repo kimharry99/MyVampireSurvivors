@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "WaveList.h"
 #include "WaveLoaderComponent.h"
 #include "WaveTriggerComponent.h"
 #include "WaveManager.generated.h"
@@ -34,4 +35,13 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, meta = (PrivateAllowAccess = "true"))
 	TObjectPtr<UWaveTriggerComponent> WaveTrigger;
+
+	/**
+	 * A data table containing ordered enemy wave data.
+	 */
+	UPROPERTY(EditDefaultsOnly, meta = (PrivateAllowAccess = "true"))
+	TObjectPtr<UDataTable> WaveDataTable = nullptr;
+
+	UPROPERTY()
+	TObjectPtr<UWaveList> WaveList = nullptr;
 };

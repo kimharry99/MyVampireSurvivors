@@ -10,17 +10,20 @@ UWaveTriggerComponent::UWaveTriggerComponent()
 
 void UWaveTriggerComponent::StartWave()
 {
+	CurrentWaveIndex = 0;
 	TriggerCurrentWave();
 }
 
-FWaveSchedule& UWaveTriggerComponent::GetWaveSchedule()
+void UWaveTriggerComponent::SetWaveList(UWaveList* InWaveList)
 {
-	return WaveSchedule;
+	WaveList = InWaveList;
 }
 
 void UWaveTriggerComponent::TriggerCurrentWave()
 {
-	UWave* CurrentWave = WaveSchedule.GetCurrentWave();
+	UWave* CurrentWave = WaveList->GetWave(CurrentWaveIndex);
+
+	// If the index is out of bounds, stop triggering waves
 	if (CurrentWave)
 	{
 		CurrentWave->Trigger();
@@ -36,13 +39,12 @@ void UWaveTriggerComponent::PostCurrentWaveTriggerd()
 void UWaveTriggerComponent::ReserveNextWave()
 {
 	// Increment wave index in the schedule
-	WaveSchedule.StepForward();
+	CurrentWaveIndex++;
 
 	// Set a timer to trigger the next wave
 	UWorld* World = GetWorld();
-	if (World)
-	{
-		World->GetTimerManager().ClearTimer(WaveHandle);
-		World->GetTimerManager().SetTimer(WaveHandle, this, &UWaveTriggerComponent::TriggerCurrentWave, WavePeriod, false);
-	}
+
+	check(World);
+	World->GetTimerManager().ClearTimer(WaveHandle);
+	World->GetTimerManager().SetTimer(WaveHandle, this, &UWaveTriggerComponent::TriggerCurrentWave, WavePeriod, false);
 }

@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Wave.h"
 #include "WaveFactory.h"
-#include "WaveSchedule.h"
+#include "WaveList.h"
 #include "WaveLoaderComponent.generated.h"
 
 
@@ -15,27 +15,22 @@ class MYVAMPIRESURVIVORS_API UWaveLoaderComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	UWaveLoaderComponent();
 
 	/**
-	 * Append all wave in data table to the schedule.
+	 * Load waves from input data table.
 	 * 
-	 * @param OutWaveSchedule The wave schedule to append the wave to
+	 * @param InWaveDataTable -  The data table to load waves from
+	 * @return Instance of UWaveList loaded from the data table
 	 */
-	void AppendAllWaveToSchedule(FWaveSchedule& OutWaveSchedule);
+	UWaveList* LoadWavesFromDataTable(UDataTable* InWaveDataTable) const;
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnRegister() override;
 
 private:
-	/**
-	 * A data table containing ordered enemy wave data.
-	 */
-	UPROPERTY(EditDefaultsOnly, meta = (PrivateAllowAccess = "true"))
-	TObjectPtr<UDataTable> WaveDataTable = nullptr;
-
 	/** Create UWave instance from wave data table row. */
 	UPROPERTY()
 	TObjectPtr<UWaveFactory> WaveFactory;

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Wave.h"
-#include "WaveSchedule.h"
+#include "WaveList.h"
 #include "WaveTriggerComponent.generated.h"
 
 /**
@@ -27,11 +27,9 @@ public:
 	void StartWave();
 
 	/**
-	 * Get the wave schedule.
-	 * 
-	 * @return The wave schedule
+	 * Set WaveList.
 	 */
-	FWaveSchedule& GetWaveSchedule();
+	void SetWaveList(UWaveList* InWaveList);
 
 private:
 	/**
@@ -40,7 +38,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float WavePeriod = 3.0f;
 
-	FWaveSchedule WaveSchedule;
+	/** The WaveList to trigger. */
+	UPROPERTY()
+	TObjectPtr<UWaveList> WaveList = nullptr;
+
+	int CurrentWaveIndex = 0;
 
 	/**
 	 * Trigger current wave.

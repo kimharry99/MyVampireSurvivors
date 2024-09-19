@@ -18,6 +18,7 @@ void AWaveManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	WaveLoader->AppendAllWaveToSchedule(WaveTrigger->GetWaveSchedule());
+	WaveList = WaveLoader->LoadWavesFromDataTable(WaveDataTable);
+	WaveTrigger->SetWaveList(WaveList);
 	WaveTrigger->StartWave();
 }
