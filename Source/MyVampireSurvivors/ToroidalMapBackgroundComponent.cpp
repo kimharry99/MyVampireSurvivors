@@ -2,7 +2,10 @@
 
 
 #include "ToroidalMapBackgroundComponent.h"
+#include "GameFramework/WorldSettings.h"
 #include "PaperTileLayer.h"
+#include "MyVamSurGameMode.h"
+#include "MyVamSurPlayerState.h"
 #include "PlayerCharacter.h"
 
 UToroidalMapBackgroundComponent::UToroidalMapBackgroundComponent()
@@ -10,17 +13,14 @@ UToroidalMapBackgroundComponent::UToroidalMapBackgroundComponent()
 	// Set the background to static
 	SetMobility(EComponentMobility::Static);
 
-	bEditableWhenInherited = false;
-
 	BackgroundTileMapComponent = CreateDefaultSubobject<UPaperTileMapComponent>(TEXT("BackgroundTileMapComponent"));
-	BackgroundTileMapComponent->bEditableWhenInherited = false;
 	BackgroundMarginTileMapComponent = CreateDefaultSubobject<UPaperTileMapComponent>(TEXT("BackgroundMarginTileMapComponent"));
 	BackgroundMarginTileMapComponent->bEditableWhenInherited = false;
 }
 
-void UToroidalMapBackgroundComponent::OnComponentCreated()
+void UToroidalMapBackgroundComponent::OnRegister()
 {
-	Super::OnComponentCreated();
+	Super::OnRegister();
 
 	BackgroundTileMapComponent->SetupAttachment(this);
 	BackgroundMarginTileMapComponent->SetupAttachment(this);
@@ -104,6 +104,10 @@ void UToroidalMapBackgroundComponent::SetBackgroundMarginTileMapFormat()
 	const int MapWidth = BackgroundTileMapComponent->TileMap->MapWidth + MarginTileCount.X * 2;
 	const int MapHeight = BackgroundTileMapComponent->TileMap->MapHeight + MarginTileCount.Y * 2;
 	BackgroundMarginTileMapComponent->TileMap->ResizeMap(MapWidth, MapHeight);
+
+	// Set tilemap collision
+	BackgroundMarginTileMapComponent->TileMap->SetCollisionThickness(0.0f);
+	BackgroundMarginTileMapComponent->TileMap->TileLayers[0]->SetLayerCollides(true);
 }
 
 void UToroidalMapBackgroundComponent::FillMarginTilesFromOriginal()

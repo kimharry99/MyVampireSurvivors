@@ -38,8 +38,8 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	virtual void OnRegister() override;
 
-	virtual void OnComponentCreated() override;
 
 	/**
 	 * Tile map component for background.
@@ -50,7 +50,7 @@ protected:
 	/**
 	 * Tile map component for background margin.
 	 */
-	UPROPERTY(EditAnywhere, Category = "Background")
+	UPROPERTY()
 	UPaperTileMapComponent* BackgroundMarginTileMapComponent;
 
 private:
