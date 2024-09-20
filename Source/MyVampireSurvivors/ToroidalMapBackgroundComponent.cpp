@@ -103,6 +103,8 @@ void UToroidalMapBackgroundComponent::SetBackgroundMarginTileMapFormat()
 
 	// Set tilemap collision
 	check(BackgroundMarginTileMapComponent->TileMap->TileLayers.Num() == 1);
+	BackgroundMarginTileMapComponent->TileMap->TileLayers.RemoveAt(0);
+	BackgroundMarginTileMapComponent->TileMap->AddNewLayer();
 	BackgroundMarginTileMapComponent->TileMap->SetCollisionThickness(0.0f);
 	BackgroundMarginTileMapComponent->TileMap->TileLayers[0]->SetLayerCollides(true);
 }
@@ -163,34 +165,22 @@ void UToroidalMapBackgroundComponent::FillMarginTilesFromOriginal()
 
 void UToroidalMapBackgroundComponent::PostBackgroundMarginTileMapChanged()
 {
+	// Update tile map component state
 	BackgroundMarginTileMapComponent->MarkRenderStateDirty();
 	BackgroundMarginTileMapComponent->RecreatePhysicsState();
+	BackgroundMarginTileMapComponent->RebuildCollision();
 	BackgroundMarginTileMapComponent->UpdateBounds();
 
 	// Save the tile map asset
 	UPaperTileMap* TileMap = BackgroundMarginTileMapComponent->TileMap;
 	TileMap->MarkPackageDirty();
-	TileMap->PostEditChange();
-
-	FSoftObjectPath MarginTileMapPath = FSoftObjectPath(TileMap);
-	FString AssetPath = MarginTileMapPath.ToString();
-
-	FString PackagePath = FPackageName::ObjectPathToPackageName(AssetPath);
-	UPackage* Package = TileMap->GetPackage();
-	if (Package != nullptr)
-	{
-		TArray<UPackage*> PackagesToSave;
-		PackagesToSave.Add(Package);
-		bool bSaveSuccess = UEditorLoadingAndSavingUtils::SavePackages(PackagesToSave, true);
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("save successed %b"), bSaveSuccess));
-	}
 }
 
 void UToroidalMapBackgroundComponent::MoveBackgroundMarginTileMapComponent()
 {
 	const FVector Offset = GetBackgroundMarginTileMapComponentOffset();
-	const FVector BackgroundLocation = BackgroundTileMapComponent->GetComponentLocation();
-	BackgroundMarginTileMapComponent->SetWorldLocation(BackgroundLocation + Offset);
+	const FVector BackgroundLocation = BackgroundTileMapComponent->GetRelativeLocation();
+	BackgroundMarginTileMapComponent->SetRelativeLocation(BackgroundLocation + Offset);
 }
 
 const FIntVector2 UToroidalMapBackgroundComponent::ConvertUnrealUnitLengthToTileCount(const FVector2D& UnrealUnitLength, UPaperTileMap* TileMap) const
@@ -223,7 +213,7 @@ const FVector UToroidalMapBackgroundComponent::GetBackgroundMarginTileMapCompone
 
 	const FIntVector2 MarginTileCount = ConvertUnrealUnitLengthToTileCount(GetMarginLengthPair(), BackgroundTileMapComponent->TileMap);
 
-	FVector BackgroundMarginTileMapOffset = FVector(-MarginTileCount.X * TileWidth, -MarginTileCount.Y * TileHeight, 0.0f) / PixelsPerUnrealUnit;
+	FVector BackgroundMarginTileMapOffset = FVector(-MarginTileCount.X * TileWidth, 0.0f, MarginTileCount.Y * TileHeight) / PixelsPerUnrealUnit;
 	return BackgroundMarginTileMapOffset;
 }
 

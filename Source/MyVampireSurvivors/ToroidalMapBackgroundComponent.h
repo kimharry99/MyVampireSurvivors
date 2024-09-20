@@ -36,11 +36,11 @@ protected:
 
 private:
 	/** Tile map asset for background. */
-	UPROPERTY(EditDefaultsOnly, Category = "Background")
+	UPROPERTY(EditDefaultsOnly, Category = "Background", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPaperTileMap> BackgroundTileMap;
 
 	/** Tile map asset for background margin. */
-	UPROPERTY(EditDefaultsOnly, Category = "Background")
+	UPROPERTY(EditDefaultsOnly, Category = "Background", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPaperTileMap> BackgroundMarginTileMap;
 
 	/** Tile map component for background. */

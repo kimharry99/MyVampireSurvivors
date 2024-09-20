@@ -25,12 +25,15 @@ void UWaveLoaderComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// Find EnemySpawner in the level
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemySpawner::StaticClass(), FoundActors);
-	check(FoundActors.Num() > 0);
+	if (UWorld* World = GetWorld())
+	{
+		TArray<AActor*> FoundActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemySpawner::StaticClass(), FoundActors);
+		check(FoundActors.Num() > 0);
 
-	AEnemySpawner* EnemySpawner = Cast<AEnemySpawner>(FoundActors[0]);
-	WaveFactory->SetEnemySpawner(EnemySpawner);
+		AEnemySpawner* EnemySpawner = Cast<AEnemySpawner>(FoundActors[0]);
+		WaveFactory->SetEnemySpawner(EnemySpawner);
+	}
 }
 
 UWaveList* UWaveLoaderComponent::LoadWavesFromDataTable(UDataTable* InWaveDataTable) const
