@@ -2,10 +2,7 @@
 
 
 #include "ToroidalMapBackgroundComponent.h"
-#include "GameFramework/WorldSettings.h"
-#include "FileHelpers.h"
 #include "PaperTileLayer.h"
-#include "PlayerCharacter.h"
 
 UToroidalMapBackgroundComponent::UToroidalMapBackgroundComponent()
 {		
@@ -67,24 +64,6 @@ void UToroidalMapBackgroundComponent::UpdateBackgroundMarginTileMapComponent()
 void UToroidalMapBackgroundComponent::BeginPlay()
 {
 	Super::BeginPlay();
-}
-
-void UToroidalMapBackgroundComponent::InitializeBackgroundMarginTileMapComponent()
-{
-	CreateBackgroundMarginTileMapAndAttach();
-	SetBackgroundMarginTileMapFormat();
-	FillMarginTilesFromOriginal();
-	MoveBackgroundMarginTileMapComponent();
-
-	BackgroundMarginTileMapComponent->MarkRenderStateDirty();
-	BackgroundMarginTileMapComponent->RecreatePhysicsState();
-	BackgroundMarginTileMapComponent->UpdateBounds();
-}
-
-void UToroidalMapBackgroundComponent::CreateBackgroundMarginTileMapAndAttach()
-{
-	check(BackgroundMarginTileMapComponent);
-	BackgroundMarginTileMapComponent->CreateNewTileMap();
 }
 
 void UToroidalMapBackgroundComponent::SetBackgroundMarginTileMapFormat()

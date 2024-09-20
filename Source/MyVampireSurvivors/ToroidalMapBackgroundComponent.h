@@ -69,19 +69,6 @@ private:
 	void UpdateBackgroundMarginTileMapComponent();
 
 	/**
-	 * Initialize background tile map component.
-	 * 
-	 * Create background margin tile map asset from original tile map.
-	 * Move it to enclose original tile map.
-	 */
-	void InitializeBackgroundMarginTileMapComponent();
-
-	/**
-	 * Create margin tile map from original tile map and attach to the tile map component.
-	 */
-	void CreateBackgroundMarginTileMapAndAttach();
-
-	/**
 	 * Set format of background margin tile map from background tile map.
 	 * 
 	 * Set tile width, tile height, pixels per unreal unit, map width and map height.
