@@ -142,7 +142,7 @@ void UToroidalSpaceComponent::TransferObjects(const FBox& Source, const FBox& De
 	}
 
 	// Transfer overlapped actors to destination
-	const FVector Offset = Destination.GetCenter() - Source.GetCenter();
+	FVector Offset = Destination.GetCenter() - Source.GetCenter();
 	for (const FOverlapResult& Result : OverlapResults)
 	{
 		if (AActor* OverlappedActor = Result.GetActor())

@@ -3,9 +3,8 @@
 
 #include "ToroidalMapBackgroundComponent.h"
 #include "GameFramework/WorldSettings.h"
+#include "FileHelpers.h"
 #include "PaperTileLayer.h"
-#include "MyVamSurGameMode.h"
-#include "MyVamSurPlayerState.h"
 #include "PlayerCharacter.h"
 
 UToroidalMapBackgroundComponent::UToroidalMapBackgroundComponent()
@@ -15,7 +14,6 @@ UToroidalMapBackgroundComponent::UToroidalMapBackgroundComponent()
 
 	BackgroundTileMapComponent = CreateDefaultSubobject<UPaperTileMapComponent>(TEXT("BackgroundTileMapComponent"));
 	BackgroundMarginTileMapComponent = CreateDefaultSubobject<UPaperTileMapComponent>(TEXT("BackgroundMarginTileMapComponent"));
-	BackgroundMarginTileMapComponent->bEditableWhenInherited = false;
 }
 
 void UToroidalMapBackgroundComponent::OnRegister()
@@ -24,55 +22,51 @@ void UToroidalMapBackgroundComponent::OnRegister()
 
 	BackgroundTileMapComponent->SetupAttachment(this);
 	BackgroundMarginTileMapComponent->SetupAttachment(this);
+
+	UpdateBackgroundTileMapComponent();
+	UpdateBackgroundMarginTileMapComponent();
 }
 
-const FBox UToroidalMapBackgroundComponent::GetBackgroundBoundingBox() const
+void UToroidalMapBackgroundComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
-	if (BackgroundTileMapComponent == nullptr)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Background tile map component is not created"))
-		return FBox();
-	}
+	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	// Get size of the tile map
-	UPaperTileMap* TileMap = BackgroundTileMapComponent->TileMap;
-	if (TileMap == nullptr)
+	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UToroidalMapBackgroundComponent, BackgroundTileMap))
 	{
-		return FBox();
+		UpdateBackgroundTileMapComponent();
 	}
-	if (TileMap->TileWidth != TileMap->TileHeight)
+	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UToroidalMapBackgroundComponent, BackgroundMarginTileMap))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TileWidth and TileHeight should be the same, TileWidth: %f, TileHeight: %f"), TileMap->TileWidth, TileMap->TileHeight)
-		return FBox();
+		UpdateBackgroundMarginTileMapComponent();
 	}
-	FVector TileCMSize(TileMap->TileWidth / TileMap->PixelsPerUnrealUnit, TileMap->TileHeight / TileMap->PixelsPerUnrealUnit, 0.0f);
-
-	float Width = TileMap->MapWidth * TileCMSize.X;
-	float Height = TileMap->MapHeight * TileCMSize.Y;
-	FVector RangeMin = BackgroundTileMapComponent->GetTileCornerPosition(0, 0, 0, true);
-	FVector RangeMax = FVector(RangeMin.X + Width, RangeMin.Y + Height, RangeMin.Z);
-
-	FBox Result = FBox(RangeMin, RangeMax);
-	return Result;
+	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UToroidalMapBackgroundComponent, MarginLength))
+	{
+		UpdateBackgroundMarginTileMapComponent();
+	}
 }
 
-void UToroidalMapBackgroundComponent::SetBackgroundTileMap(UPaperTileMap* BackgroundTileMap)
+void UToroidalMapBackgroundComponent::UpdateBackgroundTileMapComponent()
 {
-	if (BackgroundTileMap == nullptr)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Background tile map is not set"))
-		return;
-	}
-
 	BackgroundTileMapComponent->SetTileMap(BackgroundTileMap);
+}
+
+void UToroidalMapBackgroundComponent::UpdateBackgroundMarginTileMapComponent()
+{
+	BackgroundMarginTileMapComponent->SetTileMap(BackgroundMarginTileMap);
+	if (BackgroundTileMapComponent->TileMap && BackgroundMarginTileMapComponent->TileMap)
+	{
+		SetBackgroundMarginTileMapFormat();
+		FillMarginTilesFromOriginal();
+		PostBackgroundMarginTileMapChanged();
+
+		MoveBackgroundMarginTileMapComponent();
+	}
 }
 
 // Called when the game starts
 void UToroidalMapBackgroundComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	InitializeBackgroundMarginTileMapComponent();
 }
 
 void UToroidalMapBackgroundComponent::InitializeBackgroundMarginTileMapComponent()
@@ -81,49 +75,49 @@ void UToroidalMapBackgroundComponent::InitializeBackgroundMarginTileMapComponent
 	SetBackgroundMarginTileMapFormat();
 	FillMarginTilesFromOriginal();
 	MoveBackgroundMarginTileMapComponent();
+
+	BackgroundMarginTileMapComponent->MarkRenderStateDirty();
+	BackgroundMarginTileMapComponent->RecreatePhysicsState();
+	BackgroundMarginTileMapComponent->UpdateBounds();
 }
 
 void UToroidalMapBackgroundComponent::CreateBackgroundMarginTileMapAndAttach()
 {
-	if (BackgroundMarginTileMapComponent == nullptr)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Background margin tile map component is not created"))
-		return;
-	}
-
+	check(BackgroundMarginTileMapComponent);
 	BackgroundMarginTileMapComponent->CreateNewTileMap();
 }
 
 void UToroidalMapBackgroundComponent::SetBackgroundMarginTileMapFormat()
 {
+	check(BackgroundTileMapComponent->TileMap);
+	check(BackgroundMarginTileMapComponent->TileMap);
+
 	BackgroundMarginTileMapComponent->TileMap->TileWidth = BackgroundTileMapComponent->TileMap->TileWidth;
 	BackgroundMarginTileMapComponent->TileMap->TileHeight = BackgroundTileMapComponent->TileMap->TileHeight;
 	BackgroundMarginTileMapComponent->TileMap->PixelsPerUnrealUnit = BackgroundTileMapComponent->TileMap->PixelsPerUnrealUnit;
 
-	const FIntVector2 MarginTileCount = ConvertUnrealUnitLengthToTileCount(GetMarginLengthFromMainCamera(), BackgroundTileMapComponent->TileMap);
+	const FIntVector2 MarginTileCount = ConvertUnrealUnitLengthToTileCount(GetMarginLengthPair(), BackgroundTileMapComponent->TileMap);
 	const int MapWidth = BackgroundTileMapComponent->TileMap->MapWidth + MarginTileCount.X * 2;
 	const int MapHeight = BackgroundTileMapComponent->TileMap->MapHeight + MarginTileCount.Y * 2;
 	BackgroundMarginTileMapComponent->TileMap->ResizeMap(MapWidth, MapHeight);
 
 	// Set tilemap collision
+	check(BackgroundMarginTileMapComponent->TileMap->TileLayers.Num() == 1);
 	BackgroundMarginTileMapComponent->TileMap->SetCollisionThickness(0.0f);
 	BackgroundMarginTileMapComponent->TileMap->TileLayers[0]->SetLayerCollides(true);
 }
 
 void UToroidalMapBackgroundComponent::FillMarginTilesFromOriginal()
 {
+	check(BackgroundMarginTileMapComponent->TileMap);
 	UPaperTileMap* TileMap = BackgroundMarginTileMapComponent->TileMap;
-	if (TileMap->TileLayers.Num() != 1)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Background margin tile map must have only one layer"))
-		return;
-	}
 
 	// Width and Height of background tile map in tiles
+	check(BackgroundMarginTileMapComponent->TileMap);
 	int BackgroundWidth = BackgroundTileMapComponent->TileMap->MapWidth;
 	int BackgroundHeight = BackgroundTileMapComponent->TileMap->MapHeight;
 
-	const FIntVector2 MarginTileCount = ConvertUnrealUnitLengthToTileCount(GetMarginLengthFromMainCamera(), BackgroundTileMapComponent->TileMap);
+	const FIntVector2 MarginTileCount = ConvertUnrealUnitLengthToTileCount(GetMarginLengthPair(), BackgroundTileMapComponent->TileMap);
 
 	TArray<int> DestinationStartXs = { 0, MarginTileCount.X + BackgroundWidth, 0, 0 }; // Left, Right, Top, Bottom
 	TArray<int> DestinationStartYs = { MarginTileCount.Y, MarginTileCount.Y, 0, MarginTileCount.Y + BackgroundHeight };
@@ -140,6 +134,7 @@ void UToroidalMapBackgroundComponent::FillMarginTilesFromOriginal()
 		MarginTileCount.Y * 2 + BackgroundHeight
 	};
 
+	check(TileMap->TileLayers.Num() == 1);
 	UPaperTileLayer* FillingLayer = TileMap->TileLayers[0];
 	for (int i = 0; i < 4; ++i)
 	{
@@ -164,8 +159,31 @@ void UToroidalMapBackgroundComponent::FillMarginTilesFromOriginal()
 			}
 		}
 	}
+}
 
+void UToroidalMapBackgroundComponent::PostBackgroundMarginTileMapChanged()
+{
 	BackgroundMarginTileMapComponent->MarkRenderStateDirty();
+	BackgroundMarginTileMapComponent->RecreatePhysicsState();
+	BackgroundMarginTileMapComponent->UpdateBounds();
+
+	// Save the tile map asset
+	UPaperTileMap* TileMap = BackgroundMarginTileMapComponent->TileMap;
+	TileMap->MarkPackageDirty();
+	TileMap->PostEditChange();
+
+	FSoftObjectPath MarginTileMapPath = FSoftObjectPath(TileMap);
+	FString AssetPath = MarginTileMapPath.ToString();
+
+	FString PackagePath = FPackageName::ObjectPathToPackageName(AssetPath);
+	UPackage* Package = TileMap->GetPackage();
+	if (Package != nullptr)
+	{
+		TArray<UPackage*> PackagesToSave;
+		PackagesToSave.Add(Package);
+		bool bSaveSuccess = UEditorLoadingAndSavingUtils::SavePackages(PackagesToSave, true);
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("save successed %b"), bSaveSuccess));
+	}
 }
 
 void UToroidalMapBackgroundComponent::MoveBackgroundMarginTileMapComponent()
@@ -191,51 +209,43 @@ const FIntVector2 UToroidalMapBackgroundComponent::ConvertUnrealUnitLengthToTile
 	return FIntVector2(XCount, YCount);
 }
 
-const FVector2D UToroidalMapBackgroundComponent::GetMarginLengthFromMainCamera() const
+const FVector2D UToroidalMapBackgroundComponent::GetMarginLengthPair() const
 {
-	const UCameraComponent* CameraComponent = GetCharacterFollowingCamera();
-	if (CameraComponent == nullptr)
-	{
-		const float TEMP_MARGIN = 2048.0f;
-		return FVector2D(TEMP_MARGIN, TEMP_MARGIN);
-	}
-
-	return GetMarginLengthFromCameraParameter(CameraComponent->OrthoWidth, CameraComponent->AspectRatio);
-}
-
-const UCameraComponent* UToroidalMapBackgroundComponent::GetCharacterFollowingCamera() const
-{
-	const APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	if (PlayerController == nullptr)
-	{
-		return nullptr;
-	}
-
-	const APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPawn());
-	if (PlayerCharacter == nullptr)
-	{
-		return nullptr;
-	}
-
-	return PlayerCharacter->GetFollowCamera();
-}
-
-const FVector2D UToroidalMapBackgroundComponent::GetMarginLengthFromCameraParameter(const float OrthogonalWidth, const float AspectRatio) const
-{
-	const float XMargin = OrthogonalWidth / 2.0f;
-	const float YMargin = OrthogonalWidth / AspectRatio / 2.0f;
-
-	return FVector2D(XMargin, YMargin);
+	return FVector2D(MarginLength, MarginLength);
 }
 
 const FVector UToroidalMapBackgroundComponent::GetBackgroundMarginTileMapComponentOffset() const
 {
+	check(BackgroundTileMapComponent->TileMap);
 	const int TileWidth = BackgroundTileMapComponent->TileMap->TileWidth;
 	const int TileHeight = BackgroundTileMapComponent->TileMap->TileHeight;
 	const float PixelsPerUnrealUnit = BackgroundMarginTileMapComponent->TileMap->PixelsPerUnrealUnit;
 
-	const FIntVector2 MarginTileCount = ConvertUnrealUnitLengthToTileCount(GetMarginLengthFromMainCamera(), BackgroundTileMapComponent->TileMap);
+	const FIntVector2 MarginTileCount = ConvertUnrealUnitLengthToTileCount(GetMarginLengthPair(), BackgroundTileMapComponent->TileMap);
 
 	FVector BackgroundMarginTileMapOffset = FVector(-MarginTileCount.X * TileWidth, -MarginTileCount.Y * TileHeight, 0.0f) / PixelsPerUnrealUnit;
 	return BackgroundMarginTileMapOffset;
+}
+
+const FBox UToroidalMapBackgroundComponent::GetBackgroundBoundingBox() const
+{
+	check(BackgroundMarginTileMapComponent);
+	check(BackgroundTileMapComponent->TileMap);
+
+	// Get size of the tile map
+	UPaperTileMap* TileMap = BackgroundTileMapComponent->TileMap;
+	if (TileMap->TileWidth != TileMap->TileHeight)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TileWidth and TileHeight should be the same, TileWidth: %f, TileHeight: %f"), TileMap->TileWidth, TileMap->TileHeight)
+			return FBox();
+	}
+	FVector TileCMSize(TileMap->TileWidth / TileMap->PixelsPerUnrealUnit, TileMap->TileHeight / TileMap->PixelsPerUnrealUnit, 0.0f);
+
+	float Width = TileMap->MapWidth * TileCMSize.X;
+	float Height = TileMap->MapHeight * TileCMSize.Y;
+	FVector RangeMin = BackgroundTileMapComponent->GetTileCornerPosition(0, 0, 0, true);
+	FVector RangeMax = FVector(RangeMin.X + Width, RangeMin.Y + Height, RangeMin.Z);
+
+	FBox Result = FBox(RangeMin, RangeMax);
+	return Result;
 }

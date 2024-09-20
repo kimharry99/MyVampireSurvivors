@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
-#include "Camera/CameraComponent.h"
 #include "PaperTileMap.h"
 #include "PaperTileMapComponent.h"
 #include "ToroidalMapBackgroundComponent.generated.h"
@@ -28,32 +27,47 @@ public:
 	 */
 	const FBox GetBackgroundBoundingBox() const;
 
-	/**
-	 * Set background tile map asset.
-	 * 
-	 * @param BackgroundTileMap - Tile map asset for background.
-	 */
-	void SetBackgroundTileMap(UPaperTileMap* BackgroundTileMap);
-
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	virtual void OnRegister() override;
 
-
-	/**
-	 * Tile map component for background.
-	 */
-	UPROPERTY(EditAnywhere, Category = "Background")
-	UPaperTileMapComponent* BackgroundTileMapComponent;
-
-	/**
-	 * Tile map component for background margin.
-	 */
-	UPROPERTY()
-	UPaperTileMapComponent* BackgroundMarginTileMapComponent;
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 private:
+	/** Tile map asset for background. */
+	UPROPERTY(EditDefaultsOnly, Category = "Background")
+	TObjectPtr<UPaperTileMap> BackgroundTileMap;
+
+	/** Tile map asset for background margin. */
+	UPROPERTY(EditDefaultsOnly, Category = "Background")
+	TObjectPtr<UPaperTileMap> BackgroundMarginTileMap;
+
+	/** Tile map component for background. */
+	UPROPERTY()
+	TObjectPtr<UPaperTileMapComponent> BackgroundTileMapComponent;
+
+	/** Tile map component for background margin. */
+	UPROPERTY()
+	TObjectPtr<UPaperTileMapComponent> BackgroundMarginTileMapComponent;
+
+	/** Length of background margin. */
+	UPROPERTY(EditAnywhere, Category = "Background")
+	float MarginLength = 1024.0f;
+
+	/**
+	 * Update background tile map component.
+	 * Set tile map asset to the component.
+	 */
+	void UpdateBackgroundTileMapComponent();
+
+	/**
+	 * Update background margin tile map component.
+	 * Set tile map asset to the component.
+	 * Initialize background margin tile map component if all required assets are valid.
+	 */
+	void UpdateBackgroundMarginTileMapComponent();
+
 	/**
 	 * Initialize background tile map component.
 	 * 
@@ -80,6 +94,12 @@ private:
 	void FillMarginTilesFromOriginal();
 
 	/**
+	 * Called when background tile map changed.
+	 * Update background margin tile map component and save background margin tile map.
+	 */
+	void PostBackgroundMarginTileMapChanged();
+
+	/**
 	 * Move background margin tile map component to enclose original tile map.
 	 */
 	void MoveBackgroundMarginTileMapComponent();
@@ -95,29 +115,11 @@ private:
 	const FIntVector2 ConvertUnrealUnitLengthToTileCount(const FVector2D& UnrealUnitLength, UPaperTileMap* TileMap) const;
 
 	/**
-	 * Get length of background margin from main camera.
+	 * Get pair of background margin length.
 	 * 
-	 * @return Length of background margin. It depends on the main camera's view range.
-	 *         If main camera is missing, return fixed value.
+	 * @return Length of background margin.
 	 */
-	const FVector2D GetMarginLengthFromMainCamera() const;
-
-	/**
-	 * Get character follow camera.
-	 * 
-	 * @return Character follow camera if it exists. Otherwise, return nullptr.
-	 */
-	const UCameraComponent* GetCharacterFollowingCamera() const;
-
-	/*
-	 * Get margin length from camera parameters.
-	 * 
-	 * @param OrthogonalWidth Width of orthographic view.
-	 * @param AspectRatio Aspect ratio of the view.
-	 * 
-	 * @return Length of margin. X is half of orthogonal width and Y is half of orthogonal height.
-	 */
-	const FVector2D GetMarginLengthFromCameraParameter(const float OrthogonalWidth, const float AspectRatio) const;
+	const FVector2D GetMarginLengthPair() const;
 
 	/**
 	 * Get offset of background margin tile map component.

@@ -14,7 +14,6 @@ AToroidalMap::AToroidalMap()
 
 	// Set the background to XY plane
 	BackgroundComponent->SetRelativeRotation(FRotator(0.0f, 0.0f, -90.0f));
-	BackgroundComponent->SetBackgroundTileMap(BackgroundTileMap);
 	RootComponent = BackgroundComponent;
 
 	ToroidalSpaceComponent = CreateDefaultSubobject<UToroidalSpaceComponent>(TEXT("Toroidal Space Component"));

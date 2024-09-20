@@ -27,21 +27,15 @@ public:
 
 protected:
 	/**
-	 * Tile map asset for background.
-	 */
-	UPROPERTY(EditAnywhere, Category = "Background")
-	UPaperTileMap* BackgroundTileMap;
-
-	/**
 	 * Background component for toroidal map.
 	 */
-	UPROPERTY(VisibleDefaultsOnly, Category = "Background")
+	UPROPERTY(EditAnywhere, Category = "Background")
 	UToroidalMapBackgroundComponent* BackgroundComponent;
 
 	/**
 	 * Toroidal space component for toroidal map.
 	 */
-	UPROPERTY(VisibleDefaultsOnly, Category = "ToroidalSpace")
+	UPROPERTY(VisibleAnyWhere, Category = "ToroidalSpace")
 	UToroidalSpaceComponent* ToroidalSpaceComponent;
 
 	virtual void BeginPlay() override;
