@@ -2,6 +2,7 @@
 
 
 #include "WaveManager.h"
+#include "MyVamSurLogChannels.h"
 
 // Sets default values
 AWaveManager::AWaveManager()
@@ -35,5 +36,5 @@ void AWaveManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AWaveManager::HandleAllWavesCleared()
 {
 	// Game winning function
-	UE_LOG(LogTemp, Warning, TEXT("You Win!"));
+	UE_LOG(LogMyVamSur, Warning, TEXT("You Win!"));
 }

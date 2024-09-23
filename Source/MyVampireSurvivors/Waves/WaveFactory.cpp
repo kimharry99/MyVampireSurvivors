@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "MyVamSurLogChannels.h"
 #include "WaveFactory.h"
 #include "EnemyWave.h"
 
@@ -21,7 +22,7 @@ UWave* UWaveFactory::CreateWave(const UWaveDataAsset* WaveDataAsset) const
 			return EnemyWave;
 		}
 		default:
-			UE_LOG(LogTemp, Error, TEXT("Unknown wave type"))
+			UE_LOG(LogMyVamSur, Error, TEXT("Unknown wave type"));
 			return nullptr;
 	}
 }

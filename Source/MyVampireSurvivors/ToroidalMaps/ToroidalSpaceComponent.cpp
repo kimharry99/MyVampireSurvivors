@@ -2,6 +2,7 @@
 
 
 #include "ToroidalSpaceComponent.h"
+#include "MyVamSurLogChannels.h"
 
 UToroidalSpaceComponent::UToroidalSpaceComponent()
 {
@@ -70,7 +71,7 @@ void UToroidalSpaceComponent::ComputeCorrespondingRegionsInToroidalSpace(TArray<
 {
 	if (Region.Min.X > Region.Max.X || Region.Min.Y > Region.Max.Y)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Box.Min should be less than Box.Max, Box: %s"), *Region.ToString())
+		UE_LOG(LogMyVamSur, Error, TEXT("Box.Min should be less than Box.Max, Box: %s"), *Region.ToString());
 		return;
 	}
 
@@ -157,7 +158,7 @@ const FBox* UToroidalSpaceComponent::FindBoxInsideBound(const TArray<FBox>& Boxe
 {
 	if (Boxes.Num() == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Boxes is empty"))
+		UE_LOG(LogMyVamSur, Warning, TEXT("Boxes is empty"));
 		return nullptr;
 	}
 

@@ -3,6 +3,7 @@
 
 #include "ToroidalMapBackgroundComponent.h"
 #include "PaperTileLayer.h"
+#include "MyVamSurLogChannels.h"
 
 UToroidalMapBackgroundComponent::UToroidalMapBackgroundComponent()
 {		
@@ -205,8 +206,8 @@ const FBox UToroidalMapBackgroundComponent::GetBackgroundBoundingBox() const
 	UPaperTileMap* TileMap = BackgroundTileMapComponent->TileMap;
 	if (TileMap->TileWidth != TileMap->TileHeight)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TileWidth and TileHeight should be the same, TileWidth: %f, TileHeight: %f"), TileMap->TileWidth, TileMap->TileHeight)
-			return FBox();
+		UE_LOG(LogMyVamSur, Warning, TEXT("TileWidth and TileHeight should be the same, TileWidth: %f, TileHeight: %f"), TileMap->TileWidth, TileMap->TileHeight);
+		return FBox();
 	}
 	FVector TileCMSize(TileMap->TileWidth / TileMap->PixelsPerUnrealUnit, TileMap->TileHeight / TileMap->PixelsPerUnrealUnit, 0.0f);
 

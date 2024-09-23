@@ -2,6 +2,7 @@
 
 
 #include "Wave.h"
+#include "MyVamSurLogChannels.h"
 
 void UWave::Trigger()
 {
@@ -10,7 +11,7 @@ void UWave::Trigger()
 
 void UWave::ClearWave()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Wave Cleared: %s"), *GetName());
+	UE_LOG(LogMyVamSur, Warning, TEXT("Wave Cleared: %s"), *GetName());
 	OnWaveCleared.Broadcast();
 	PostWaveCleared();
 }

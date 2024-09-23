@@ -4,6 +4,7 @@
 #include "Enemy.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "MyVamSurLogChannels.h"
 #include "ChasingEnemyAI.h"
 
 AEnemy::AEnemy()
@@ -36,7 +37,7 @@ void AEnemy::BeginPlay()
 
 void AEnemy::TriggerDeath()
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s is dead!"), *GetName());
+	UE_LOG(LogMyVamSur, Warning, TEXT("%s is dead!"), *GetName());
 	OnEnemyDied.Broadcast();
 	Destroy();
 }
