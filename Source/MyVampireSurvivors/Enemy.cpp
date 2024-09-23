@@ -26,7 +26,7 @@ void AEnemy::BeginPlay()
 
 	// FIXME: Temporary implementation
 	// Set the life time of the enemy
-	float LifeTime = 999.0f;
+	const float LifeTime = 5.0f;
 	UWorld* World = GetWorld();
 	if (World)
 	{

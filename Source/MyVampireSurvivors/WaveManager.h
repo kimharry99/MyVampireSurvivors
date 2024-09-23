@@ -25,14 +25,17 @@ public:
 	AWaveManager();
 
 protected:
-	// Called when the game starts or when spawned
+	//~AActor Interface
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	//~End of AActor Interface
 
 private:
 	/** Wave data loader from a data table */
 	UPROPERTY(EditDefaultsOnly, meta = (PrivateAllowAccess = "true"))
 	TObjectPtr<UWaveLoaderComponent> WaveLoader;
 
+	/** This class triggers waves periodically. */
 	UPROPERTY(EditDefaultsOnly, meta = (PrivateAllowAccess = "true"))
 	TObjectPtr<UWaveTriggerComponent> WaveTrigger;
 
@@ -44,4 +47,11 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UWaveList> WaveList = nullptr;
+
+	/**
+	 * Event handler for all waves cleared.
+	 * Call game winning function.
+	 */
+	UFUNCTION()
+	void HandleAllWavesCleared();
 };

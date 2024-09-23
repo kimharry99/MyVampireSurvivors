@@ -150,7 +150,7 @@ void UToroidalMapBackgroundComponent::PostBackgroundMarginTileMapChanged()
 	BackgroundMarginTileMapComponent->RebuildCollision();
 	BackgroundMarginTileMapComponent->UpdateBounds();
 
-	// Save the tile map asset
+	// Update tile map asset package
 	UPaperTileMap* TileMap = BackgroundMarginTileMapComponent->TileMap;
 	TileMap->MarkPackageDirty();
 }

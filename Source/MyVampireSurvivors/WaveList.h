@@ -7,6 +7,8 @@
 #include "Wave.h"
 #include "WaveList.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAllWavesCleared);
+
 /**
  * Wave container.
  */
@@ -32,7 +34,26 @@ public:
 	 */
 	UWave* GetWave(int Index) const;
 
+	/** Delegate that is broadcasted when all waves in the list are cleared. */
+	FOnAllWavesCleared OnAllWavesCleared;
+
+protected:
+	//~UObject Interface
+	virtual void BeginDestroy() override;
+	//~End UObject Interface
+
 private:
 	/** List of waves */
 	TArray<TObjectPtr<UWave>> Waves;
+
+	/** The number of remain waves. */
+	int RemainWavesCount = 0;
+
+	/**
+	 * Wave cleared event handler.
+	 * Decrease the number of remain waves.
+	 * If the number of remain waves is 0, broadcast OnAllWavesCleared delegate.
+	 */
+	UFUNCTION()
+	void HandleWaveCleared();
 };

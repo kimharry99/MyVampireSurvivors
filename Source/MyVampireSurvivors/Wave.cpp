@@ -3,12 +3,19 @@
 
 #include "Wave.h"
 
-UWave::UWave()
+void UWave::Trigger()
 {
 
 }
 
-void UWave::Trigger()
+void UWave::ClearWave()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Wave Cleared: %s"), *GetName());
+	OnWaveCleared.Broadcast();
+	PostWaveCleared();
+}
+
+void UWave::PostWaveCleared()
 {
 
 }

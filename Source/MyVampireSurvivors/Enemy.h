@@ -6,7 +6,7 @@
 #include "PaperCharacter.h"
 #include "Enemy.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnEnemyDied);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDied);
 
 /**
  * The base class for all enemies in the game.

@@ -18,12 +18,14 @@ class MYVAMPIRESURVIVORS_API UEnemyWave : public UWave
 	GENERATED_BODY()
 
 protected:
-	/**
-	 * Trigger the wave.
-	 *
-	 * Spawn enemies based on enemy wave data asset.
-	 */
+	//~UWave interface
+	/** Spawn enemies based on enemy wave data asset. */
 	virtual void Trigger() override;
+	//~End of UWave interface
+	
+	//~UObject interface
+	virtual void BeginDestroy() override;
+	//~End of UObject interface
 
 private:
 	friend UWaveFactory;
@@ -36,16 +38,15 @@ private:
 	UPROPERTY()
 	TObjectPtr<AEnemySpawner> EnemySpawner;
 
+	UPROPERTY()
+	TArray<TObjectPtr<AEnemy>> SpawnedEnemies;
+
 	/** The number of remain enemies spawned by the enemy wave. */
 	int RemainEnemiesCount = 0;
 
 	/**
 	 * Post spawned enemy death event handler.
 	 */
+	UFUNCTION()
 	void PostSpawnedEnemyDie();
-
-	/**
-	 * Complete the enemy wave.
-	 */
-	void CompleteEnemyWave();
 };

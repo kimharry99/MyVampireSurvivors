@@ -19,6 +19,21 @@ void AWaveManager::BeginPlay()
 	Super::BeginPlay();
 
 	WaveList = WaveLoader->LoadWavesFromDataTable(WaveDataTable);
+	WaveList->OnAllWavesCleared.AddDynamic(this, &ThisClass::HandleAllWavesCleared);
+
 	WaveTrigger->SetWaveList(WaveList);
 	WaveTrigger->StartWave();
+}
+
+void AWaveManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	WaveList->OnAllWavesCleared.RemoveAll(this);
+}
+
+void AWaveManager::HandleAllWavesCleared()
+{
+	// Game winning function
+	UE_LOG(LogTemp, Warning, TEXT("You Win!"));
 }
