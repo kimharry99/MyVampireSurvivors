@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "PlayerCharacter.h"
+#include "Players/PlayerCharacter.h"
 #include "ToroidalSpaceComponent.generated.h"
 
 

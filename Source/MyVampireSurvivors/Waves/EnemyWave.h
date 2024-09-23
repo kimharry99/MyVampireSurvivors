@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enemies/EnemySpawner.h"
 #include "Wave.h"
 #include "WaveFactory.h"
 #include "EnemyWaveDataAsset.h"
-#include "EnemySpawner.h"
 #include "EnemyWave.generated.h"
 
 /**

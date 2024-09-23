@@ -5,7 +5,13 @@ using UnrealBuildTool;
 public class MyVampireSurvivors : ModuleRules
 {
 	public MyVampireSurvivors(ReadOnlyTargetRules Target) : base(Target)
-	{
+    {
+		PublicIncludePaths.AddRange(
+			new string[] {
+				"MyVampireSurvivors"
+			}
+		);
+
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });

@@ -3,7 +3,7 @@
 
 #include "WaveLoaderComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "EnemySpawner.h"
+#include "Enemies/EnemySpawner.h"
 #include "WaveTableRow.h"
 
 // Sets default values for this component's properties

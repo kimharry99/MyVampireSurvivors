@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "PaperTileMap.h"
-#include "PlayerCharacter.h"
+#include "Players/PlayerCharacter.h"
 #include "ToroidalMapBackgroundComponent.h"
 #include "ToroidalSpaceComponent.h"
 #include "ToroidalMap.generated.h"

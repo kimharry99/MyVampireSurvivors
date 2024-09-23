@@ -2,7 +2,7 @@
 
 
 #include "EnemyWave.h"
-#include "EnemySpawnRecord.h"
+#include "Enemies/EnemySpawnRecord.h"
 
 void UEnemyWave::Trigger()
 {

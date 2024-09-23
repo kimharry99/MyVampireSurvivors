@@ -6,7 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "WaveDataAsset.h"
 #include "Wave.h"
-#include "EnemySpawner.h"
+#include "Enemies/EnemySpawner.h"
 #include "WaveFactory.generated.h"
 
 /**

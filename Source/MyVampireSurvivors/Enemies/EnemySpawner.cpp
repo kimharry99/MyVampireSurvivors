@@ -3,7 +3,7 @@
 
 #include "EnemySpawner.h"
 #include "Kismet/GameplayStatics.h"
-#include "ToroidalMap.h"
+#include "ToroidalMaps/ToroidalMap.h"
 
 void AEnemySpawner::BeginPlay()
 {

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "WaveDataAsset.h"
-#include "EnemySpawnRecord.h"
+#include "Enemies/EnemySpawnRecord.h"
 #include "EnemyWaveDataAsset.generated.h"
 
 /**
