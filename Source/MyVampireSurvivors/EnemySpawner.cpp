@@ -2,31 +2,36 @@
 
 
 #include "EnemySpawner.h"
-#include "Enemy.h"
-#include "ToroidalMapManager.h"
+#include "Kismet/GameplayStatics.h"
+#include "ToroidalMap.h"
 
-void UEnemySpawner::SpawnEnemyWave(const FEnemyWaveInfo& EnemyWaveInfo)
+void AEnemySpawner::BeginPlay()
 {
-	// Spawn enemies set in the enemy wave info
-	for(const FEnemySpawnInfo& EnemySpawnInfo : EnemyWaveInfo.EnemySpawnInfos)
-	{
-		SpawnEnemies(EnemySpawnInfo);
-	}
+	Super::BeginPlay();
+
+	// Find toroid map in the map
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AToroidalMap::StaticClass(), FoundActors);
+	check(FoundActors.Num() > 0);
+	AToroidalMap* ToroidalMap = Cast<AToroidalMap>(FoundActors[0]);
+
+	// Set spawn boundary to map boundary
+	check(ToroidalMap != nullptr);
+	SpawnBoundary = ToroidalMap->GetMapRange();
 }
 
-void UEnemySpawner::SpawnEnemies(const FEnemySpawnInfo& EnemySpawnInfo)
+AEnemy* AEnemySpawner::SpawnEnemy(TSubclassOf<AEnemy> EnemyClass) const
 {
 	UWorld* World = GetWorld();
-	if (World == nullptr) return;
-
-	for (int i = 0; i < EnemySpawnInfo.Count; ++i)
+	if (World != nullptr)
 	{
 		// Set spawn location
-		const FBox& SpawnBoundary = ToroidalMapManager::GetInstance()->GetMapRange();
 		FVector SpawnLocation = FMath::RandPointInBox(SpawnBoundary);
 		SpawnLocation.Z = 50.0f;
 
 		// Spawn an enemy
-		AEnemy* Enemy = World->SpawnActor<AEnemy>(EnemySpawnInfo.EnemyClass, SpawnLocation, FRotator::ZeroRotator);
+		return World->SpawnActor<AEnemy>(EnemyClass, SpawnLocation, FRotator::ZeroRotator);
 	}
+
+	return nullptr;
 }

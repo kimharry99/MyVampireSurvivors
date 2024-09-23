@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "MyClass.generated.h"
+#include "GameFramework/GameModeBase.h"
+#include "MyVamSurGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MYVAMPIRESURVIVORS_API UMyClass : public UObject
+class MYVAMPIRESURVIVORS_API AMyVamSurGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	

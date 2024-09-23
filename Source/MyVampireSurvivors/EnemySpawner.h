@@ -3,31 +3,31 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "EnemyWaveInfo.h"
-#include "EnemySpawnInfo.h"
+#include "GameFramework/Actor.h"
+#include "Enemy.h"
 #include "EnemySpawner.generated.h"
 
 /**
  * EnemySpanwer spawns enemies at random locations.
  */
 UCLASS()
-class MYVAMPIRESURVIVORS_API UEnemySpawner : public UObject
+class MYVAMPIRESURVIVORS_API AEnemySpawner : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	/**
-	 * Spawn an enemy wave according to the enemy wave info.
-	 *
-	 * @param EnemyWaveInfo The enemy wave info.
-	 */
-	void SpawnEnemyWave(const FEnemyWaveInfo& EnemyWaveInfo);
-
-	/**
-	 * Spawn enemies according to the enemy spawn info.
+	 * Spawn an enemy at random location in spawn boundary.
 	 * 
-	 * @param EnemySpawnInfo The enemy spawn info.
+	 * @param EnemyClass - Enemy class to spawn
+	 * @return Spawned enemy
 	 */
-	void SpawnEnemies(const FEnemySpawnInfo& EnemySpawnInfo);
+	AEnemy* SpawnEnemy(TSubclassOf<AEnemy> EnemyClass) const;
+
+protected:
+	virtual void BeginPlay() override;
+
+private:
+	/** Boundary of spawn area */
+	FBox SpawnBoundary = FBox();
 };

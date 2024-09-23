@@ -23,4 +23,20 @@ AEnemy::AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// FIXME: Temporary implementation
+	// Set the life time of the enemy
+	const float LifeTime = 5.0f;
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		World->GetTimerManager().SetTimer(DeathHandle, this, &AEnemy::TriggerDeath, LifeTime, false);
+	}
+}
+
+void AEnemy::TriggerDeath()
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s is dead!"), *GetName());
+	OnEnemyDied.Broadcast();
+	Destroy();
 }
