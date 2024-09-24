@@ -19,6 +19,9 @@ AEnemy::AEnemy()
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ToroidalActor"));
 
 	GetCharacterMovement()->MaxWalkSpeed = 10.0f;
+
+	const float DefaultHealthPoint = 5.0f;
+	SetHealthPoint(DefaultHealthPoint);
 }
 
 void AEnemy::BeginPlay()
@@ -27,17 +30,29 @@ void AEnemy::BeginPlay()
 
 	// FIXME: Temporary implementation
 	// Set the life time of the enemy
-	const float LifeTime = 5.0f;
+	const float DamagedPeriod = 1.0f;
 	UWorld* World = GetWorld();
 	if (World)
 	{
-		World->GetTimerManager().SetTimer(DeathHandle, this, &AEnemy::TriggerDeath, LifeTime, false);
+		World->GetTimerManager().SetTimer(SelfHarmHandle, this, &AEnemy::PerformSelfHarm, DamagedPeriod, false);
 	}
 }
 
-void AEnemy::TriggerDeath()
+void AEnemy::Die()
 {
-	UE_LOG(LogMyVamSur, Warning, TEXT("%s is dead!"), *GetName());
-	OnEnemyDied.Broadcast();
+	Super::Die();
+
 	Destroy();
+}
+
+void AEnemy::PerformSelfHarm()
+{
+	const float DamageAmount = 1.0f;
+	ReceiveAttack(DamageAmount, GetController());
+
+	const float DamagedPeriod = 1.0f;
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().SetTimer(SelfHarmHandle, this, &AEnemy::PerformSelfHarm, DamagedPeriod, false);
+	}
 }

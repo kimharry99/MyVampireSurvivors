@@ -6,13 +6,14 @@
 #include "Camera/CameraComponent.h"
 #include "InputActionValue.h"
 #include "PaperZDCharacter.h"
+#include "Characters/MyVamSurCharacter.h"
 #include "PlayerCharacter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MYVAMPIRESURVIVORS_API APlayerCharacter : public APaperZDCharacter
+class MYVAMPIRESURVIVORS_API APlayerCharacter : public AMyVamSurCharacter
 {
 	GENERATED_BODY()
 
