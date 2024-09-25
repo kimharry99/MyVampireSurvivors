@@ -33,6 +33,7 @@ protected:
 	 */
 	void SetHealthPoint(float NewHealthPoint);
 
+public:
 	/**
 	 * Handles the character receiving an attack.
 	 * 

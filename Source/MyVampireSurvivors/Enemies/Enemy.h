@@ -27,13 +27,4 @@ protected:
 	//~AMyVamSurCharacter interface
 	virtual void Die() override;
 	//~End of AMyVamSurCharacter interface
-
-private:
-	//~TEMPORARY IMPLEMENTATIONS
-	FTimerHandle SelfHarmHandle;
-	/**
-	 * Get damaged by self.
-	 */
-	void PerformSelfHarm();
-	//~END OF TEMPORARY IMPLEMENTATIONS
 };

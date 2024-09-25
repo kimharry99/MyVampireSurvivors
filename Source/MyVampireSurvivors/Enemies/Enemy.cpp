@@ -27,15 +27,6 @@ AEnemy::AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// FIXME: Temporary implementation
-	// Set the life time of the enemy
-	const float DamagedPeriod = 1.0f;
-	UWorld* World = GetWorld();
-	if (World)
-	{
-		World->GetTimerManager().SetTimer(SelfHarmHandle, this, &AEnemy::PerformSelfHarm, DamagedPeriod, false);
-	}
 }
 
 void AEnemy::Die()
@@ -43,16 +34,4 @@ void AEnemy::Die()
 	Super::Die();
 
 	Destroy();
-}
-
-void AEnemy::PerformSelfHarm()
-{
-	const float DamageAmount = 1.0f;
-	ReceiveAttack(DamageAmount, GetController());
-
-	const float DamagedPeriod = 1.0f;
-	if (UWorld* World = GetWorld())
-	{
-		World->GetTimerManager().SetTimer(SelfHarmHandle, this, &AEnemy::PerformSelfHarm, DamagedPeriod, false);
-	}
 }

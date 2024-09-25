@@ -17,7 +17,8 @@ void AMyVamSurCharacter::SetHealthPoint(float NewHealthPoint)
 void AMyVamSurCharacter::ReceiveAttack(float DamageAmount, AController* Attacker)
 {
 	FDamageEvent DamageEvent;
-	TakeDamage(DamageAmount, DamageEvent, Attacker, Attacker->GetPawn());
+	AActor* DamageCauser = Attacker ? Attacker->GetPawn() : nullptr;
+	TakeDamage(DamageAmount, DamageEvent, Attacker, DamageCauser);
 }
 
 float AMyVamSurCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
