@@ -20,6 +20,11 @@ void AWeapon::UseWeapon()
 
 }
 
+bool AWeapon::IsUsable() const
+{
+	return true;
+}
+
 void AWeapon::AttackEnemy(AEnemy* Enemy)
 {
 	AController* Controller = nullptr;

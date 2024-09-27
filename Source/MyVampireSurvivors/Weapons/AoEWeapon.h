@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Components/BoxComponent.h"
-#include "Weapons/Weapon.h"
+#include "Weapons/ActiveWeapon.h"
 #include "AoEWeapon.generated.h"
 
 /**
  * Attack all enemies in a box-shaped area
  */
 UCLASS()
-class MYVAMPIRESURVIVORS_API AAoEWeapon : public AWeapon
+class MYVAMPIRESURVIVORS_API AAoEWeapon : public AActiveWeapon
 {
 	GENERATED_BODY()
 
@@ -29,10 +29,4 @@ protected:
 	//~AWeapon interface
 	virtual void UseWeapon();
 	//~End of AWeapon interface
-
-//~FIXME: Temporary implementation
-private:
-	virtual void Tick(float DeltaTime) override;
-	float AttackCoolDown = 1.0f;
-//~End of FIXME
 };

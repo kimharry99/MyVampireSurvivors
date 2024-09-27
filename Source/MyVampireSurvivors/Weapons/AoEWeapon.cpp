@@ -59,15 +59,3 @@ void AAoEWeapon::UseWeapon()
 		}
 	}
 }
-
-void AAoEWeapon::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	AttackCoolDown -= DeltaTime;
-	if (AttackCoolDown <= 0.0f)
-	{
-		UseWeapon();
-		AttackCoolDown = 1.0f;
-	}
-}

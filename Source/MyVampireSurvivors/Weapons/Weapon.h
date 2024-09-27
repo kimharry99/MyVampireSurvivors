@@ -25,11 +25,18 @@ protected:
 	virtual void BeginPlay() override;
 	//~End of AActor interface
 
+public:
+	/**
+	 * Returns true, if the weapon can be used.
+	 */
+	virtual bool IsUsable() const;
+
 	/**
 	 * Use the weapon.
 	 */
 	virtual void UseWeapon();
 
+protected:
 	/**
 	 * Attack an enemy.
 	 *

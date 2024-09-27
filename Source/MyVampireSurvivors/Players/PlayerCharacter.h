@@ -8,7 +8,7 @@
 #include "PaperZDCharacter.h"
 #include "Characters/MyVamSurCharacter.h"
 #include "Weapons/Weapon.h"
-#include "Weapons/AutoWeaponInventory.h"
+#include "Weapons/WeaponInventory.h"
 #include "PlayerCharacter.generated.h"
 
 /**
@@ -64,7 +64,7 @@ private:
 private:
 	/** Inventory of weapons that the player character has. */
 	UPROPERTY()
-	FAutoWeaponInventory WeaponInventory;
+	FWeaponInventory WeaponInventory;
 
 public:
 	/**
