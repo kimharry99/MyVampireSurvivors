@@ -28,6 +28,16 @@ APlayerCharacter::APlayerCharacter() : Directionality(FVector2D::ZeroVector)
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// FIXME: Remove this code after testing
+	//~Testing code
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	AWeapon* TestingWeapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass, GetActorLocation(), FRotator::ZeroRotator, SpawnParams);
+	check(TestingWeapon);
+	EquipWeapon(TestingWeapon);
+	//~End of testing code
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -97,4 +107,11 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 			Directionality = Direction;
 		}
 	}
+}
+
+void APlayerCharacter::EquipWeapon(AWeapon* Weapon)
+{
+	check(Weapon);
+	WeaponInventory.AddWeapon(Weapon);
+	Weapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
 }

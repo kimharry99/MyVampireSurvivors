@@ -7,6 +7,8 @@
 #include "InputActionValue.h"
 #include "PaperZDCharacter.h"
 #include "Characters/MyVamSurCharacter.h"
+#include "Weapons/Weapon.h"
+#include "Weapons/AutoWeaponInventory.h"
 #include "PlayerCharacter.generated.h"
 
 /**
@@ -16,6 +18,13 @@ UCLASS()
 class MYVAMPIRESURVIVORS_API APlayerCharacter : public AMyVamSurCharacter
 {
 	GENERATED_BODY()
+
+// FIXME: Remove this code after testing
+//~Begin of testing code
+public:
+	UPROPERTY(EditAnywhere, Category="Testing")
+	TSubclassOf<AWeapon> WeaponClass;
+//~End of testing code
 
 public:
 	APlayerCharacter();
@@ -49,9 +58,11 @@ public:
 	const FBox GetViewBox() const;
 
 protected:
+	//~AActor interface
 	virtual void BeginPlay() override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void Tick(float DeltaSeconds) override;
+	//~End of AActor interface
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
 	void Move(const FInputActionValue& Value);
@@ -70,4 +81,19 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	class UInputAction* IA_Move;
+
+private:
+	/** Inventory of weapons that the player character has. */
+	UPROPERTY()
+	FAutoWeaponInventory WeaponInventory;
+
+public:
+	/**
+	 * Equip a weapon to the player character.
+	 * Add the weapon to the inventory.
+	 * The weapon will be attached to the player character.
+	 * 
+	 * @param Weapon Weapon to equip.
+	 */
+	void EquipWeapon(AWeapon* Weapon); 
 };
