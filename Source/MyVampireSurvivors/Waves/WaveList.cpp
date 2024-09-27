@@ -26,7 +26,10 @@ void UWaveList::BeginDestroy()
 
 	for (UWave* Wave : Waves)
 	{
-		Wave->OnWaveCleared.RemoveAll(this);
+		if (Wave)
+		{
+			Wave->OnWaveCleared.RemoveAll(this);
+		}
 	}
 }
 
