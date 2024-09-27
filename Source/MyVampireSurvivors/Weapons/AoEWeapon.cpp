@@ -11,7 +11,7 @@ AAoEWeapon::AAoEWeapon()
 	AttackRangeComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackRangeComponent"));
 	AttackRangeComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AttackRangeComponent->bHiddenInGame = true;
-	AttackRangeComponent->SetupAttachment(RootComponent);
+	RootComponent = AttackRangeComponent;
 }
 
 void AAoEWeapon::UseWeapon()
