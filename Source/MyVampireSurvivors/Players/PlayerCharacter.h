@@ -30,27 +30,6 @@ public:
 	APlayerCharacter();
 
 	/**
-	 * Get the width of the camera's orthographic view
-	 *
-	 * @return The width of the camera's orthographic view
-	 */
-	float GetCameraOrthoWidth() const;
-
-	/**
-	 * Get the aspect ratio of the camera
-	 * 
-	 * @return The aspect ratio of the camera
-	 */
-	float GetCameraAspectRatio() const;
-
-	/**
-	 * Get camera attached to the player character.
-	 * 
-	 * @return Camera attached to the player character.
-	 */
-	const UCameraComponent* GetFollowCamera() const;
-
-	/**
 	 * Get the view box of the camera.
 	 * 
 	 * @return The view box of the camera.

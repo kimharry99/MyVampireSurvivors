@@ -64,25 +64,13 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 }
 
-const UCameraComponent* APlayerCharacter::GetFollowCamera() const
-{
-	return FollowCamera;
-}
-
-float APlayerCharacter::GetCameraOrthoWidth() const
-{
-	return FollowCamera->OrthoWidth;
-}
-
-float APlayerCharacter::GetCameraAspectRatio() const
-{
-	return FollowCamera->AspectRatio;
-}
-
 const FBox APlayerCharacter::GetViewBox() const
 {
-	float HalfHeight = GetCameraOrthoWidth() / (2.0f * GetCameraAspectRatio());
-	float HalfWidth = GetCameraOrthoWidth() / 2.0f;
+	const float OrthoWidth = FollowCamera->OrthoWidth;
+	const float AspectRatio = FollowCamera->AspectRatio;
+
+	float HalfHeight = OrthoWidth / (2.0f * AspectRatio);
+	float HalfWidth = OrthoWidth / 2.0f;
 
 	const FVector Right = GetActorForwardVector();
 	const FVector Up = GetActorRightVector();
