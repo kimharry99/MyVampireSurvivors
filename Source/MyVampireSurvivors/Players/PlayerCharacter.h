@@ -23,7 +23,7 @@ class MYVAMPIRESURVIVORS_API APlayerCharacter : public AMyVamSurCharacter
 //~Begin of testing code
 public:
 	UPROPERTY(EditAnywhere, Category="Testing")
-	TSubclassOf<AEquipment> WeaponClass;
+	TArray<TSubclassOf<AEquipment>> Equipments;
 //~End of testing code
 
 public:

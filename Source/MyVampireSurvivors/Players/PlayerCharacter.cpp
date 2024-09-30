@@ -34,13 +34,16 @@ void APlayerCharacter::BeginPlay()
 	//~Testing code
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
+	SpawnParams.Instigator = this;
 
-	check(WeaponClass);
-	check(WeaponClass->ImplementsInterface(UWeaponInterface::StaticClass()));
-
-	AEquipment* TestingWeapon = GetWorld()->SpawnActor<AEquipment>(WeaponClass, GetActorLocation(), FRotator::ZeroRotator, SpawnParams);
-	check(TestingWeapon);
-	EquipEquipment(TestingWeapon);
+	for (const TSubclassOf<AEquipment>& EquipmentClass : Equipments)
+	{
+		check(EquipmentClass);
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		AEquipment* TestingEquipment = GetWorld()->SpawnActor<AEquipment>(EquipmentClass, GetActorLocation(), FRotator::ZeroRotator, SpawnParams);
+		check(TestingEquipment);
+		EquipEquipment(TestingEquipment);
+	}
 	//~End of testing code
 }
 
