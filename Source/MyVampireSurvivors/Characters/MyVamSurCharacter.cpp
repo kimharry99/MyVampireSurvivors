@@ -3,10 +3,14 @@
 
 #include "Characters/MyVamSurCharacter.h"
 #include "Engine/DamageEvents.h"
+#include "Components/CapsuleComponent.h"
+#include "Physics/MyVamSurCollisionChannels.h"
 
 AMyVamSurCharacter::AMyVamSurCharacter()
 {
 	SetCanBeDamaged(true);
+
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("PlayerCharacter"));
 }
 
 void AMyVamSurCharacter::SetHealthPoint(float NewHealthPoint)

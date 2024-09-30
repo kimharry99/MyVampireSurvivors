@@ -4,6 +4,7 @@
 #include "Enemy.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Physics/MyVamSurCollisionChannels.h"
 #include "MyVamSurLogChannels.h"
 #include "ChasingEnemyAI.h"
 
@@ -16,7 +17,7 @@ AEnemy::AEnemy()
 	// Set the collision handling method to always spawn
 	SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ToroidalActor"));
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
 
 	GetCharacterMovement()->MaxWalkSpeed = 10.0f;
 

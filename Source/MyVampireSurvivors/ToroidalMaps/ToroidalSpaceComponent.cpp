@@ -51,7 +51,7 @@ void UToroidalSpaceComponent::MoveActorsInBoxToOppositeSide(const FBox& Departur
 	const FBox* DestinationPtr = FindBoxInsideBound(PossibleDestinations, SpaceBoundary);
 	if (DestinationPtr != nullptr)
 	{	
-		TransferObjects(DepartureBox, *DestinationPtr, ECollisionChannel::ECC_GameTraceChannel2); // Use ToroidalWorld channel
+		TransferObjects(DepartureBox, *DestinationPtr, TraceChannel_ToroidalWorld); // Use ToroidalWorld channel
 	}
 }
 
@@ -120,11 +120,11 @@ void UToroidalSpaceComponent::TransferObjectsFromMultiSource(const TArray<FBox>&
 	// Traverse all source regions
 	for (const FBox& Source : SourceRegions)
 	{
-		TransferObjects(Source, Destination, ECollisionChannel::ECC_GameTraceChannel2); // Use ToroidalWorld channel
+		TransferObjects(Source, Destination, TraceChannel_ToroidalWorld); // Use ToroidalWorld channel
 	}
 }
 
-void UToroidalSpaceComponent::TransferObjects(const FBox& Source, const FBox& Destination, const ECollisionChannel& QueryChannel) const
+void UToroidalSpaceComponent::TransferObjects(const FBox& Source, const FBox& Destination, const ECollisionChannel& TraceChannel) const
 {
 	// Do box trace to get all actors in source regions
 	TArray<FOverlapResult> OverlapResults;
@@ -133,7 +133,7 @@ void UToroidalSpaceComponent::TransferObjects(const FBox& Source, const FBox& De
 		OverlapResults,
 		Source.GetCenter(),
 		FQuat::Identity,
-		QueryChannel,
+		TraceChannel,
 		FCollisionShape::MakeBox(Source.GetExtent())
 	);
 

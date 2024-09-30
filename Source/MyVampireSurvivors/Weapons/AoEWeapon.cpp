@@ -3,6 +3,7 @@
 
 #include "Weapons/AoEWeapon.h"
 #include "DrawDebugHelpers.h"
+#include "Physics/MyVamSurCollisionChannels.h"
 
 AAoEWeapon::AAoEWeapon()
 {
@@ -47,7 +48,7 @@ void AAoEWeapon::UseEquipment()
 		OverlapResults,
 		GetActorLocation(),
 		GetActorQuat(),
-		ECollisionChannel::ECC_Pawn,
+		TraceChannel_Weapon,
 		CollisionShape,
 		CollisionQueryParams
 	);
