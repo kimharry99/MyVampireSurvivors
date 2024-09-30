@@ -3,6 +3,11 @@
 
 #include "Equipments/ActiveEquipment.h"
 
+AActiveEquipment::AActiveEquipment()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
+
 void AActiveEquipment::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

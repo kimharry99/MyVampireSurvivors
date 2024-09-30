@@ -14,6 +14,9 @@ class MYVAMPIRESURVIVORS_API AActiveEquipment : public AEquipment
 {
 	GENERATED_BODY()
 
+public:
+	AActiveEquipment();
+
 protected:
 	//~AActor interface
 	virtual void Tick(float DeltaTime) override;
