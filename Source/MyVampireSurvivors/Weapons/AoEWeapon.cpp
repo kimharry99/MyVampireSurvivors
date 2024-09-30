@@ -14,9 +14,24 @@ AAoEWeapon::AAoEWeapon()
 	RootComponent = AttackRangeComponent;
 }
 
-void AAoEWeapon::UseWeapon()
+AController* AAoEWeapon::GetController() const
 {
-	Super::UseWeapon();
+	if (AActor* ParentActor = GetParentActor())
+	{
+		return ParentActor->GetInstigatorController();
+	}
+
+	return nullptr;
+}
+
+float AAoEWeapon::GetWeaponDamage() const
+{
+	return Damage;
+}
+
+void AAoEWeapon::UseEquipment()
+{
+	Super::UseEquipment();
 
 	check(AttackRangeComponent);
 	FCollisionShape CollisionShape = FCollisionShape::MakeBox(AttackRangeComponent->GetScaledBoxExtent());

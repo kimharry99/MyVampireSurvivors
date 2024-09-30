@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Weapons/ActiveWeapon.h"
+#include "Equipments/ActiveEquipment.h"
 
-void AActiveWeapon::Tick(float DeltaTime)
+void AActiveEquipment::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -13,17 +13,17 @@ void AActiveWeapon::Tick(float DeltaTime)
 	}
 }
 
-bool AActiveWeapon::IsUsable() const
+bool AActiveEquipment::IsUsable() const
 {
 	bool bIsUsable = Super::IsUsable();
-	
+
 	bIsUsable &= RemainCoolDown <= 0.0f;
 	return bIsUsable;
 }
 
-void AActiveWeapon::UseWeapon()
+void AActiveEquipment::UseEquipment()
 {
-	Super::UseWeapon();
+	Super::UseEquipment();
 
 	if (RemainCoolDown <= 0.0f)
 	{

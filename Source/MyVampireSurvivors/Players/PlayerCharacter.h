@@ -7,8 +7,8 @@
 #include "InputActionValue.h"
 #include "PaperZDCharacter.h"
 #include "Characters/MyVamSurCharacter.h"
-#include "Weapons/Weapon.h"
-#include "Weapons/WeaponInventory.h"
+#include "Equipments/Equipment.h"
+#include "Equipments/EquipmentInventory.h"
 #include "PlayerCharacter.generated.h"
 
 /**
@@ -23,7 +23,7 @@ class MYVAMPIRESURVIVORS_API APlayerCharacter : public AMyVamSurCharacter
 //~Begin of testing code
 public:
 	UPROPERTY(EditAnywhere, Category="Testing")
-	TSubclassOf<AWeapon> WeaponClass;
+	TSubclassOf<AEquipment> WeaponClass;
 //~End of testing code
 
 public:
@@ -62,17 +62,17 @@ private:
 	class UInputAction* IA_Move;
 
 private:
-	/** Inventory of weapons that the player character has. */
+	/** Inventory of equipments that the player character has. */
 	UPROPERTY()
-	FWeaponInventory WeaponInventory;
+	FEquipmentInventory Inventory;
 
 public:
 	/**
-	 * Equip a weapon to the player character.
-	 * Add the weapon to the inventory.
-	 * The weapon will be attached to the player character.
+	 * Equip a equipment to the player character.
+	 * Add the equipment to the inventory.
+	 * The equipment actor will be attached to the player character.
 	 * 
-	 * @param Weapon Weapon to equip.
+	 * @param Equipment Equipment to equip.
 	 */
-	void EquipWeapon(AWeapon* Weapon); 
+	void EquipEquipment(AEquipment* Equipment); 
 };

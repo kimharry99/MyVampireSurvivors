@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Weapons/WeaponInterface.h"
 
 APlayerCharacter::APlayerCharacter() : Directionality(FVector2D::ZeroVector)
 {
@@ -34,9 +35,12 @@ void APlayerCharacter::BeginPlay()
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 
-	AWeapon* TestingWeapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass, GetActorLocation(), FRotator::ZeroRotator, SpawnParams);
+	check(WeaponClass);
+	check(WeaponClass->ImplementsInterface(UWeaponInterface::StaticClass()));
+
+	AEquipment* TestingWeapon = GetWorld()->SpawnActor<AEquipment>(WeaponClass, GetActorLocation(), FRotator::ZeroRotator, SpawnParams);
 	check(TestingWeapon);
-	EquipWeapon(TestingWeapon);
+	EquipEquipment(TestingWeapon);
 	//~End of testing code
 }
 
@@ -44,7 +48,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	WeaponInventory.UseAllEnableWeapons();
+	Inventory.UseAllEnableEquipments();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -99,9 +103,9 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
-void APlayerCharacter::EquipWeapon(AWeapon* Weapon)
+void APlayerCharacter::EquipEquipment(AEquipment* Equipment)
 {
-	check(Weapon);
-	WeaponInventory.AddWeapon(Weapon);
-	Weapon->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
+	check(Equipment);
+	Inventory.AddEquipment(Equipment);
+	Equipment->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
 }

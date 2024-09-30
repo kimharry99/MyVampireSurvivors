@@ -4,14 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "Components/BoxComponent.h"
-#include "Weapons/ActiveWeapon.h"
+#include "Equipments/ActiveEquipment.h"
+#include "WeaponInterface.h"
 #include "AoEWeapon.generated.h"
 
 /**
  * Attack all enemies in a box-shaped area
  */
 UCLASS()
-class MYVAMPIRESURVIVORS_API AAoEWeapon : public AActiveWeapon
+class MYVAMPIRESURVIVORS_API AAoEWeapon : public AActiveEquipment, public IWeaponInterface
 {
 	GENERATED_BODY()
 
@@ -26,7 +27,19 @@ protected:
 	TObjectPtr<UBoxComponent> AttackRangeComponent;
 
 protected:
-	//~AWeapon interface
-	virtual void UseWeapon();
-	//~End of AWeapon interface
+	//~IWeaponInterface interface
+	virtual AController* GetController() const override;
+	virtual float GetWeaponDamage() const override;
+	//~End of IWeaponInterface interface
+
+	//~AEquipment interface
+	virtual void UseEquipment() override;
+	//~End of AEquipment interface
+
+private:
+	/**
+	 * The damage dealt by the weapon.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Weapon")
+	float Damage = 0.0f;
 };
