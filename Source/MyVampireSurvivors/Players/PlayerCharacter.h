@@ -6,39 +6,28 @@
 #include "Camera/CameraComponent.h"
 #include "InputActionValue.h"
 #include "PaperZDCharacter.h"
+#include "Characters/MyVamSurCharacter.h"
+#include "Equipments/Equipment.h"
+#include "Equipments/EquipmentInventory.h"
 #include "PlayerCharacter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MYVAMPIRESURVIVORS_API APlayerCharacter : public APaperZDCharacter
+class MYVAMPIRESURVIVORS_API APlayerCharacter : public AMyVamSurCharacter
 {
 	GENERATED_BODY()
 
+// FIXME: Remove this code after testing
+//~Begin of testing code
+public:
+	UPROPERTY(EditAnywhere, Category="Testing")
+	TArray<TSubclassOf<AEquipment>> Equipments;
+//~End of testing code
+
 public:
 	APlayerCharacter();
-
-	/**
-	 * Get the width of the camera's orthographic view
-	 *
-	 * @return The width of the camera's orthographic view
-	 */
-	float GetCameraOrthoWidth() const;
-
-	/**
-	 * Get the aspect ratio of the camera
-	 * 
-	 * @return The aspect ratio of the camera
-	 */
-	float GetCameraAspectRatio() const;
-
-	/**
-	 * Get camera attached to the player character.
-	 * 
-	 * @return Camera attached to the player character.
-	 */
-	const UCameraComponent* GetFollowCamera() const;
 
 	/**
 	 * Get the view box of the camera.
@@ -48,9 +37,11 @@ public:
 	const FBox GetViewBox() const;
 
 protected:
+	//~AActor interface
 	virtual void BeginPlay() override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void Tick(float DeltaSeconds) override;
+	//~End of AActor interface
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
 	void Move(const FInputActionValue& Value);
@@ -69,4 +60,19 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	class UInputAction* IA_Move;
+
+private:
+	/** Inventory of equipments that the player character has. */
+	UPROPERTY()
+	FEquipmentInventory Inventory;
+
+public:
+	/**
+	 * Equip a equipment to the player character.
+	 * Add the equipment to the inventory.
+	 * The equipment actor will be attached to the player character.
+	 * 
+	 * @param Equipment Equipment to equip.
+	 */
+	void EquipEquipment(AEquipment* Equipment); 
 };

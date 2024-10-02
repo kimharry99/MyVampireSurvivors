@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Physics/MyVamSurCollisionChannels.h"
 #include "Players/PlayerCharacter.h"
 #include "ToroidalSpaceComponent.generated.h"
 
@@ -147,7 +148,7 @@ private:
 	 * 
 	 * @param Source - The region which the actors move are located
 	 * @param Destination - The region to which actors will be moved
-	 * @param QueryChannel - Collision channel for the query
+	 * @param TraceChannel - Trace channel for the query
 	 */
-	void TransferObjects(const FBox& Source, const FBox& Destination, const ECollisionChannel& QueryChannel = ECollisionChannel::ECC_Pawn) const;
+	void TransferObjects(const FBox& Source, const FBox& Destination, const ECollisionChannel& TraceChannel = TraceChannel_ToroidalWorld) const;
 };

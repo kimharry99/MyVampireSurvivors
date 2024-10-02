@@ -12,7 +12,7 @@ void UEnemyWave::Trigger()
 		for (int i = 0; i < EnemySpawnRecord.EnemyCount; ++i)
 		{
 			AEnemy* SpawnedEnemy = EnemySpawner->SpawnEnemy(EnemySpawnRecord.EnemyClass);
-			SpawnedEnemy->OnEnemyDied.AddDynamic(this, &ThisClass::PostSpawnedEnemyDie);
+			SpawnedEnemy->OnCharacterDied.AddDynamic(this, &ThisClass::PostSpawnedEnemyDie);
 
 			SpawnedEnemies.Add(SpawnedEnemy);
 			RemainEnemiesCount++;
@@ -28,7 +28,7 @@ void UEnemyWave::BeginDestroy()
 	{
 		if (SpawnedEnemy)
 		{
-			SpawnedEnemy->OnEnemyDied.RemoveAll(this);
+			SpawnedEnemy->OnCharacterDied.RemoveAll(this);
 		}
 	}
 }

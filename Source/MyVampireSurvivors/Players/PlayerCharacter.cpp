@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Weapons/WeaponInterface.h"
 
 APlayerCharacter::APlayerCharacter() : Directionality(FVector2D::ZeroVector)
 {
@@ -28,11 +29,29 @@ APlayerCharacter::APlayerCharacter() : Directionality(FVector2D::ZeroVector)
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// FIXME: Remove this code after testing
+	//~Testing code
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = this;
+
+	for (const TSubclassOf<AEquipment>& EquipmentClass : Equipments)
+	{
+		check(EquipmentClass);
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		AEquipment* TestingEquipment = GetWorld()->SpawnActor<AEquipment>(EquipmentClass, GetActorLocation(), FRotator::ZeroRotator, SpawnParams);
+		check(TestingEquipment);
+		EquipEquipment(TestingEquipment);
+	}
+	//~End of testing code
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	Inventory.UseAllEnableEquipments();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -54,25 +73,13 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 }
 
-const UCameraComponent* APlayerCharacter::GetFollowCamera() const
-{
-	return FollowCamera;
-}
-
-float APlayerCharacter::GetCameraOrthoWidth() const
-{
-	return FollowCamera->OrthoWidth;
-}
-
-float APlayerCharacter::GetCameraAspectRatio() const
-{
-	return FollowCamera->AspectRatio;
-}
-
 const FBox APlayerCharacter::GetViewBox() const
 {
-	float HalfHeight = GetCameraOrthoWidth() / (2.0f * GetCameraAspectRatio());
-	float HalfWidth = GetCameraOrthoWidth() / 2.0f;
+	const float OrthoWidth = FollowCamera->OrthoWidth;
+	const float AspectRatio = FollowCamera->AspectRatio;
+
+	float HalfHeight = OrthoWidth / (2.0f * AspectRatio);
+	float HalfWidth = OrthoWidth / 2.0f;
 
 	const FVector Right = GetActorForwardVector();
 	const FVector Up = GetActorRightVector();
@@ -97,4 +104,11 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 			Directionality = Direction;
 		}
 	}
+}
+
+void APlayerCharacter::EquipEquipment(AEquipment* Equipment)
+{
+	check(Equipment);
+	Inventory.AddEquipment(Equipment);
+	Equipment->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
 }

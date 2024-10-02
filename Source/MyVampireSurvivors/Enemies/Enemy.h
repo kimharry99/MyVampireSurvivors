@@ -3,10 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PaperCharacter.h"
+#include "Characters/MyVamSurCharacter.h"
 #include "Enemy.generated.h"
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDied);
 
 /**
  * The base class for all enemies in the game.
@@ -14,28 +12,19 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyDied);
  * Chase the player by default.
  */
 UCLASS()
-class MYVAMPIRESURVIVORS_API AEnemy : public APaperCharacter
+class MYVAMPIRESURVIVORS_API AEnemy : public AMyVamSurCharacter
 {
 	GENERATED_BODY()
 
 public:
 	AEnemy();
 
-	/** Multicast delegate called when the enemy die.*/
-	FOnEnemyDied OnEnemyDied;
-
 protected:
+	//~AActor interface
 	virtual void BeginPlay() override;
+	//~End of AActor interface
 
-	/**
-	 * Kill the enemy.
-	 */
-	virtual void TriggerDeath();
-
-private:
-	/**
-	 * FIXME: Temporary implementation.
-	 * Handle for the death timer.
-	 */
-	FTimerHandle DeathHandle;
+	//~AMyVamSurCharacter interface
+	virtual void Die() override;
+	//~End of AMyVamSurCharacter interface
 };
