@@ -7,12 +7,36 @@
 
 AAoEWeapon::AAoEWeapon()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PlayerPosition = CreateDefaultSubobject<USceneComponent>(TEXT("PlayerPosition"));
+	RootComponent = PlayerPosition;
 
-	AttackRangeComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackRangeComponent"));
-	AttackRangeComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	AttackRangeComponent->bHiddenInGame = true;
-	RootComponent = AttackRangeComponent;
+	HitboxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Hitbox"));
+	HitboxComponent->SetupAttachment(RootComponent);
+	HitboxComponent->SetVisibility(false);
+	HitboxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	WeaponEffectComponent = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("WeaponEffect"));
+	WeaponEffectComponent->SetupAttachment(RootComponent);
+	WeaponEffectComponent->SetVisibility(false);
+	WeaponEffectComponent->SetCollisionProfileName(TEXT("NoCollision"));
+	WeaponEffectComponent->SetLooping(false);
+}
+
+void AAoEWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Set effect play rate
+	if (WeaponEffectComponent->GetFlipbook())
+	{
+		float EffectDuration = WeaponEffectComponent->GetFlipbookLength();
+		if (GetCoolDown() < EffectDuration)
+		{
+			float EffectPlayingTime = GetCoolDown() * 0.5f;
+			float PlayRate = EffectDuration / EffectPlayingTime;
+			WeaponEffectComponent->SetPlayRate(PlayRate);
+		}
+	}
 }
 
 AController* AAoEWeapon::GetController() const
@@ -34,8 +58,52 @@ void AAoEWeapon::UseEquipment()
 {
 	Super::UseEquipment();
 
-	check(AttackRangeComponent);
-	FCollisionShape CollisionShape = FCollisionShape::MakeBox(AttackRangeComponent->GetScaledBoxExtent());
+	PlayWeaponEffect();
+}
+
+void AAoEWeapon::PlayWeaponEffect()
+{
+	if (WeaponEffectComponent->GetFlipbook())
+	{
+		WeaponEffectComponent->SetVisibility(true);
+		WeaponEffectComponent->PlayFromStart();
+
+		float Duration = WeaponEffectComponent->GetFlipbookLength() / WeaponEffectComponent->GetPlayRate();
+		FTimerHandle TimerHandle;
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().SetTimer(TimerHandle, this, &AAoEWeapon::StopWeaponEffect, Duration, false);
+		}
+	}
+}
+
+void AAoEWeapon::StopWeaponEffect()
+{
+	WeaponEffectComponent->SetVisibility(false);
+	WeaponEffectComponent->Stop();
+
+# if WITH_EDITOR
+	HitboxComponent->SetHiddenInGame(true);
+	HitboxComponent->SetVisibility(false);
+# endif
+}
+
+void AAoEWeapon::PerformAoEAttack()
+{
+	TArray<FOverlapResult> Overlaps;
+	DoAoEWeaponTrace(Overlaps);
+	AttackHitEnemies(Overlaps);
+
+# if WITH_EDITOR
+	HitboxComponent->SetHiddenInGame(false);
+	HitboxComponent->SetVisibility(true);
+# endif
+}
+
+void AAoEWeapon::DoAoEWeaponTrace(TArray<FOverlapResult>& OutOverlaps)
+{
+	check(HitboxComponent);
+	FCollisionShape CollisionShape = FCollisionShape::MakeBox(HitboxComponent->GetScaledBoxExtent());
 
 	FCollisionQueryParams CollisionQueryParams;
 	CollisionQueryParams.AddIgnoredActor(this);
@@ -43,35 +111,24 @@ void AAoEWeapon::UseEquipment()
 
 	UWorld* World = GetWorld();
 	check(World);
-	TArray<FOverlapResult> OverlapResults;
-	bool bOverlapped = World->OverlapMultiByChannel(
-		OverlapResults,
-		GetActorLocation(),
-		GetActorQuat(),
+	World->OverlapMultiByChannel(
+		OutOverlaps,
+		HitboxComponent->GetComponentLocation(),
+		HitboxComponent->GetComponentQuat(),
 		TraceChannel_Weapon,
 		CollisionShape,
 		CollisionQueryParams
 	);
+}
 
-	DrawDebugBox(
-		World,
-		GetActorLocation(),
-		AttackRangeComponent->GetScaledBoxExtent(),
-		FQuat::Identity,
-		FColor::Red,
-		false,
-		0.5f
-	);
-
-	if (bOverlapped)
+void AAoEWeapon::AttackHitEnemies(const TArray<FOverlapResult>& Overlaps)
+{
+	for (const FOverlapResult& OverlapResult : Overlaps)
 	{
-		for (const FOverlapResult& OverlapResult : OverlapResults)
+		AEnemy* OverlappedEnemy = Cast<AEnemy>(OverlapResult.GetActor());
+		if (OverlappedEnemy)
 		{
-			AEnemy* OverlappedEnemy = Cast<AEnemy>(OverlapResult.GetActor());
-			if (OverlappedEnemy)
-			{
-				AttackEnemy(OverlappedEnemy);
-			}
+			AttackEnemy(OverlappedEnemy);
 		}
 	}
 }

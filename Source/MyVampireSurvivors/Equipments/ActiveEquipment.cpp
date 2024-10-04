@@ -35,3 +35,8 @@ void AActiveEquipment::UseEquipment()
 		RemainCoolDown = CoolDown;
 	}
 }
+
+float AActiveEquipment::GetCoolDown() const
+{
+	return CoolDown;
+}

@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "PaperFlipbookComponent.h"
 #include "Weapons/WeaponInterface.h"
 
 APlayerCharacter::APlayerCharacter() : Directionality(FVector2D::ZeroVector)
@@ -14,6 +15,9 @@ APlayerCharacter::APlayerCharacter() : Directionality(FVector2D::ZeroVector)
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ToroidalActor"));
+
+	GetSprite()->SetCollisionProfileName(TEXT("NoCollision"));
+	GetSprite()->SetRelativeRotation(FRotator(0.0f, 0.0f, -90.0f));
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -111,4 +115,7 @@ void APlayerCharacter::EquipEquipment(AEquipment* Equipment)
 	check(Equipment);
 	Inventory.AddEquipment(Equipment);
 	Equipment->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
+
+	check(GetSprite());
+	Equipment->SetActorRelativeRotation(GetSprite()->GetRelativeRotation());
 }
