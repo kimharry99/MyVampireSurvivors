@@ -82,10 +82,10 @@ UProjectileMovementComponent* AProjectileWeapon::GetProjectileMovementComponent(
 void AProjectileWeapon::HandleProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// If the projectile hits an enemy, attack enemy.
-	if (OtherActor->IsA<AEnemy>())
+	if (OtherActor && OtherActor->IsA<AEnemy>())
 	{
 		AEnemy* Enemy = Cast<AEnemy>(OtherActor);
 		AttackEnemy(Enemy);
-		Destroy();
 	}
+	Destroy();
 }

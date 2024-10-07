@@ -7,20 +7,27 @@ void AProjectileLauncher::UseEquipment()
 {
 	Super::UseEquipment();
 
-	Fire();
+	TArray<FVector> FireLocations;
+	TArray<FRotator> FireRotations;
+	CalculateFireLocationAndRotation(FireLocations, FireRotations);
+	Fire(FireLocations, FireRotations);
 }
 
-void AProjectileLauncher::Fire()
+void AProjectileLauncher::CalculateFireLocationAndRotation(OUT TArray<FVector>& OutFireLocations, OUT TArray<FRotator>& OutFireRotations)
 {
-	const int ProjectileCount = 1;
+
+}
+
+void AProjectileLauncher::Fire(const TArray<FVector>& FireLocations, const TArray<FRotator>& FireRotations)
+{
+	check(FireLocations.Num() == FireRotations.Num());
+	const int ProjectileCount = FireLocations.Num();
 	for (int i = 0; i < ProjectileCount; ++i)
 	{
-		FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 50.0f;
-		FRotator SpawnRotation = FRotator::ZeroRotator;
 		FActorSpawnParameters SpawnInfo;
 		SpawnInfo.Owner = this;
 		SpawnInfo.Instigator = GetInstigator();
 
-		AProjectileWeapon* Projectile = GetWorld()->SpawnActor<AProjectileWeapon>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnInfo);
+		AProjectileWeapon* Projectile = GetWorld()->SpawnActor<AProjectileWeapon>(ProjectileClass, FireLocations[i], FireRotations[i], SpawnInfo);
 	}
 }
