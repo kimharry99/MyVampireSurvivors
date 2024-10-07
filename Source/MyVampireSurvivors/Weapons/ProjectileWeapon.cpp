@@ -2,7 +2,6 @@
 
 
 #include "ProjectileWeapon.h"
-#include "UObject/ConstructorHelpers.h"
 #include "MyVamSurLogChannels.h"
 #include "Enemies/Enemy.h"
 
@@ -12,26 +11,20 @@ AProjectileWeapon::AProjectileWeapon()
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SphereComponent->InitSphereRadius(10.0f);
+	RootComponent = SphereComponent;
+
 	SphereComponent->SetSimulatePhysics(true);
 	SphereComponent->SetEnableGravity(false);
-
 	SphereComponent->SetNotifyRigidBodyCollision(true);
 	SphereComponent->SetGenerateOverlapEvents(false);
 	SphereComponent->SetCollisionProfileName(TEXT("Projectile"));
 	SphereComponent->OnComponentHit.AddDynamic(this, &AProjectileWeapon::HandleProjectileHit);
-	RootComponent = SphereComponent;
 
-	SphereMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereMeshComponent"));
-	SphereMeshComponent->SetupAttachment(RootComponent);
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
-	if (SphereMesh.Succeeded())
-	{
-		SphereMeshComponent->SetStaticMesh(SphereMesh.Object);
-		SphereMeshComponent->SetRelativeScale3D(FVector(SphereComponent->GetUnscaledSphereRadius() / 50.0f));
-		SphereMeshComponent->SetGenerateOverlapEvents(false);
-		SphereMeshComponent->SetCollisionProfileName(TEXT("NoCollision"));
-		SphereMeshComponent->SetEnableGravity(false);
-	}
+	SpriteComponent = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Sprite"));
+	SpriteComponent->SetupAttachment(RootComponent);
+	SpriteComponent->SetGenerateOverlapEvents(false);
+	SpriteComponent->SetCollisionProfileName(TEXT("NoCollision"));
+	SpriteComponent->SetEnableGravity(false);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->SetUpdatedComponent(RootComponent);
