@@ -28,6 +28,12 @@ public:
 	virtual void UseEquipment() override;
 	//~End of AEquipment interface
 
+protected:
+	/**
+	 * Returns the cooldown of the equipment.
+	 */
+	float GetCoolDown() const;
+
 private:
 	/** Cooldown(sec) of the equipment. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Equipment|Active")

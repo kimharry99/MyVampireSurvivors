@@ -6,12 +6,13 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
+#include "PaperFlipbookComponent.h"
 #include "WeaponInterface.h"
 #include "ProjectileWeapon.generated.h"
 
 /**
  * ProjectileWeapon.
- * 
+ *
  * Projectile will attack a contacted enemy.
  * Usually, the projectile weapon is spawned by a launcher.
  */
@@ -19,8 +20,8 @@ UCLASS()
 class MYVAMPIRESURVIVORS_API AProjectileWeapon : public AActor, public IWeaponInterface
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	AProjectileWeapon();
 
 protected:
@@ -49,8 +50,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon|Projectile", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USphereComponent> SphereComponent;
 
+	/** The sprite of the projectile. */
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon|Projectile", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UStaticMeshComponent> SphereMeshComponent;
+	TObjectPtr<UPaperFlipbookComponent> SpriteComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon|Projectile", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;

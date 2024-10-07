@@ -12,7 +12,7 @@
  * 
  * Projectile launcher is a equipment that can launch a projectile.
  */
-UCLASS()
+UCLASS(Abstract)
 class MYVAMPIRESURVIVORS_API AProjectileLauncher : public AActiveEquipment
 {
 	GENERATED_BODY()
@@ -22,12 +22,19 @@ public:
 	virtual void UseEquipment() override;
 	//~End of AActiveEquipment interface
 
-private:
-	UPROPERTY(EditDefaultsOnly, Category = "Equipment|Launcher", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AProjectileWeapon> ProjectileClass;
+protected:
+	/**
+	 * Calculate the fire location and rotation for spawning the projectiles.
+	 */
+	virtual void CalculateFireLocationAndRotation(OUT TArray<FVector>& OutFireLocations, OUT TArray<FRotator>& OutFireRotations);
 
 	/**
 	 * Fire the projectile.
+	 * Spawn the projectiles at the given fire locations and rotations.
 	 */
-	void Fire();
+	virtual void Fire(const TArray<FVector>& FireLocations, const TArray<FRotator>& FireRotations);
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Equipment|Launcher", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AProjectileWeapon> ProjectileClass;
 };
