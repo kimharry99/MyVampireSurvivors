@@ -116,9 +116,8 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 void APlayerCharacter::EquipEquipment(AEquipment* Equipment)
 {
 	check(Equipment);
-	Inventory.AddEquipment(Equipment);
-	Equipment->AttachToActor(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
-
 	check(GetSprite());
-	Equipment->SetActorRelativeRotation(GetSprite()->GetRelativeRotation());
+	Inventory.AddEquipment(Equipment);
+	FName SocketName(TEXT("EquipmentSocket"));
+	Equipment->AttachToComponent(GetSprite(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
 }
