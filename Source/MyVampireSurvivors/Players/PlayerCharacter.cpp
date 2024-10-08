@@ -2,16 +2,18 @@
 
 
 #include "PlayerCharacter.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "InputActionValue.h"
 #include "PaperFlipbookComponent.h"
+#include "Equipments/Equipment.h"
 #include "Weapons/WeaponInterface.h"
 
-APlayerCharacter::APlayerCharacter() : Directionality(FVector2D::ZeroVector)
+APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -65,19 +67,15 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (PlayerInputComponent == nullptr) return;
-	
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	if (EnhancedInputComponent == nullptr) return;
+	check(EnhancedInputComponent);
+	EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 	
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController == nullptr) return;
-
+	check(PlayerController);
 	UEnhancedInputLocalPlayerSubsystem* EnhancedSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
-	if (EnhancedSubsystem == nullptr) return;
-	
+	check(EnhancedSubsystem);
 	EnhancedSubsystem->AddMappingContext(IMC_TopDownChar, 1);
-	EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 }
 
 const FBox APlayerCharacter::GetViewBox() const
@@ -98,7 +96,7 @@ const FBox APlayerCharacter::GetViewBox() const
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
-	if (Controller != nullptr)
+	if (Controller)
 	{
 		const FVector2D Direction = Value.Get<FVector2D>();
 		if (Direction.SizeSquared() > 0.0f)

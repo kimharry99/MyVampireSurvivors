@@ -2,17 +2,20 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Camera/CameraComponent.h"
-#include "InputActionValue.h"
-#include "PaperZDCharacter.h"
 #include "Characters/MyVamSurCharacter.h"
-#include "Equipments/Equipment.h"
 #include "Equipments/EquipmentInventory.h"
 #include "PlayerCharacter.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
+class UInputComponent;
+class UInputMappingContext;
+class UInputAction;
+class AEquipment;
+struct FInputActionValue;
+
 /**
- * 
+ * Player character class.
  */
 UCLASS()
 class MYVAMPIRESURVIVORS_API APlayerCharacter : public AMyVamSurCharacter
@@ -41,25 +44,28 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	//~End of AActor interface
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	//~ACharacter interface
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	//~End of ACharacter interface
 
 private:
 	void Move(const FInputActionValue& Value);
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FVector2D Directionality;
+	FVector2D Directionality = FVector2D::ZeroVector;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
+	TObjectPtr<USpringArmComponent> CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
+	TObjectPtr<UCameraComponent> FollowCamera;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	class UInputMappingContext* IMC_TopDownChar;
+	TObjectPtr<UInputMappingContext> IMC_TopDownChar = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	class UInputAction* IA_Move;
+	TObjectPtr<UInputAction> IA_Move = nullptr;
 
 private:
 	/** Inventory of equipments that the player character has. */
