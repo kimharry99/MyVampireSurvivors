@@ -6,6 +6,8 @@
 #include "Characters/MyVamSurCharacter.h"
 #include "Enemy.generated.h"
 
+class UToroidalNPAComponent;
+
 /**
  * The base class for all enemies in the game.
  * 
@@ -21,10 +23,15 @@ public:
 
 protected:
 	//~AActor interface
+	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	//~End of AActor interface
 
 	//~AMyVamSurCharacter interface
 	virtual void Die() override;
 	//~End of AMyVamSurCharacter interface
+
+private:
+	UPROPERTY(VisibleAnywhere, Category="Torus")
+	TObjectPtr<UToroidalNPAComponent> ToroidalNPAComponent;
 };

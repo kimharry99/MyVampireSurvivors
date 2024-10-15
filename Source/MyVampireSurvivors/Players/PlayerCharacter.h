@@ -8,6 +8,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class UToroidalPlayerComponent;
 class UInputComponent;
 class UInputMappingContext;
 class UInputAction;
@@ -22,26 +23,13 @@ class MYVAMPIRESURVIVORS_API APlayerCharacter : public AMyVamSurCharacter
 {
 	GENERATED_BODY()
 
-// FIXME: Remove this code after testing
-//~Begin of testing code
-public:
-	UPROPERTY(EditAnywhere, Category="Testing")
-	TArray<TSubclassOf<AEquipment>> Equipments;
-//~End of testing code
-
 public:
 	APlayerCharacter();
-
-	/**
-	 * Get the view box of the camera.
-	 * 
-	 * @return The view box of the camera.
-	 */
-	const FBox GetViewBox() const;
 
 protected:
 	//~AActor interface
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaSeconds) override;
 	//~End of AActor interface
 
@@ -50,22 +38,43 @@ protected:
 	//~End of ACharacter interface
 
 private:
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputMappingContext> IMC_TopDownChar = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> IA_Move = nullptr;
+
 	void Move(const FInputActionValue& Value);
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FVector2D Directionality = FVector2D::ZeroVector;
 
+private:
+	UPROPERTY(VisibleAnywhere, Category="Torus")
+	TObjectPtr<UToroidalPlayerComponent> ToroidalPlayerComponent;
+
+private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCamera;
 
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputMappingContext> IMC_TopDownChar = nullptr;
+public:
+	/**
+	 * Get the view box of the camera.
+	 *
+	 * @return The view box of the camera.
+	 */
+	const FBox GetViewBox() const;
 
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> IA_Move = nullptr;
+
+	// FIXME: Remove this code after testing
+	//~Begin of testing code
+public:
+	UPROPERTY(EditAnywhere, Category = "Testing")
+	TArray<TSubclassOf<AEquipment>> Equipments;
+	//~End of testing code
 
 private:
 	/** Inventory of equipments that the player character has. */

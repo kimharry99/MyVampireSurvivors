@@ -2,6 +2,11 @@
 
 
 #include "ProjectileWeapon.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "PaperFlipbookComponent.h"
+#include "ToroidalMaps/ToroidalNPAComponent.h"
 #include "MyVamSurLogChannels.h"
 #include "Enemies/Enemy.h"
 
@@ -31,6 +36,18 @@ AProjectileWeapon::AProjectileWeapon()
 	ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
 	ProjectileMovementComponent->InitialSpeed = 1000.0f;
 	ProjectileMovementComponent->MaxSpeed = 1000.0f;
+
+	ToroidalNPAComponent = CreateDefaultSubobject<UToroidalNPAComponent>(TEXT("ToroidalNPAComponent"));
+}
+
+void AProjectileWeapon::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (ToroidalNPAComponent)
+	{
+		ToroidalNPAComponent->AddTickPrerequisiteComponent(ProjectileMovementComponent);
+	}
 }
 
 void AProjectileWeapon::BeginPlay()
@@ -38,6 +55,12 @@ void AProjectileWeapon::BeginPlay()
 	Super::BeginPlay();
 
 	SetLifeSpan(LifeTime);
+
+	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	if (PlayerPawn)
+	{
+		ToroidalNPAComponent->AddTickPrerequisiteActor(PlayerPawn);
+	}
 }
 
 void AProjectileWeapon::EndPlay(const EEndPlayReason::Type EndPlayReason)
