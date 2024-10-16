@@ -55,7 +55,7 @@ public:
 	bool IsInsideBoxOnTorus(const FVector& Point, const FBox& Box) const;
 
 	/**
-	 * Calculate the displacement between two points on toroidal topology.
+	 * Calculate displacement to the closest point corresponding to the destination on a toroidal map.
 	 */
 	FVector CalculateDisplacement(const FVector& From, const FVector& To) const;
 
