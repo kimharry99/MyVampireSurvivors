@@ -8,6 +8,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class UToroidalActorComponent;
 class UToroidalPlayerComponent;
 class UInputComponent;
 class UInputMappingContext;
@@ -52,6 +53,12 @@ private:
 private:
 	UPROPERTY(VisibleAnywhere, Category="Torus")
 	TObjectPtr<UToroidalPlayerComponent> ToroidalPlayerComponent;
+
+public:
+	/**
+	 * Add a toroidal actor component that needs to be ticked after the player character.
+	 */
+	void AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component);
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

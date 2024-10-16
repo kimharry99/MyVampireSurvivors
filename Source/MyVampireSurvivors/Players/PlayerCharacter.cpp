@@ -121,6 +121,14 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
+void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component)
+{
+	if (Component)
+	{
+		Component->AddTickPrerequisiteComponent(ToroidalPlayerComponent);
+	}
+}
+
 void APlayerCharacter::EquipEquipment(AEquipment* Equipment)
 {
 	check(Equipment);

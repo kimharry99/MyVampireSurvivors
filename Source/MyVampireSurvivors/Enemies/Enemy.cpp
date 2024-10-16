@@ -2,9 +2,9 @@
 
 
 #include "Enemy.h"
-#include "Kismet/GamePlayStatics.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Players/PlayerCharacter.h"
 #include "ToroidalMaps/ToroidalNPAComponent.h"
 #include "ChasingEnemyAI.h"
 
@@ -41,10 +41,10 @@ void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-	if (PlayerPawn)
+	APlayerCharacter* Player = GetWorld()->GetFirstPlayerController()->GetPawn<APlayerCharacter>();
+	if (Player)
 	{
-		AddTickPrerequisiteActor(PlayerPawn);
+		Player->AddTickSubsequentToroidalComponent(ToroidalNPAComponent);
 	}
 }
 
