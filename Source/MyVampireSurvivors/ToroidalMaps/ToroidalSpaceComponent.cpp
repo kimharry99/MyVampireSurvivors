@@ -4,7 +4,7 @@
 #include "ToroidalSpaceComponent.h"
 #include "MyVamSurLogChannels.h"
 
-UToroidalSpaceComponent::UToroidalSpaceComponent()
+UToroidalSpaceComponent_Deprecated::UToroidalSpaceComponent_Deprecated()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -13,12 +13,12 @@ UToroidalSpaceComponent::UToroidalSpaceComponent()
 	bEditableWhenInherited = false;
 }
 
-void UToroidalSpaceComponent::SetSpaceBoundary(const FBox& NewSpaceBoundary)
+void UToroidalSpaceComponent_Deprecated::SetSpaceBoundary(const FBox& NewSpaceBoundary)
 {
 	SpaceBoundary = NewSpaceBoundary;
 }
 
-void UToroidalSpaceComponent::RepositionActorsInToroidalSpace(APlayerCharacter* PlayerCharacter) const
+void UToroidalSpaceComponent_Deprecated::RepositionActorsInToroidalSpace(APlayerCharacter* PlayerCharacter) const
 {
 	// Check player escape space
 	if (!SpaceBoundary.IsInsideXY(PlayerCharacter->GetActorLocation()))
@@ -36,13 +36,13 @@ void UToroidalSpaceComponent::RepositionActorsInToroidalSpace(APlayerCharacter* 
 	}
 }
 
-void UToroidalSpaceComponent::HandlePlayerEscapingSpace(APlayerCharacter* PlayerCharacter) const
+void UToroidalSpaceComponent_Deprecated::HandlePlayerEscapingSpace(APlayerCharacter* PlayerCharacter) const
 {
 	const FBox ViewBox = PlayerCharacter->GetViewBox();
 	MoveActorsInBoxToOppositeSide(ViewBox);
 }
 
-void UToroidalSpaceComponent::MoveActorsInBoxToOppositeSide(const FBox& DepartureBox) const
+void UToroidalSpaceComponent_Deprecated::MoveActorsInBoxToOppositeSide(const FBox& DepartureBox) const
 {
 	TArray<FBox> PossibleDestinations;
 	ComputeCorrespondingRegionsInToroidalSpace(PossibleDestinations, DepartureBox);
@@ -55,19 +55,19 @@ void UToroidalSpaceComponent::MoveActorsInBoxToOppositeSide(const FBox& Departur
 	}
 }
 
-void UToroidalSpaceComponent::HandlePlayerViewBoxEscapingSpace(const FBox& PlayerViewBox) const
+void UToroidalSpaceComponent_Deprecated::HandlePlayerViewBoxEscapingSpace(const FBox& PlayerViewBox) const
 {
 	MoveActorsInCorrespondingRegionsToBox(PlayerViewBox);
 }
 
-void UToroidalSpaceComponent::MoveActorsInCorrespondingRegionsToBox(const FBox& DestinationBox) const
+void UToroidalSpaceComponent_Deprecated::MoveActorsInCorrespondingRegionsToBox(const FBox& DestinationBox) const
 {
 	TArray<FBox> CorrespondingRegions;
 	ComputeCorrespondingRegionsInToroidalSpace(CorrespondingRegions, DestinationBox);
 	TransferObjectsFromMultiSource(CorrespondingRegions, DestinationBox);
 }
 
-void UToroidalSpaceComponent::ComputeCorrespondingRegionsInToroidalSpace(TArray<FBox>& OutCorrespondingRegions, const FBox& Region) const
+void UToroidalSpaceComponent_Deprecated::ComputeCorrespondingRegionsInToroidalSpace(TArray<FBox>& OutCorrespondingRegions, const FBox& Region) const
 {
 	if (Region.Min.X > Region.Max.X || Region.Min.Y > Region.Max.Y)
 	{
@@ -92,7 +92,7 @@ void UToroidalSpaceComponent::ComputeCorrespondingRegionsInToroidalSpace(TArray<
 	}
 }
 
-const uint8 UToroidalSpaceComponent::ComputeBoxEscapeFlag(const FBox& Box, const FBox& Boundary) const
+const uint8 UToroidalSpaceComponent_Deprecated::ComputeBoxEscapeFlag(const FBox& Box, const FBox& Boundary) const
 {
 	uint8 EscapeFlags = 0;
 	if (Box.Min.X < Boundary.Min.X)
@@ -115,7 +115,7 @@ const uint8 UToroidalSpaceComponent::ComputeBoxEscapeFlag(const FBox& Box, const
 	return EscapeFlags;
 }
 
-void UToroidalSpaceComponent::TransferObjectsFromMultiSource(const TArray<FBox>& SourceRegions, const FBox& Destination) const
+void UToroidalSpaceComponent_Deprecated::TransferObjectsFromMultiSource(const TArray<FBox>& SourceRegions, const FBox& Destination) const
 {
 	// Traverse all source regions
 	for (const FBox& Source : SourceRegions)
@@ -124,7 +124,7 @@ void UToroidalSpaceComponent::TransferObjectsFromMultiSource(const TArray<FBox>&
 	}
 }
 
-void UToroidalSpaceComponent::TransferObjects(const FBox& Source, const FBox& Destination, const ECollisionChannel& TraceChannel) const
+void UToroidalSpaceComponent_Deprecated::TransferObjects(const FBox& Source, const FBox& Destination, const ECollisionChannel& TraceChannel) const
 {
 	// Do box trace to get all actors in source regions
 	TArray<FOverlapResult> OverlapResults;
@@ -154,7 +154,7 @@ void UToroidalSpaceComponent::TransferObjects(const FBox& Source, const FBox& De
 	}
 }
 
-const FBox* UToroidalSpaceComponent::FindBoxInsideBound(const TArray<FBox>& Boxes, const FBox& Bound) const
+const FBox* UToroidalSpaceComponent_Deprecated::FindBoxInsideBound(const TArray<FBox>& Boxes, const FBox& Bound) const
 {
 	if (Boxes.Num() == 0)
 	{

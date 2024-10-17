@@ -10,6 +10,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "PaperFlipbookComponent.h"
+#include "ToroidalMaps/ToroidalPlayerComponent.h"
 #include "Equipments/Equipment.h"
 #include "Weapons/WeaponInterface.h"
 
@@ -33,6 +34,15 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->SetOrthoWidth(1024.0f);
 
 	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+
+	ToroidalPlayerComponent = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayerComponent"));
+}
+
+void APlayerCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	ToroidalPlayerComponent->AddTickPrerequisiteComponent(GetCharacterMovement());
 }
 
 void APlayerCharacter::BeginPlay()
@@ -108,6 +118,14 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
 			Directionality = Direction;
 		}
+	}
+}
+
+void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component)
+{
+	if (Component)
+	{
+		Component->AddTickPrerequisiteComponent(ToroidalPlayerComponent);
 	}
 }
 

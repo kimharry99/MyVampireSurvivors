@@ -7,7 +7,6 @@
 #include "PaperTileMap.h"
 #include "Players/PlayerCharacter.h"
 #include "ToroidalMapBackgroundComponent.h"
-#include "ToroidalSpaceComponent.h"
 #include "ToroidalMap.generated.h"
 
 UCLASS()
@@ -18,12 +17,10 @@ class MYVAMPIRESURVIVORS_API AToroidalMap : public AActor
 public:
 	AToroidalMap();
 
-	/**
-	 * Return the range of the map. 
-	 * 
-	 * @return Axis-aligned bounding box of the map.
-	 */
-	const FBox GetMapRange() const;
+protected:
+	//~AActor interface
+	virtual void BeginPlay() override;
+	//~End of AActor interface
 
 protected:
 	/**
@@ -32,21 +29,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Background")
 	UToroidalMapBackgroundComponent* BackgroundComponent;
 
+public:
 	/**
-	 * Toroidal space component for toroidal map.
+	 * Return the range of the map. 
+	 * 
+	 * @return Axis-aligned bounding box of the map.
 	 */
-	UPROPERTY(VisibleAnyWhere, Category = "ToroidalSpace")
-	UToroidalSpaceComponent* ToroidalSpaceComponent;
-
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaSeconds) override;
-
-private:
-	/**
-	 * Check if the player and the view box escape the map and move them to the other side if they are.
-	 */
-	void HandleActorsOnToroidalMap() const;
-
-	UPROPERTY()
-	TObjectPtr<APlayerCharacter> PlayerCharacter;
+	const FBox GetMapRange() const;
 };

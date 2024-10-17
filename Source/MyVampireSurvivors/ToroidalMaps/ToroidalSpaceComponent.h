@@ -14,12 +14,12 @@
  * The position will be determined by position of player character and its following camera view box.
  */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MYVAMPIRESURVIVORS_API UToroidalSpaceComponent : public UActorComponent
+class MYVAMPIRESURVIVORS_API UToroidalSpaceComponent_Deprecated : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
-	UToroidalSpaceComponent();
+	UToroidalSpaceComponent_Deprecated();
 
 	/**
 	 * Reposition actors to their valid position in toroidal space.

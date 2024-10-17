@@ -4,8 +4,8 @@
 #include "Enemy.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Physics/MyVamSurCollisionChannels.h"
-#include "MyVamSurLogChannels.h"
+#include "Players/PlayerCharacter.h"
+#include "ToroidalMaps/ToroidalNPAComponent.h"
 #include "ChasingEnemyAI.h"
 
 AEnemy::AEnemy()
@@ -21,13 +21,31 @@ AEnemy::AEnemy()
 
 	GetCharacterMovement()->MaxWalkSpeed = 10.0f;
 
+	ToroidalNPAComponent = CreateDefaultSubobject<UToroidalNPAComponent>(TEXT("ToroidalNPAComponent"));
+
 	const float DefaultHealthPoint = 5.0f;
 	SetHealthPoint(DefaultHealthPoint);
+}
+
+void AEnemy::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (ToroidalNPAComponent)
+	{
+		ToroidalNPAComponent->AddTickPrerequisiteComponent(GetCharacterMovement());
+	}
 }
 
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	APlayerCharacter* Player = GetWorld()->GetFirstPlayerController()->GetPawn<APlayerCharacter>();
+	if (Player)
+	{
+		Player->AddTickSubsequentToroidalComponent(ToroidalNPAComponent);
+	}
 }
 
 void AEnemy::Die()

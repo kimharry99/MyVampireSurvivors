@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "GameFramework/ProjectileMovementComponent.h"
-#include "Components/SphereComponent.h"
-#include "PaperFlipbookComponent.h"
 #include "WeaponInterface.h"
 #include "ProjectileWeapon.generated.h"
+
+class UPaperFlipbookComponent;
+class UProjectileMovementComponent;
+class USphereComponent;
+class UToroidalNPAComponent;
 
 /**
  * ProjectileWeapon.
@@ -26,6 +28,7 @@ public:
 
 protected:
 	//~AActor interface
+	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -56,6 +59,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon|Projectile", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Torus")
+	TObjectPtr<UToroidalNPAComponent> ToroidalNPAComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon|Projectile", meta = (AllowPrivateAccess = "true"))
 	float LifeTime = 0.5f;
