@@ -6,10 +6,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
-#include "InputActionValue.h"
 #include "PaperFlipbookComponent.h"
+#include "Players/PlayerPawnComponent.h"
 #include "ToroidalMaps/ToroidalPlayerComponent.h"
 #include "Equipments/Equipment.h"
 #include "Weapons/WeaponInterface.h"
@@ -17,6 +15,8 @@
 APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ToroidalActor"));
 
@@ -33,16 +33,16 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->SetProjectionMode(ECameraProjectionMode::Orthographic);
 	FollowCamera->SetOrthoWidth(1024.0f);
 
-	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+	PlayerPawn = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawnComponent"));
 
-	ToroidalPlayerComponent = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayerComponent"));
+	ToroidalPlayer = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayerComponent"));
 }
 
 void APlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	ToroidalPlayerComponent->AddTickPrerequisiteComponent(GetCharacterMovement());
+	ToroidalPlayer->AddTickPrerequisiteComponent(GetCharacterMovement());
 }
 
 void APlayerCharacter::BeginPlay()
@@ -73,21 +73,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Inventory.UseAllEnableEquipments();
 }
 
-void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	check(EnhancedInputComponent);
-	EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-	
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	check(PlayerController);
-	UEnhancedInputLocalPlayerSubsystem* EnhancedSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
-	check(EnhancedSubsystem);
-	EnhancedSubsystem->AddMappingContext(IMC_TopDownChar, 1);
-}
-
 const FBox APlayerCharacter::GetViewBox() const
 {
 	const float OrthoWidth = FollowCamera->OrthoWidth;
@@ -104,28 +89,11 @@ const FBox APlayerCharacter::GetViewBox() const
 	return FBox(BottomLeft + GetActorLocation(), TopRight + GetActorLocation());
 }
 
-void APlayerCharacter::Move(const FInputActionValue& Value)
-{
-	if (Controller)
-	{
-		const FVector2D Direction = Value.Get<FVector2D>();
-		if (Direction.SizeSquared() > 0.0f)
-		{
-			const FVector RightDirection = FVector::ForwardVector * Direction.X;
-			const FVector UpDirection = -FVector::RightVector * Direction.Y;
-
-			AddMovementInput(RightDirection + UpDirection);
-
-			Directionality = Direction;
-		}
-	}
-}
-
 void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component)
 {
 	if (Component)
 	{
-		Component->AddTickPrerequisiteComponent(ToroidalPlayerComponent);
+		Component->AddTickPrerequisiteComponent(ToroidalPlayer);
 	}
 }
 

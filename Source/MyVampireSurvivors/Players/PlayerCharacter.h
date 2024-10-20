@@ -7,14 +7,11 @@
 #include "PlayerCharacter.generated.h"
 
 class UCameraComponent;
+class UPlayerPawnComponent;
 class USpringArmComponent;
 class UToroidalActorComponent;
 class UToroidalPlayerComponent;
-class UInputComponent;
-class UInputMappingContext;
-class UInputAction;
 class AEquipment;
-struct FInputActionValue;
 
 /**
  * Player character class.
@@ -34,38 +31,26 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 	//~End of AActor interface
 
-	//~ACharacter interface
-	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-	//~End of ACharacter interface
+private:
+	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USpringArmComponent> CameraBoom;
+
+	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCameraComponent> FollowCamera;
 
 private:
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputMappingContext> IMC_TopDownChar = nullptr;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> IA_Move = nullptr;
-
-	void Move(const FInputActionValue& Value);
-
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FVector2D Directionality = FVector2D::ZeroVector;
+	UPROPERTY(VisibleAnywhere, Category="Player")
+	TObjectPtr<UPlayerPawnComponent> PlayerPawn;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category="Torus")
-	TObjectPtr<UToroidalPlayerComponent> ToroidalPlayerComponent;
+	TObjectPtr<UToroidalPlayerComponent> ToroidalPlayer;
 
 public:
 	/**
 	 * Add a toroidal actor component that needs to be ticked after the player character.
 	 */
 	void AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component);
-
-private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<USpringArmComponent> CameraBoom;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UCameraComponent> FollowCamera;
 
 public:
 	/**
