@@ -69,8 +69,6 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	Inventory.UseAllEnableEquipments();
 }
 
 const FBox APlayerCharacter::GetViewBox() const
@@ -100,8 +98,16 @@ void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponen
 void APlayerCharacter::EquipEquipment(AEquipment* Equipment)
 {
 	check(Equipment);
-	check(GetSprite());
 	Inventory.AddEquipment(Equipment);
-	FName SocketName(TEXT("EquipmentSocket"));
-	Equipment->AttachToComponent(GetSprite(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
+
+	if (UPaperFlipbookComponent* CharacterSprite = GetSprite())
+	{
+		FName SocketName(TEXT("EquipmentSocket"));
+		Equipment->AttachToComponent(CharacterSprite, FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
+	}
+}
+
+void APlayerCharacter::UseAllEnableEquipments()
+{
+	Inventory.UseAllEnableEquipments();
 }

@@ -24,19 +24,19 @@ class MYVAMPIRESURVIVORS_API APlayerCharacter : public AMyVamSurCharacter
 public:
 	APlayerCharacter();
 
-protected:
-	//~AActor interface
-	virtual void BeginPlay() override;
-	virtual void PostInitializeComponents() override;
-	virtual void Tick(float DeltaSeconds) override;
-	//~End of AActor interface
-
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCamera;
+
+protected:
+	//~AActor interface
+	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
+	virtual void Tick(float DeltaSeconds) override;
+	//~End of AActor interface
 
 private:
 	UPROPERTY(VisibleAnywhere, Category="Player")
@@ -52,15 +52,6 @@ public:
 	 */
 	void AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component);
 
-public:
-	/**
-	 * Get the view box of the camera.
-	 *
-	 * @return The view box of the camera.
-	 */
-	const FBox GetViewBox() const;
-
-
 	// FIXME: Remove this code after testing
 	//~Begin of testing code
 public:
@@ -75,11 +66,26 @@ private:
 
 public:
 	/**
+	 * Use all enable equipments in the inventory.
+	 */
+	void UseAllEnableEquipments();
+
+public:
+	/**
 	 * Equip a equipment to the player character.
 	 * Add the equipment to the inventory.
 	 * The equipment actor will be attached to the player character.
 	 * 
 	 * @param Equipment Equipment to equip.
 	 */
-	void EquipEquipment(AEquipment* Equipment); 
+	void EquipEquipment(AEquipment* Equipment);
+
+public:
+	/**
+	 * Get the view box of the camera.
+	 *
+	 * @return The view box of the camera.
+	 */
+	const FBox GetViewBox() const;
+
 };

@@ -16,6 +16,9 @@ class MYVAMPIRESURVIVORS_API AMyVamSurGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+public:
+	AMyVamSurGameMode();
+
 protected:
 	//~AGameModeBase interface
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
