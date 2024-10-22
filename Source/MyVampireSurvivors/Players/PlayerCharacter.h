@@ -6,12 +6,13 @@
 #include "Equipments/EquipmentInventory.h"
 #include "PlayerCharacter.generated.h"
 
+class AEquipmentItem;
 class UCameraComponent;
+class UEquipmentComponent;
 class UPlayerPawnComponent;
 class USpringArmComponent;
 class UToroidalActorComponent;
 class UToroidalPlayerComponent;
-class AEquipment;
 
 /**
  * Player character class.
@@ -42,9 +43,11 @@ private:
 	UPROPERTY(VisibleAnywhere, Category="Player")
 	TObjectPtr<UPlayerPawnComponent> PlayerPawn;
 
-private:
 	UPROPERTY(VisibleAnywhere, Category="Torus")
 	TObjectPtr<UToroidalPlayerComponent> ToroidalPlayer;
+
+	UPROPERTY(EditDefaultsOnly, Category="Player|Equipment")
+	TObjectPtr<UEquipmentComponent> Inventory;
 
 public:
 	/**
@@ -52,25 +55,12 @@ public:
 	 */
 	void AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component);
 
-	// FIXME: Remove this code after testing
-	//~Begin of testing code
-public:
-	UPROPERTY(EditAnywhere, Category = "Testing")
-	TArray<TSubclassOf<AEquipment>> Equipments;
-	//~End of testing code
-
-private:
-	/** Inventory of equipments that the player character has. */
-	UPROPERTY()
-	FEquipmentInventory Inventory;
-
 public:
 	/**
 	 * Use all enable equipments in the inventory.
 	 */
 	void UseAllEnableEquipments();
 
-public:
 	/**
 	 * Equip a equipment to the player character.
 	 * Add the equipment to the inventory.
@@ -78,7 +68,7 @@ public:
 	 * 
 	 * @param Equipment Equipment to equip.
 	 */
-	void EquipEquipment(AEquipment* Equipment);
+	void EquipEquipment(AEquipmentItem* Equipment);
 
 public:
 	/**

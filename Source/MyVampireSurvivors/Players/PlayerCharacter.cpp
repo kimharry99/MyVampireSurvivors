@@ -9,8 +9,7 @@
 #include "PaperFlipbookComponent.h"
 #include "Players/PlayerPawnComponent.h"
 #include "ToroidalMaps/ToroidalPlayerComponent.h"
-#include "Equipments/Equipment.h"
-#include "Weapons/WeaponInterface.h"
+#include "Equipments/EquipmentComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -36,6 +35,8 @@ APlayerCharacter::APlayerCharacter()
 	PlayerPawn = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawnComponent"));
 
 	ToroidalPlayer = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayerComponent"));
+
+	Inventory = CreateDefaultSubobject<UEquipmentComponent>(TEXT("InventoryComponent"));
 }
 
 void APlayerCharacter::PostInitializeComponents()
@@ -48,22 +49,6 @@ void APlayerCharacter::PostInitializeComponents()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// FIXME: Remove this code after testing
-	//~Testing code
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.Instigator = this;
-
-	for (const TSubclassOf<AEquipment>& EquipmentClass : Equipments)
-	{
-		check(EquipmentClass);
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		AEquipment* TestingEquipment = GetWorld()->SpawnActor<AEquipment>(EquipmentClass, GetActorLocation(), FRotator::ZeroRotator, SpawnParams);
-		check(TestingEquipment);
-		EquipEquipment(TestingEquipment);
-	}
-	//~End of testing code
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -95,19 +80,12 @@ void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponen
 	}
 }
 
-void APlayerCharacter::EquipEquipment(AEquipment* Equipment)
+void APlayerCharacter::EquipEquipment(AEquipmentItem* Equipment)
 {
-	check(Equipment);
-	Inventory.AddEquipment(Equipment);
-
-	if (UPaperFlipbookComponent* CharacterSprite = GetSprite())
-	{
-		FName SocketName(TEXT("EquipmentSocket"));
-		Equipment->AttachToComponent(CharacterSprite, FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
-	}
+	Inventory->AddEquipmentItem(Equipment);
 }
 
 void APlayerCharacter::UseAllEnableEquipments()
 {
-	Inventory.UseAllEnableEquipments();
+	Inventory->UseAllEnableEquipments();
 }

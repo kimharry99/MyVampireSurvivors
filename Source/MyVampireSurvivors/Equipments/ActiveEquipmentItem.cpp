@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Equipments/ActiveEquipment.h"
+#include "Equipments/ActiveEquipmentItem.h"
 
-AActiveEquipment::AActiveEquipment()
+AActiveEquipmentItem::AActiveEquipmentItem()
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void AActiveEquipment::Tick(float DeltaTime)
+void AActiveEquipmentItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -18,7 +18,7 @@ void AActiveEquipment::Tick(float DeltaTime)
 	}
 }
 
-bool AActiveEquipment::IsUsable() const
+bool AActiveEquipmentItem::IsUsable() const
 {
 	bool bIsUsable = Super::IsUsable();
 
@@ -26,7 +26,7 @@ bool AActiveEquipment::IsUsable() const
 	return bIsUsable;
 }
 
-void AActiveEquipment::UseEquipment()
+void AActiveEquipmentItem::UseEquipment()
 {
 	Super::UseEquipment();
 
@@ -36,7 +36,7 @@ void AActiveEquipment::UseEquipment()
 	}
 }
 
-float AActiveEquipment::GetCoolDown() const
+float AActiveEquipmentItem::GetCoolDown() const
 {
 	return CoolDown;
 }
