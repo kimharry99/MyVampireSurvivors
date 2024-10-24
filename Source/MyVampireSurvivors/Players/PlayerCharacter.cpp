@@ -32,11 +32,11 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->SetProjectionMode(ECameraProjectionMode::Orthographic);
 	FollowCamera->SetOrthoWidth(1024.0f);
 
-	PlayerPawn = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawnComponent"));
+	PlayerPawn = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawn"));
 
-	ToroidalPlayer = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayerComponent"));
+	ToroidalPlayer = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayer"));
 
-	Inventory = CreateDefaultSubobject<UEquipmentComponent>(TEXT("InventoryComponent"));
+	Inventory = CreateDefaultSubobject<UEquipmentComponent>(TEXT("Inventory"));
 }
 
 void APlayerCharacter::PostInitializeComponents()

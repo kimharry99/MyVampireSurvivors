@@ -28,7 +28,7 @@ protected:
 	//~End of AActor interface
 
 	//~AMyVamSurCharacter interface
-	virtual void Die() override;
+	virtual void StartDeath() override;
 	//~End of AMyVamSurCharacter interface
 
 private:

@@ -4,9 +4,9 @@
 #include "Enemy.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Enemies/ChasingEnemyAI.h"
 #include "Players/PlayerCharacter.h"
 #include "ToroidalMaps/ToroidalNPAComponent.h"
-#include "ChasingEnemyAI.h"
 
 AEnemy::AEnemy()
 {
@@ -22,9 +22,6 @@ AEnemy::AEnemy()
 	GetCharacterMovement()->MaxWalkSpeed = 10.0f;
 
 	ToroidalNPAComponent = CreateDefaultSubobject<UToroidalNPAComponent>(TEXT("ToroidalNPAComponent"));
-
-	const float DefaultHealthPoint = 5.0f;
-	SetHealthPoint(DefaultHealthPoint);
 }
 
 void AEnemy::PostInitializeComponents()
@@ -48,9 +45,8 @@ void AEnemy::BeginPlay()
 	}
 }
 
-void AEnemy::Die()
+void AEnemy::StartDeath()
 {
-	Super::Die();
-
+	Super::StartDeath();
 	Destroy();
 }

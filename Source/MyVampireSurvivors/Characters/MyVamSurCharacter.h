@@ -6,6 +6,8 @@
 #include "PaperZDCharacter.h"
 #include "MyVamSurCharacter.generated.h"
 
+class UHealthComponent;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharacterDied);
 
 /**
@@ -21,17 +23,9 @@ public:
 	AMyVamSurCharacter();
 
 private:
-	/** Character HealthPoint, when it reaches 0, the character dies. */
-	UPROPERTY(EditAnywhere, Category = "MyVamSurCharacter", meta = (AllowPrivateAccess = "true"))
-	float HealthPoint = 0;
-
-protected:
-	/**
-	 * Sets the character's HealthPoint.
-	 * 
-	 * @param NewHealthPoint The new HealthPoint value.
-	 */
-	void SetHealthPoint(float NewHealthPoint);
+	/** The character's HealthComponent. */
+	UPROPERTY(EditDefaultsOnly, Category="Character|Health")
+	TObjectPtr<UHealthComponent> Health;
 
 public:
 	/**
@@ -55,5 +49,6 @@ protected:
 	/**
 	 * Handles the character's death.
 	 */
-	virtual void Die();
+	UFUNCTION()
+	virtual void StartDeath();
 };

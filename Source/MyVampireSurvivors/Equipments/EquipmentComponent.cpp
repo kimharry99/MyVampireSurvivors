@@ -41,6 +41,7 @@ void UEquipmentComponent::UseAllEnableEquipments()
 
 void UEquipmentComponent::BeginPlay()
 {
+	Super::BeginPlay();
 	// FIXME: Remove this code after testing
 	//~Testing code
 	APawn* Pawn = GetOwner<APawn>();
