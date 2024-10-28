@@ -2,6 +2,9 @@
 
 
 #include "WaveManager.h"
+#include "Waves/WaveList.h"
+#include "Waves/WaveLoaderComponent.h"
+#include "Waves/WaveTriggerComponent.h"
 #include "MyVamSurLogChannels.h"
 
 // Sets default values
@@ -31,6 +34,16 @@ void AWaveManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 
 	WaveList->OnAllWavesCleared.RemoveAll(this);
+}
+
+int AWaveManager::GetCurrentWaveNumber() const
+{
+	return WaveTrigger->GetCurrentWaveIndex();
+}
+
+float AWaveManager::GetTimeUntilNextWave() const
+{
+	return WaveTrigger->GetTimeUntilNextWave();
 }
 
 void AWaveManager::HandleAllWavesCleared()

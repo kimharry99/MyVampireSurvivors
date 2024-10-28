@@ -2,10 +2,20 @@
 
 
 #include "WaveTriggerComponent.h"
+#include "Waves/Wave.h"
+#include "Waves/WaveList.h"
 
 UWaveTriggerComponent::UWaveTriggerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+}
+
+void UWaveTriggerComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(WaveHandle);
+	}
 }
 
 void UWaveTriggerComponent::StartWave()
@@ -17,6 +27,20 @@ void UWaveTriggerComponent::StartWave()
 void UWaveTriggerComponent::SetWaveList(UWaveList* InWaveList)
 {
 	WaveList = InWaveList;
+}
+
+int UWaveTriggerComponent::GetCurrentWaveIndex() const
+{
+	return CurrentWaveIndex;
+}
+
+float UWaveTriggerComponent::GetTimeUntilNextWave() const
+{
+	if (UWorld* World = GetWorld())
+	{
+		return World->GetTimerManager().GetTimerRemaining(WaveHandle);
+	}
+	return -1.0f;
 }
 
 void UWaveTriggerComponent::TriggerCurrentWave()
@@ -31,6 +55,17 @@ void UWaveTriggerComponent::TriggerCurrentWave()
 	}
 }
 
+void UWaveTriggerComponent::StepToNextWave()
+{
+	CurrentWaveIndex++;
+}
+
+void UWaveTriggerComponent::TriggerNextWave()
+{
+	StepToNextWave();
+	TriggerCurrentWave();
+}
+
 void UWaveTriggerComponent::PostCurrentWaveTriggerd()
 {
 	ReserveNextWave();
@@ -38,13 +73,10 @@ void UWaveTriggerComponent::PostCurrentWaveTriggerd()
 
 void UWaveTriggerComponent::ReserveNextWave()
 {
-	// Increment wave index in the schedule
-	CurrentWaveIndex++;
-
-	// Set a timer to trigger the next wave
-	UWorld* World = GetWorld();
-
-	check(World);
-	World->GetTimerManager().ClearTimer(WaveHandle);
-	World->GetTimerManager().SetTimer(WaveHandle, this, &UWaveTriggerComponent::TriggerCurrentWave, WavePeriod, false);
+	if (UWorld* World = GetWorld())
+	{
+		// Set a timer to trigger the next wave
+		World->GetTimerManager().ClearTimer(WaveHandle);
+		World->GetTimerManager().SetTimer(WaveHandle, this, &UWaveTriggerComponent::TriggerNextWave, WavePeriod, false);
+	}
 }

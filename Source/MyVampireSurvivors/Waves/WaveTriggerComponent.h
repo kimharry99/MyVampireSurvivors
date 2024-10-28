@@ -4,22 +4,27 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Wave.h"
-#include "WaveList.h"
 #include "WaveTriggerComponent.generated.h"
+
+class UWaveList;
 
 /**
  * Component that can be attached to an actor to trigger a wave.
  */
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS()
 class MYVAMPIRESURVIVORS_API UWaveTriggerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UWaveTriggerComponent();
 
+protected:
+	//~UActorComponent interface
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	//~End of UActorComponent interface
+
+public:
 	/**
 	 * Start wave triggering.
 	 * The component will trigger the waves periodically in the order they were set.
@@ -30,6 +35,9 @@ public:
 	 * Set WaveList.
 	 */
 	void SetWaveList(UWaveList* InWaveList);
+
+	int GetCurrentWaveIndex() const;
+	float GetTimeUntilNextWave() const;
 
 private:
 	/**
@@ -44,10 +52,9 @@ private:
 
 	int CurrentWaveIndex = 0;
 
-	/**
-	 * Trigger current wave.
-	 */
 	void TriggerCurrentWave();
+	void StepToNextWave();
+	void TriggerNextWave();
 
 	/**
 	 * Called when the current wave is triggered.

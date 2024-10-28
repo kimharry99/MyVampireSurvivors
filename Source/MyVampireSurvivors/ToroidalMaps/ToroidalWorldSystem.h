@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MyVamSurGameMode.h"
+#include "GameModes/MyVamSurGameMode.h"
 #include "ToroidalWorldSystem.generated.h"
 
 class AToroidalMap;

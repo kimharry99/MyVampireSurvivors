@@ -3,6 +3,7 @@
 
 #include "MyVamSurGameMode.h"
 #include "EngineUtils.h"
+#include "GameModes/MyVamSurGameState.h"
 #include "Players/PlayerCharacter.h"
 #include "Players/MyVamSurPlayerState.h"
 #include "Players/MyVamSurPlayerController.h"
@@ -11,22 +12,29 @@
 
 AMyVamSurGameMode::AMyVamSurGameMode()
 {
+	GameStateClass = AMyVamSurGameState::StaticClass();
 	DefaultPawnClass = APlayerCharacter::StaticClass();
 	PlayerControllerClass = AMyVamSurPlayerController::StaticClass();
 	PlayerStateClass = AMyVamSurPlayerState::StaticClass();
 }
 
-void AMyVamSurGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+void AMyVamSurGameMode::PreInitializeComponents()
 {
-	Super::InitGame(MapName, Options, ErrorMessage);
+	Super::PreInitializeComponents();
 
 	AddToroidalWorldSystemToGame();
+	AddWaveManagerToGame();
+}
+
+UToroidalWorldSystem* AMyVamSurGameMode::GetToroidalWorldSystem() const
+{
+	return ToroidalWorldSystem;
 }
 
 void AMyVamSurGameMode::AddToroidalWorldSystemToGame()
 {
+	// GameMode does not need to check if the world is valid
 	UWorld* World = GetWorld();
-	check(World);
 
 	ToroidalWorldSystem = NewObject<UToroidalWorldSystem>(World);
 	for (TActorIterator<AToroidalMap> It(World); It; ++It)
@@ -36,7 +44,18 @@ void AMyVamSurGameMode::AddToroidalWorldSystemToGame()
 	}
 }
 
-UToroidalWorldSystem* AMyVamSurGameMode::GetToroidalWorldSystem() const
+void AMyVamSurGameMode::AddWaveManagerToGame()
 {
-	return ToroidalWorldSystem;
+	// GameMode does not need to check if the world is valid
+	UWorld* World = GetWorld();
+
+	check(WaveManagerClass);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Instigator = GetInstigator();
+	WaveManager = World->SpawnActor<AWaveManager>(WaveManagerClass, SpawnParams);
+
+	check(WaveManager);
+	AMyVamSurGameState* MyGameState = GetGameState<AMyVamSurGameState>();
+	check(MyGameState);
+	MyGameState->SetWaveManager(WaveManager);
 }

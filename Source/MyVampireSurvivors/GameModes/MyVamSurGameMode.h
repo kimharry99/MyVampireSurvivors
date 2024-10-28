@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Waves/WaveManager.h"
 #include "MyVamSurGameMode.generated.h"
 
 class UToroidalWorldSystem;
@@ -21,7 +22,7 @@ public:
 
 protected:
 	//~AGameModeBase interface
-	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+	virtual void PreInitializeComponents() override;
 	//~End of AGameModeBase interface
 
 public:
@@ -34,8 +35,21 @@ private:
 	UPROPERTY()
 	TObjectPtr<UToroidalWorldSystem> ToroidalWorldSystem;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Wave")
+	TSubclassOf<AWaveManager> WaveManagerClass;
+
+	UPROPERTY()
+	TObjectPtr<AWaveManager> WaveManager;
+
+private:
 	/**
 	 * Add the toroidal world system to the game.
 	 */
 	void AddToroidalWorldSystemToGame();
+
+	/**
+	 * Add the wave manager to the game.
+	 * Spawn the wave manager actor.
+	 */
+	void AddWaveManagerToGame();
 };
