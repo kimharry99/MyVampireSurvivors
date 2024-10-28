@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "WaveList.h"
-#include "WaveLoaderComponent.h"
-#include "WaveTriggerComponent.h"
 #include "WaveManager.generated.h"
+
+class UWaveList;
+class UWaveLoaderComponent;
+class UWaveTriggerComponent;
 
 /**
  * WaveManager handles ordered waves.
@@ -29,6 +30,10 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	//~End of AActor Interface
+
+public:
+	int GetCurrentWaveNumber() const;
+	float GetTimeUntilNextWave() const;
 
 private:
 	/** Wave data loader from a data table */
