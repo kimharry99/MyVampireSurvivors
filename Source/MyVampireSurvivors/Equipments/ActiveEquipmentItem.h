@@ -3,19 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Equipments/Equipment.h"
-#include "ActiveEquipment.generated.h"
+#include "Equipments/EquipmentItem.h"
+#include "ActiveEquipmentItem.generated.h"
 
 /**
  * The equipment which has cooldown.
  */
 UCLASS()
-class MYVAMPIRESURVIVORS_API AActiveEquipment : public AEquipment
+class MYVAMPIRESURVIVORS_API AActiveEquipmentItem : public AEquipmentItem
 {
 	GENERATED_BODY()
 
 public:
-	AActiveEquipment();
+	AActiveEquipmentItem();
 
 protected:
 	//~AActor interface

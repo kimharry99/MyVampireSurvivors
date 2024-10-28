@@ -6,15 +6,13 @@
 #include "Equipments/EquipmentInventory.h"
 #include "PlayerCharacter.generated.h"
 
-class UCameraComponent;
+class AEquipmentItem;
+class UMyVamSurCameraComponent;
+class UEquipmentComponent;
+class UPlayerPawnComponent;
 class USpringArmComponent;
 class UToroidalActorComponent;
 class UToroidalPlayerComponent;
-class UInputComponent;
-class UInputMappingContext;
-class UInputAction;
-class AEquipment;
-struct FInputActionValue;
 
 /**
  * Player character class.
@@ -34,25 +32,21 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 	//~End of AActor interface
 
-	//~ACharacter interface
-	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-	//~End of ACharacter interface
-
 private:
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputMappingContext> IMC_TopDownChar = nullptr;
+	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USpringArmComponent> CameraBoom;
 
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> IA_Move = nullptr;
+	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UMyVamSurCameraComponent> FollowCamera;
 
-	void Move(const FInputActionValue& Value);
+	UPROPERTY(VisibleAnywhere, Category="Player")
+	TObjectPtr<UPlayerPawnComponent> PlayerPawn;
 
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FVector2D Directionality = FVector2D::ZeroVector;
-
-private:
 	UPROPERTY(VisibleAnywhere, Category="Torus")
-	TObjectPtr<UToroidalPlayerComponent> ToroidalPlayerComponent;
+	TObjectPtr<UToroidalPlayerComponent> ToroidalPlayer;
+
+	UPROPERTY(EditDefaultsOnly, Category="Player|Equipment")
+	TObjectPtr<UEquipmentComponent> Inventory;
 
 public:
 	/**
@@ -60,12 +54,20 @@ public:
 	 */
 	void AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component);
 
-private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<USpringArmComponent> CameraBoom;
+public:
+	/**
+	 * Use all enable equipments in the inventory.
+	 */
+	void UseAllEnableEquipments();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UCameraComponent> FollowCamera;
+	/**
+	 * Equip a equipment to the player character.
+	 * Add the equipment to the inventory.
+	 * The equipment actor will be attached to the player character.
+	 * 
+	 * @param Equipment Equipment to equip.
+	 */
+	void EquipEquipment(AEquipmentItem* Equipment);
 
 public:
 	/**
@@ -74,27 +76,4 @@ public:
 	 * @return The view box of the camera.
 	 */
 	const FBox GetViewBox() const;
-
-
-	// FIXME: Remove this code after testing
-	//~Begin of testing code
-public:
-	UPROPERTY(EditAnywhere, Category = "Testing")
-	TArray<TSubclassOf<AEquipment>> Equipments;
-	//~End of testing code
-
-private:
-	/** Inventory of equipments that the player character has. */
-	UPROPERTY()
-	FEquipmentInventory Inventory;
-
-public:
-	/**
-	 * Equip a equipment to the player character.
-	 * Add the equipment to the inventory.
-	 * The equipment actor will be attached to the player character.
-	 * 
-	 * @param Equipment Equipment to equip.
-	 */
-	void EquipEquipment(AEquipment* Equipment); 
 };

@@ -6,16 +6,15 @@
 #include "ToroidalMaps/ToroidalWorldSystem.h"
 #include "Players/PlayerCharacter.h"
 
-UToroidalNPAComponent::UToroidalNPAComponent()
-{
-
-}
-
 void UToroidalNPAComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	UWorld* World = GetWorld();
+	check(World);
+	APlayerController* FirstPlayer = World->GetFirstPlayerController();
+	check(FirstPlayer);
+	Player = FirstPlayer->GetPawn<APlayerCharacter>();
 	check(Player);
 }
 
@@ -40,14 +39,24 @@ void UToroidalNPAComponent::RepositionActor()
 	}
 }
 
+FBox UToroidalNPAComponent::CalculatePlayerSight(const APlayerCharacter* PlayerCharacter) const
+{
+	if(PlayerCharacter == nullptr)
+	{
+		return FBox();
+	}
+
+	return PlayerCharacter->GetViewBox();
+}
+
 void UToroidalNPAComponent::RepositionActorUsingPlayerAsOrigin()
 {
 	if (AActor* Owner = GetOwner())
 	{
 		FVector DisplacementToPlayer = GetToroidalWorldSystem()->CalculateDisplacement(Owner->GetActorLocation(), Player->GetActorLocation());
-				
+
 		// NewActorLocation can be outside the toroidal map.
-		FVector NewActorLocation = Player->GetActorLocation() - DisplacementToPlayer;
+		FVector NewActorLocation = Player->GetActorLocation() - DisplacementToPlayer; // Player + (Actor - Player)
 		Owner->SetActorLocation(NewActorLocation, false, nullptr, TeleportType);
 	}
 }
@@ -56,7 +65,7 @@ bool UToroidalNPAComponent::IsActorInPlayerSight() const
 {
 	if(AActor* Owner = GetOwner())
 	{
-		FBox ViewBox = Player->GetViewBox();
+		FBox ViewBox = CalculatePlayerSight(Player);
 		return ViewBox.IsInsideXY(Owner->GetActorLocation());
 	}
 	return false;
@@ -66,7 +75,10 @@ bool UToroidalNPAComponent::IsActorInToroidalPlayerSight() const
 {
 	if (AActor* Owner = GetOwner())
 	{
-		return GetToroidalWorldSystem()->IsInsideBoxOnTorus(Owner->GetActorLocation(), Player->GetViewBox());
+		return GetToroidalWorldSystem()->IsInsideBoxOnTorus(
+			Owner->GetActorLocation(),
+			CalculatePlayerSight(Player)
+		);
 	}
 	return false;
 }

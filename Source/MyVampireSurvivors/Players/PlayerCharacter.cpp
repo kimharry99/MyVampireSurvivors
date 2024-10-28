@@ -4,19 +4,18 @@
 #include "PlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
+#include "Camera/MyVamSurCameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
-#include "InputActionValue.h"
 #include "PaperFlipbookComponent.h"
+#include "Players/PlayerPawnComponent.h"
 #include "ToroidalMaps/ToroidalPlayerComponent.h"
-#include "Equipments/Equipment.h"
-#include "Weapons/WeaponInterface.h"
+#include "Equipments/EquipmentComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ToroidalActor"));
 
@@ -28,112 +27,55 @@ APlayerCharacter::APlayerCharacter()
 	CameraBoom->SetRelativeRotation(FRotator(-90.0f, -90.0f, 0.0f));
 	CameraBoom->bDoCollisionTest = false;
 
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	FollowCamera = CreateDefaultSubobject<UMyVamSurCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->SetProjectionMode(ECameraProjectionMode::Orthographic);
 	FollowCamera->SetOrthoWidth(1024.0f);
 
-	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+	PlayerPawn = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawn"));
 
-	ToroidalPlayerComponent = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayerComponent"));
+	ToroidalPlayer = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayer"));
+
+	Inventory = CreateDefaultSubobject<UEquipmentComponent>(TEXT("Inventory"));
 }
 
 void APlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	ToroidalPlayerComponent->AddTickPrerequisiteComponent(GetCharacterMovement());
+	ToroidalPlayer->AddTickPrerequisiteComponent(GetCharacterMovement());
+	FollowCamera->AddTickPrerequisiteComponent(ToroidalPlayer);
 }
 
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// FIXME: Remove this code after testing
-	//~Testing code
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.Instigator = this;
-
-	for (const TSubclassOf<AEquipment>& EquipmentClass : Equipments)
-	{
-		check(EquipmentClass);
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		AEquipment* TestingEquipment = GetWorld()->SpawnActor<AEquipment>(EquipmentClass, GetActorLocation(), FRotator::ZeroRotator, SpawnParams);
-		check(TestingEquipment);
-		EquipEquipment(TestingEquipment);
-	}
-	//~End of testing code
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	Inventory.UseAllEnableEquipments();
-}
-
-void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	check(EnhancedInputComponent);
-	EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-	
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	check(PlayerController);
-	UEnhancedInputLocalPlayerSubsystem* EnhancedSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
-	check(EnhancedSubsystem);
-	EnhancedSubsystem->AddMappingContext(IMC_TopDownChar, 1);
 }
 
 const FBox APlayerCharacter::GetViewBox() const
 {
-	const float OrthoWidth = FollowCamera->OrthoWidth;
-	const float AspectRatio = FollowCamera->AspectRatio;
-
-	float HalfHeight = OrthoWidth / (2.0f * AspectRatio);
-	float HalfWidth = OrthoWidth / 2.0f;
-
-	const FVector Right = GetActorForwardVector();
-	const FVector Up = GetActorRightVector();
-	const FVector TopRight = (Right * HalfWidth) + (Up * HalfHeight) + (GetActorUpVector() * 100.0f); // Define z range of the box to +-100.0f
-	const FVector BottomLeft = -(Right * HalfWidth) - (Up * HalfHeight) - (GetActorUpVector() * 100.0f);
-
-	return FBox(BottomLeft + GetActorLocation(), TopRight + GetActorLocation());
-}
-
-void APlayerCharacter::Move(const FInputActionValue& Value)
-{
-	if (Controller)
-	{
-		const FVector2D Direction = Value.Get<FVector2D>();
-		if (Direction.SizeSquared() > 0.0f)
-		{
-			const FVector RightDirection = FVector::ForwardVector * Direction.X;
-			const FVector UpDirection = -FVector::RightVector * Direction.Y;
-
-			AddMovementInput(RightDirection + UpDirection);
-
-			Directionality = Direction;
-		}
-	}
+	return FollowCamera->GetWorldViewBox();
 }
 
 void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component)
 {
 	if (Component)
 	{
-		Component->AddTickPrerequisiteComponent(ToroidalPlayerComponent);
+		Component->AddTickPrerequisiteComponent(FollowCamera);
 	}
 }
 
-void APlayerCharacter::EquipEquipment(AEquipment* Equipment)
+void APlayerCharacter::EquipEquipment(AEquipmentItem* Equipment)
 {
-	check(Equipment);
-	check(GetSprite());
-	Inventory.AddEquipment(Equipment);
-	FName SocketName(TEXT("EquipmentSocket"));
-	Equipment->AttachToComponent(GetSprite(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
+	Inventory->AddEquipmentItem(Equipment);
+}
+
+void APlayerCharacter::UseAllEnableEquipments()
+{
+	Inventory->UseAllEnableEquipments();
 }

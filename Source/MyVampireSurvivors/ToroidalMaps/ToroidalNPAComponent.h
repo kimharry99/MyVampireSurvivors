@@ -16,9 +16,6 @@ class MYVAMPIRESURVIVORS_API UToroidalNPAComponent : public UToroidalActorCompon
 {
 	GENERATED_BODY()
 
-public:
-	UToroidalNPAComponent();
-
 protected:
 	//~UActorComponent interface
 	virtual void BeginPlay() override;
@@ -32,6 +29,8 @@ private:
 	/** Cached player character. */
 	UPROPERTY()
 	TObjectPtr<const APlayerCharacter> Player;
+
+	FBox CalculatePlayerSight(const APlayerCharacter* PlayerCharacter) const;
 
 	/**
 	 * Retrns true, if the actor is in the player's sight.

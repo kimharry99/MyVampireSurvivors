@@ -6,6 +6,8 @@
 #include "PaperZDCharacter.h"
 #include "MyVamSurCharacter.generated.h"
 
+class UHealthComponent;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharacterDied);
 
 /**
@@ -20,18 +22,16 @@ class MYVAMPIRESURVIVORS_API AMyVamSurCharacter : public APaperZDCharacter
 public:
 	AMyVamSurCharacter();
 
-private:
-	/** Character HealthPoint, when it reaches 0, the character dies. */
-	UPROPERTY(EditAnywhere, Category = "MyVamSurCharacter", meta = (AllowPrivateAccess = "true"))
-	float HealthPoint = 0;
-
 protected:
-	/**
-	 * Sets the character's HealthPoint.
-	 * 
-	 * @param NewHealthPoint The new HealthPoint value.
-	 */
-	void SetHealthPoint(float NewHealthPoint);
+	//~AActor interface
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	//~End of AActor interface
+
+private:
+	/** The character's HealthComponent. */
+	UPROPERTY(EditDefaultsOnly, Category="Character|Health")
+	TObjectPtr<UHealthComponent> Health;
 
 public:
 	/**
@@ -42,11 +42,6 @@ public:
 	 */
 	virtual void ReceiveAttack(float DamageAmount, AController* Attacker);
 
-private:
-	//~AActor interface
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-	//~End of AActor interface
-
 public:
 	/** Called when the character dies. */
 	FOnCharacterDied OnCharacterDied;
@@ -55,5 +50,6 @@ protected:
 	/**
 	 * Handles the character's death.
 	 */
-	virtual void Die();
+	UFUNCTION()
+	virtual void StartDeath();
 };

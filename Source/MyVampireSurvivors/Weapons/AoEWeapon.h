@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/BoxComponent.h"
 #include "PaperFlipbookComponent.h"
-#include "Equipments/ActiveEquipment.h"
+#include "Equipments/ActiveEquipmentItem.h"
 #include "WeaponInterface.h"
 #include "AoEWeapon.generated.h"
 
@@ -13,7 +13,7 @@
  * Attack all enemies in a box-shaped area
  */
 UCLASS()
-class MYVAMPIRESURVIVORS_API AAoEWeapon : public AActiveEquipment, public IWeaponInterface
+class MYVAMPIRESURVIVORS_API AAoEWeapon : public AActiveEquipmentItem, public IWeaponInterface
 {
 	GENERATED_BODY()
 

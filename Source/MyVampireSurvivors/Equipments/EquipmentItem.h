@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Equipment.generated.h"
+#include "EquipmentItem.generated.h"
 
 /**
  * Base class for equipments.
  */
 UCLASS(Abstract)
-class MYVAMPIRESURVIVORS_API AEquipment : public AActor
+class MYVAMPIRESURVIVORS_API AEquipmentItem : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	AEquipment();
+	AEquipmentItem();
 
 public:
 	/**

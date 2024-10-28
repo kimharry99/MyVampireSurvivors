@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Equipment.h"
 #include "EquipmentInventory.generated.h"
+
+class AEquipmentItem;
 
 /**
  * Container of equipments for the player.
@@ -18,15 +19,20 @@ public:
 	/**
 	 * Add a equipment to inventory.
 	 */
-	void AddEquipment(AEquipment* Equipment);
+	void AddEquipment(AEquipmentItem* Equipment);
+
+	/**
+	 * Returns all enable equipments in inventory.
+	 */
+	TArray<AEquipmentItem*> GetAllEnableEquipments() const;
 
 	/**
 	 * Use all usable equipments in inventory.
 	 */
-	void UseAllEnableEquipments();
+	void UseAllEnableEquipments_Deprecated();
 
 private:
 	/** The array of equipments. */
 	UPROPERTY()
-	TArray<TObjectPtr<AEquipment>> Equipments;
+	TArray<TObjectPtr<AEquipmentItem>> Equipments;
 };

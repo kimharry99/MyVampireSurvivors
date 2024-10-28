@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Equipments/ActiveEquipment.h"
+#include "Equipments/ActiveEquipmentItem.h"
 #include "Weapons/ProjectileWeapon.h"
 #include "ProjectileLauncher.generated.h"
 
@@ -13,7 +13,7 @@
  * Projectile launcher is a equipment that can launch a projectile.
  */
 UCLASS(Abstract)
-class MYVAMPIRESURVIVORS_API AProjectileLauncher : public AActiveEquipment
+class MYVAMPIRESURVIVORS_API AProjectileLauncher : public AActiveEquipmentItem
 {
 	GENERATED_BODY()
 

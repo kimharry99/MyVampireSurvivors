@@ -2,15 +2,29 @@
 
 
 #include "Equipments/EquipmentInventory.h"
+#include "Equipments/EquipmentItem.h"
 
-void FEquipmentInventory::AddEquipment(AEquipment* Equipment)
+void FEquipmentInventory::AddEquipment(AEquipmentItem* Equipment)
 {
 	Equipments.Add(Equipment);
 }
 
-void FEquipmentInventory::UseAllEnableEquipments()
+TArray<AEquipmentItem*> FEquipmentInventory::GetAllEnableEquipments() const
 {
-	for (AEquipment* Equipment : Equipments)
+	TArray<AEquipmentItem*> Results;
+	for (AEquipmentItem* Equipment : Equipments)
+	{
+		if (Equipment->IsUsable())
+		{
+			Results.Add(Equipment);
+		}
+	}
+	return Results;
+}
+
+void FEquipmentInventory::UseAllEnableEquipments_Deprecated()
+{
+	for (AEquipmentItem* Equipment : Equipments)
 	{
 		if (Equipment->IsUsable())
 		{
