@@ -21,13 +21,17 @@ void AChasingEnemyAI::Tick(float DeltaTime)
 
 void AChasingEnemyAI::ChasePlayer()
 {
-	if (PlayerPawn)
+	if (PlayerPawn == nullptr)
 	{
-		const FVector VirtualDestination = CalculateVirtualDestination(PlayerPawn->GetActorLocation());
-		const float AcceptanceRadius = 5.0f;
-		const bool bStopOnOverlap = true;
-		const bool bUsePathfinding = false;
-		MoveToLocation(VirtualDestination, AcceptanceRadius, bStopOnOverlap, bUsePathfinding);
+		return;
+	}
+
+	if(APawn* ControlledPawn = GetPawn())
+	{
+		const FVector Destination = PlayerPawn->GetActorLocation();
+		const FVector EnemyPosition = ControlledPawn->GetActorLocation();
+		const FVector ToroidalDisplacement = ToroidalWorldSystem->CalculateDisplacement(EnemyPosition, Destination);
+		ControlledPawn->AddMovementInput(ToroidalDisplacement);
 	}
 }
 
