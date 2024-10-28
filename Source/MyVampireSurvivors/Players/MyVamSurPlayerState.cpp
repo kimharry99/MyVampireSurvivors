@@ -2,7 +2,7 @@
 
 
 #include "Players/MyVamSurPlayerState.h"
-#include "Players/HealthData.h"
+#include "Characters/HealthData.h"
 
 AMyVamSurPlayerState::AMyVamSurPlayerState()
 {

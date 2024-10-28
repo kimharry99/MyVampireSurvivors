@@ -5,7 +5,7 @@
 #include "Engine/DamageEvents.h"
 #include "Components/CapsuleComponent.h"
 #include "Physics/MyVamSurCollisionChannels.h"
-#include "Players/HealthComponent.h"
+#include "Characters/HealthComponent.h"
 
 AMyVamSurCharacter::AMyVamSurCharacter()
 {

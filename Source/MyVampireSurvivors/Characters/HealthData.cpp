@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Players/HealthData.h"
+#include "Characters/HealthData.h"
 
 void UHealthData::InitializeHealth(float MaxHealthValue)
 {

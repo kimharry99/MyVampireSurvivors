@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Players/HealthComponent.h"
-#include "Players/HealthData.h"
+#include "Characters/HealthComponent.h"
+#include "Characters/HealthData.h"
 #include "Players/MyVamSurPlayerState.h"
 
 class APlayerController;
