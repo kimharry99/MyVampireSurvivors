@@ -7,7 +7,7 @@
 #include "PlayerCharacter.generated.h"
 
 class AEquipmentItem;
-class UCameraComponent;
+class UMyVamSurCameraComponent;
 class UEquipmentComponent;
 class UPlayerPawnComponent;
 class USpringArmComponent;
@@ -25,13 +25,6 @@ class MYVAMPIRESURVIVORS_API APlayerCharacter : public AMyVamSurCharacter
 public:
 	APlayerCharacter();
 
-private:
-	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<USpringArmComponent> CameraBoom;
-
-	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UCameraComponent> FollowCamera;
-
 protected:
 	//~AActor interface
 	virtual void BeginPlay() override;
@@ -40,6 +33,12 @@ protected:
 	//~End of AActor interface
 
 private:
+	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USpringArmComponent> CameraBoom;
+
+	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UMyVamSurCameraComponent> FollowCamera;
+
 	UPROPERTY(VisibleAnywhere, Category="Player")
 	TObjectPtr<UPlayerPawnComponent> PlayerPawn;
 
@@ -77,5 +76,4 @@ public:
 	 * @return The view box of the camera.
 	 */
 	const FBox GetViewBox() const;
-
 };

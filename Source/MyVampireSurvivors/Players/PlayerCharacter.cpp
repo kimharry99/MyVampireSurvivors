@@ -4,7 +4,7 @@
 #include "PlayerCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
+#include "Camera/MyVamSurCameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PaperFlipbookComponent.h"
 #include "Players/PlayerPawnComponent.h"
@@ -27,7 +27,7 @@ APlayerCharacter::APlayerCharacter()
 	CameraBoom->SetRelativeRotation(FRotator(-90.0f, -90.0f, 0.0f));
 	CameraBoom->bDoCollisionTest = false;
 
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	FollowCamera = CreateDefaultSubobject<UMyVamSurCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->SetProjectionMode(ECameraProjectionMode::Orthographic);
 	FollowCamera->SetOrthoWidth(1024.0f);
@@ -44,6 +44,7 @@ void APlayerCharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	ToroidalPlayer->AddTickPrerequisiteComponent(GetCharacterMovement());
+	FollowCamera->AddTickPrerequisiteComponent(ToroidalPlayer);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -58,25 +59,14 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 const FBox APlayerCharacter::GetViewBox() const
 {
-	const float OrthoWidth = FollowCamera->OrthoWidth;
-	const float AspectRatio = FollowCamera->AspectRatio;
-
-	float HalfHeight = OrthoWidth / (2.0f * AspectRatio);
-	float HalfWidth = OrthoWidth / 2.0f;
-
-	const FVector Right = GetActorForwardVector();
-	const FVector Up = GetActorRightVector();
-	const FVector TopRight = (Right * HalfWidth) + (Up * HalfHeight) + (GetActorUpVector() * 100.0f); // Define z range of the box to +-100.0f
-	const FVector BottomLeft = -(Right * HalfWidth) - (Up * HalfHeight) - (GetActorUpVector() * 100.0f);
-
-	return FBox(BottomLeft + GetActorLocation(), TopRight + GetActorLocation());
+	return FollowCamera->GetWorldViewBox();
 }
 
 void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component)
 {
 	if (Component)
 	{
-		Component->AddTickPrerequisiteComponent(ToroidalPlayer);
+		Component->AddTickPrerequisiteComponent(FollowCamera);
 	}
 }
 
