@@ -38,6 +38,16 @@ void UHealthComponent::Initialize()
 	HealthData->OnOutOfHealth.AddDynamic(this, &UHealthComponent::HandleOutOfHealth);
 }
 
+void UHealthComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if (HealthData)
+	{
+		HealthData->OnOutOfHealth.RemoveDynamic(this, &UHealthComponent::HandleOutOfHealth);
+	}
+}
+
 void UHealthComponent::TakeDamage(float Damage)
 {
 	if (HealthData)

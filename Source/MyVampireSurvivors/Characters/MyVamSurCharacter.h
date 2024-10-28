@@ -22,6 +22,12 @@ class MYVAMPIRESURVIVORS_API AMyVamSurCharacter : public APaperZDCharacter
 public:
 	AMyVamSurCharacter();
 
+protected:
+	//~AActor interface
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	//~End of AActor interface
+
 private:
 	/** The character's HealthComponent. */
 	UPROPERTY(EditDefaultsOnly, Category="Character|Health")
@@ -35,11 +41,6 @@ public:
 	 * @param Attacker The Controller that attacks the character.
 	 */
 	virtual void ReceiveAttack(float DamageAmount, AController* Attacker);
-
-private:
-	//~AActor interface
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-	//~End of AActor interface
 
 public:
 	/** Called when the character dies. */

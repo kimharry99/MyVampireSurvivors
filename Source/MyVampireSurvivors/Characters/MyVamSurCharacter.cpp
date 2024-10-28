@@ -17,6 +17,13 @@ AMyVamSurCharacter::AMyVamSurCharacter()
 	Health->OnDeathStarted.AddDynamic(this, &AMyVamSurCharacter::StartDeath);
 }
 
+void AMyVamSurCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	Health->OnDeathStarted.RemoveDynamic(this, &AMyVamSurCharacter::StartDeath);
+}
+
 void AMyVamSurCharacter::ReceiveAttack(float DamageAmount, AController* Attacker)
 {
 	FDamageEvent DamageEvent;
