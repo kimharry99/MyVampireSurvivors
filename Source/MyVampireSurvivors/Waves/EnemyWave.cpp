@@ -3,41 +3,64 @@
 
 #include "EnemyWave.h"
 #include "Enemies/EnemySpawnRecord.h"
+#include "GameModes/MyVamSurGameMode.h"
+#include "Waves/EnemyWaveDataAsset.h"
 
-void UEnemyWave::Trigger()
+void AEnemyWave::BeginPlay()
 {
-	RemainEnemiesCount = 0;
+	Super::BeginPlay();
+
+	UWorld* World = GetWorld();
+	check(World);
+
+	AMyVamSurGameMode* GameMode = World->GetAuthGameMode<AMyVamSurGameMode>();
+	check(GameMode);
+
+	EnemySpawner = GameMode->GetEnemySpawner();
+}
+
+void AEnemyWave::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	for (AEnemy* SpawnedEnemy : SpawnedEnemies)
+	{
+		if (SpawnedEnemy)
+		{
+			SpawnedEnemy->OnEnemyDied.RemoveAll(this);
+		}
+	}
+
+	Super::EndPlay(EndPlayReason);
+}
+
+void AEnemyWave::InitWaveData(const UWaveDataAsset* InWaveDataAsset)
+{
+	if (InWaveDataAsset->IsA(UEnemyWaveDataAsset::StaticClass()))
+	{
+		EnemyWaveDataAsset = Cast<const UEnemyWaveDataAsset>(InWaveDataAsset);
+	}
+}
+
+void AEnemyWave::Trigger()
+{
 	for (const FEnemySpawnRecord& EnemySpawnRecord : EnemyWaveDataAsset->GetSpawningEnemyGroup())
 	{
 		for (int i = 0; i < EnemySpawnRecord.EnemyCount; ++i)
 		{
 			AEnemy* SpawnedEnemy = EnemySpawner->SpawnEnemy(EnemySpawnRecord.EnemyClass);
-			SpawnedEnemy->OnCharacterDied.AddDynamic(this, &ThisClass::PostSpawnedEnemyDie);
-
+			SpawnedEnemy->OnEnemyDied.AddDynamic(this, &ThisClass::HandleSpawnedEnemyDie);
 			SpawnedEnemies.Add(SpawnedEnemy);
-			RemainEnemiesCount++;
 		}
 	}
 }
 
-void UEnemyWave::BeginDestroy()
+void AEnemyWave::HandleSpawnedEnemyDie(AEnemy* DiedEnemy)
 {
-	Super::BeginDestroy();
-
-	for (AEnemy* SpawnedEnemy : SpawnedEnemies)
+	if (SpawnedEnemies.Contains(DiedEnemy))
 	{
-		if (SpawnedEnemy)
-		{
-			SpawnedEnemy->OnCharacterDied.RemoveAll(this);
-		}
+		SpawnedEnemies.Remove(DiedEnemy);
 	}
-}
 
-void UEnemyWave::PostSpawnedEnemyDie()
-{
-	RemainEnemiesCount--;
-	check(RemainEnemiesCount >= 0);
-	if (RemainEnemiesCount == 0)
+	if (SpawnedEnemies.Num() == 0)
 	{
 		ClearWave();
 	}

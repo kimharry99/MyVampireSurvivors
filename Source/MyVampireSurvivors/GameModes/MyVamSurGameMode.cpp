@@ -3,6 +3,7 @@
 
 #include "MyVamSurGameMode.h"
 #include "EngineUtils.h"
+#include "Enemies/EnemySpawner.h"
 #include "GameModes/MyVamSurGameState.h"
 #include "Players/PlayerCharacter.h"
 #include "Players/MyVamSurPlayerState.h"
@@ -23,12 +24,8 @@ void AMyVamSurGameMode::PreInitializeComponents()
 	Super::PreInitializeComponents();
 
 	AddToroidalWorldSystemToGame();
+	AddEnemySpawnerToGame();
 	AddWaveManagerToGame();
-}
-
-UToroidalWorldSystem* AMyVamSurGameMode::GetToroidalWorldSystem() const
-{
-	return ToroidalWorldSystem;
 }
 
 void AMyVamSurGameMode::AddToroidalWorldSystemToGame()
@@ -44,6 +41,16 @@ void AMyVamSurGameMode::AddToroidalWorldSystemToGame()
 	}
 }
 
+void AMyVamSurGameMode::AddEnemySpawnerToGame()
+{
+	// GameMode does not need to check if the world is valid
+	UWorld* World = GetWorld();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Instigator = GetInstigator();
+	EnemySpawner = World->SpawnActor<AEnemySpawner>(SpawnParams);
+}
+
 void AMyVamSurGameMode::AddWaveManagerToGame()
 {
 	// GameMode does not need to check if the world is valid
@@ -51,6 +58,7 @@ void AMyVamSurGameMode::AddWaveManagerToGame()
 
 	check(WaveManagerClass);
 	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
 	SpawnParams.Instigator = GetInstigator();
 	WaveManager = World->SpawnActor<AWaveManager>(WaveManagerClass, SpawnParams);
 
@@ -58,4 +66,14 @@ void AMyVamSurGameMode::AddWaveManagerToGame()
 	AMyVamSurGameState* MyGameState = GetGameState<AMyVamSurGameState>();
 	check(MyGameState);
 	MyGameState->SetWaveManager(WaveManager);
+}
+
+UToroidalWorldSystem* AMyVamSurGameMode::GetToroidalWorldSystem() const
+{
+	return ToroidalWorldSystem;
+}
+
+AEnemySpawner* AMyVamSurGameMode::GetEnemySpawner() const
+{
+	return EnemySpawner;
 }

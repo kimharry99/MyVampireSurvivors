@@ -6,47 +6,37 @@
 #include "Enemies/EnemySpawner.h"
 #include "Wave.h"
 #include "WaveFactory.h"
-#include "EnemyWaveDataAsset.h"
 #include "EnemyWave.generated.h"
 
-/**
- * 
- */
+class UEnemyWaveDataAsset;
+
 UCLASS()
-class MYVAMPIRESURVIVORS_API UEnemyWave : public UWave
+class MYVAMPIRESURVIVORS_API AEnemyWave : public AWave
 {
 	GENERATED_BODY()
 
 protected:
-	//~UWave interface
-	/** Spawn enemies based on enemy wave data asset. */
+	//~AActor interface
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	//~End of AActor interface
+
+public:
+	virtual void InitWaveData(const UWaveDataAsset* InWaveDataAsset) override;
 	virtual void Trigger() override;
-	//~End of UWave interface
-	
-	//~UObject interface
-	virtual void BeginDestroy() override;
-	//~End of UObject interface
 
 private:
-	friend UWaveFactory;
-
-	/** Enemy wave data asset */
 	UPROPERTY()
 	TObjectPtr<const UEnemyWaveDataAsset> EnemyWaveDataAsset;
 
-	/** Enemy spawner to spawn enemies */
 	UPROPERTY()
 	TObjectPtr<AEnemySpawner> EnemySpawner;
 
+private:
 	UPROPERTY()
 	TArray<TObjectPtr<AEnemy>> SpawnedEnemies;
 
-	/** The number of remain enemies spawned by the enemy wave. */
-	int RemainEnemiesCount = 0;
-
-	/**
-	 * Post spawned enemy death event handler.
-	 */
+private:
 	UFUNCTION()
-	void PostSpawnedEnemyDie();
+	void HandleSpawnedEnemyDie(AEnemy* DiedEnemy);
 };

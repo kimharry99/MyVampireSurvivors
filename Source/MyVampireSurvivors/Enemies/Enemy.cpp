@@ -48,5 +48,7 @@ void AEnemy::BeginPlay()
 void AEnemy::StartDeath()
 {
 	Super::StartDeath();
+
+	OnEnemyDied.Broadcast(this);
 	Destroy();
 }

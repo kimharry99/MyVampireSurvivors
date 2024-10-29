@@ -2,52 +2,138 @@
 
 
 #include "WaveManager.h"
-#include "Waves/WaveList.h"
-#include "Waves/WaveLoaderComponent.h"
-#include "Waves/WaveTriggerComponent.h"
+#include "Waves/Wave.h"
+#include "Waves/WaveDataAsset.h"
+#include "Waves/WaveFactory.h"
 #include "MyVamSurLogChannels.h"
 
-// Sets default values
-AWaveManager::AWaveManager()
+void AWaveManager::PostInitializeComponents()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	Super::PostInitializeComponents();
 
-	WaveLoader = CreateDefaultSubobject<UWaveLoaderComponent>(TEXT("WaveLoader"));
-	WaveTrigger = CreateDefaultSubobject<UWaveTriggerComponent>(TEXT("WaveTrigger"));
+	WaveFactory = NewObject<UWaveFactory>(this);
+	check(WaveFactory);
 }
 
-// Called when the game starts or when spawned
 void AWaveManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	WaveList = WaveLoader->LoadWavesFromDataTable(WaveDataTable);
-	WaveList->OnAllWavesCleared.AddDynamic(this, &ThisClass::HandleAllWavesCleared);
-
-	WaveTrigger->SetWaveList(WaveList);
-	WaveTrigger->StartWave();
+	CurrentWaveIndex = -1;
+	UpdateUpcomingWaveData();
+	TriggerUpcomingWave();
+	SetPeriodTimer();
 }
 
 void AWaveManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	WaveList->OnAllWavesCleared.RemoveAll(this);
+	if(UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(WavePeriodTimerHandle);
+	}
+
+	for (AWave* Wave : TriggeredWaves)
+	{
+		if (Wave)
+		{
+			Wave->OnWaveCleared.RemoveAll(this);
+		}
+	}
 }
 
 int AWaveManager::GetCurrentWaveNumber() const
 {
-	return WaveTrigger->GetCurrentWaveIndex();
+	return CurrentWaveIndex;
 }
 
 float AWaveManager::GetTimeUntilNextWave() const
 {
-	return WaveTrigger->GetTimeUntilNextWave();
+	if (UWorld* World = GetWorld())
+	{
+		if (World->GetTimerManager().IsTimerActive(WavePeriodTimerHandle))
+		{
+			return World->GetTimerManager().GetTimerRemaining(WavePeriodTimerHandle);
+		}
+	}
+	return -1.0f;
+}
+
+bool AWaveManager::IsAllWavesTriggered() const
+{
+	return CurrentWaveIndex >= WaveTable.Num();
+}
+
+void AWaveManager::TriggerUpcomingWave()
+{
+	if (UpcomingWaveData == nullptr)
+	{
+		return;
+	}
+
+	if (WaveFactory == nullptr)
+	{
+		UE_LOG(LogMyVamSur, Warning, TEXT("Wave factory is not set"));
+		return;
+	}
+
+	AWave* UpcomingWave = WaveFactory->CreateWave(UpcomingWaveData);
+	UpcomingWave->OnWaveCleared.AddDynamic(this, &ThisClass::HandleWaveClear);
+	UpcomingWave->Trigger();
+	TriggeredWaves.Add(UpcomingWave);
+}
+
+void AWaveManager::UpdateUpcomingWaveData()
+{
+	if(WaveTable.IsValidIndex(++CurrentWaveIndex))
+	{
+		UpcomingWaveData = WaveTable[CurrentWaveIndex];
+	}
+	else
+	{
+		UpcomingWaveData = nullptr;
+	}
+}
+
+void AWaveManager::SetPeriodTimer()
+{
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().SetTimer(WavePeriodTimerHandle, this, &ThisClass::PostPeriodTimerComplete, WavePeriod);
+	}
+}
+
+void AWaveManager::PostPeriodTimerComplete()
+{
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(WavePeriodTimerHandle);
+	}
+
+	if (!IsAllWavesTriggered())
+	{
+		TriggerUpcomingWave();
+		SetPeriodTimer();
+		UpdateUpcomingWaveData();
+	}
+}
+
+void AWaveManager::HandleWaveClear(AWave* ClearedWave)
+{
+	if (TriggeredWaves.Contains(ClearedWave))
+	{
+		TriggeredWaves.Remove(ClearedWave);
+	}
+
+	if (TriggeredWaves.Num() == 0 && IsAllWavesTriggered())
+	{
+		HandleAllWavesCleared();
+	}
 }
 
 void AWaveManager::HandleAllWavesCleared()
 {
-	// Game winning function
+	// Call game winning function
 	UE_LOG(LogMyVamSur, Warning, TEXT("You Win!"));
 }

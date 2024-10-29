@@ -6,12 +6,12 @@
 #include "GameFramework/Actor.h"
 #include "WaveManager.generated.h"
 
-class UWaveList;
-class UWaveLoaderComponent;
-class UWaveTriggerComponent;
+class AWave;
+class UWaveDataAsset;
+class UWaveFactory;
 
 /**
- * WaveManager handles ordered waves.
+ * WaveManager_Deprecated handles ordered waves.
  *
  * It triggers an initial wave when the game starts.
  * After a cooldown period in the wave has passed, the class will trigger the next wave.
@@ -20,13 +20,10 @@ UCLASS()
 class MYVAMPIRESURVIVORS_API AWaveManager : public AActor
 {
 	GENERATED_BODY()
-	
-public:
-	// Sets default values for this actor's properties
-	AWaveManager();
 
 protected:
 	//~AActor Interface
+	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	//~End of AActor Interface
@@ -36,27 +33,46 @@ public:
 	float GetTimeUntilNextWave() const;
 
 private:
-	/** Wave data loader from a data table */
-	UPROPERTY(EditDefaultsOnly, meta = (PrivateAllowAccess = "true"))
-	TObjectPtr<UWaveLoaderComponent> WaveLoader;
+	UPROPERTY()
+	TObjectPtr<UWaveFactory> WaveFactory;
 
-	/** This class triggers waves periodically. */
-	UPROPERTY(EditDefaultsOnly, meta = (PrivateAllowAccess = "true"))
-	TObjectPtr<UWaveTriggerComponent> WaveTrigger;
-
+private:
 	/**
 	 * A data table containing ordered enemy wave data.
 	 */
-	UPROPERTY(EditDefaultsOnly, meta = (PrivateAllowAccess = "true"))
-	TObjectPtr<UDataTable> WaveDataTable = nullptr;
-
-	UPROPERTY()
-	TObjectPtr<UWaveList> WaveList = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = "Wave", meta = (PrivateAllowAccess = "true"))
+	TArray<TObjectPtr<UWaveDataAsset>> WaveTable;
 
 	/**
-	 * Event handler for all waves cleared.
-	 * Call game winning function.
+	 * The period(sec) between enemy waves.
 	 */
+	UPROPERTY(EditAnywhere, Category = "Wave", meta = (AllowPrivateAccess = "true"))
+	float WavePeriod = 3.0f;
+
+	int CurrentWaveIndex = -1;
+
+	UPROPERTY()
+	TObjectPtr<UWaveDataAsset> UpcomingWaveData = nullptr;
+
+	UPROPERTY()
+	TArray<TObjectPtr<AWave>> TriggeredWaves;
+
+	FTimerHandle WavePeriodTimerHandle;
+
+private:
+	bool IsAllWavesTriggered() const;
+
+private:
+	void TriggerUpcomingWave();
+	void UpdateUpcomingWaveData();
+	void SetPeriodTimer();
+
 	UFUNCTION()
+	void PostPeriodTimerComplete();
+
+private:
+	UFUNCTION()
+	void HandleWaveClear(AWave* ClearedWave);
+
 	void HandleAllWavesCleared();
 };
