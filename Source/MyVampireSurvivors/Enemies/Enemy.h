@@ -2,11 +2,13 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Characters/MyVamSurCharacter.h"
 #include "Enemy.generated.h"
 
+class AEnemy;
 class UToroidalNPAComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDied, AEnemy*, DiedEnemy);
 
 /**
  * The base class for all enemies in the game.
@@ -30,6 +32,9 @@ protected:
 	//~AMyVamSurCharacter interface
 	virtual void StartDeath() override;
 	//~End of AMyVamSurCharacter interface
+
+public:
+	FOnEnemyDied OnEnemyDied;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category="Torus")

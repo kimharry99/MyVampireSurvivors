@@ -7,6 +7,7 @@
 #include "Waves/WaveManager.h"
 #include "MyVamSurGameMode.generated.h"
 
+class AEnemySpawner;
 class UToroidalWorldSystem;
 
 /**
@@ -31,9 +32,14 @@ public:
 	 */
 	UToroidalWorldSystem* GetToroidalWorldSystem() const;
 
+	AEnemySpawner* GetEnemySpawner() const;
+
 private:
 	UPROPERTY()
 	TObjectPtr<UToroidalWorldSystem> ToroidalWorldSystem;
+
+	UPROPERTY()
+	TObjectPtr<AEnemySpawner> EnemySpawner;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Wave")
 	TSubclassOf<AWaveManager> WaveManagerClass;
@@ -41,11 +47,14 @@ private:
 	UPROPERTY()
 	TObjectPtr<AWaveManager> WaveManager;
 
+
 private:
 	/**
 	 * Add the toroidal world system to the game.
 	 */
 	void AddToroidalWorldSystemToGame();
+
+	void AddEnemySpawnerToGame();
 
 	/**
 	 * Add the wave manager to the game.

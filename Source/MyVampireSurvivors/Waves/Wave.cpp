@@ -2,21 +2,22 @@
 
 
 #include "Wave.h"
+#include "Waves/WaveDataAsset.h"
 #include "MyVamSurLogChannels.h"
 
-void UWave::Trigger()
+void AWave::InitWaveData(const UWaveDataAsset* InWaveDataAsset)
 {
-
+	// Empty implementation
 }
 
-void UWave::ClearWave()
+void AWave::Trigger()
+{
+	// Empty implementation
+}
+
+void AWave::ClearWave()
 {
 	UE_LOG(LogMyVamSur, Warning, TEXT("Wave Cleared: %s"), *GetName());
-	OnWaveCleared.Broadcast();
-	PostWaveCleared();
-}
-
-void UWave::PostWaveCleared()
-{
-
+	OnWaveCleared.Broadcast(this);
+	Destroy();
 }

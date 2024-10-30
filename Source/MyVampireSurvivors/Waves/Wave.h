@@ -3,38 +3,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "GameFramework/Actor.h"
 #include "Wave.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWaveCleared);
+class AWave;
+class UWaveDataAsset;
 
-/**
- * Base class for wave.
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveCleared, AWave*, ClearedWave);
+
 UCLASS(Abstract)
-class MYVAMPIRESURVIVORS_API UWave : public UObject
+class MYVAMPIRESURVIVORS_API AWave : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	/**
-	 * Trigger the wave.
-	 */
+	virtual void InitWaveData(const UWaveDataAsset* InWaveDataAsset);
 	virtual void Trigger();
 
+public:
 	/** Delegate that is broadcasted when the wave is cleared. */
 	FOnWaveCleared OnWaveCleared;
 
 protected:
-	/**
-	 * Clear the wave.
-	 * Broadcast OnWaveCleared delegate.
-	 * Call PostWaveCleared function.
-	 */
 	virtual void ClearWave();
-
-	/**
-	 * Called when the wave is cleared.
-	 */
-	virtual void PostWaveCleared();
 };

@@ -3,28 +3,36 @@
 
 #include "WaveFactory.h"
 #include "MyVamSurLogChannels.h"
-#include "EnemyWave.h"
+#include "Waves/EnemyWave.h"
+#include "Waves/WaveDataAsset.h"
 
-void UWaveFactory::SetEnemySpawner(AEnemySpawner* InEnemySpawner)
+AWave* UWaveFactory::CreateWave(const UWaveDataAsset* WaveDataAsset) const
 {
-	EnemySpawner = InEnemySpawner;
-}
-
-UWave* UWaveFactory::CreateWave(const UWaveDataAsset* WaveDataAsset) const
-{
-	switch (WaveDataAsset->WaveType)
+	if (WaveDataAsset == nullptr)
 	{
-		case EWaveType::Enemy:
-		{
-			UEnemyWave* EnemyWave = NewObject<UEnemyWave>();
-			EnemyWave->EnemyWaveDataAsset = Cast<UEnemyWaveDataAsset>(WaveDataAsset);
-			EnemyWave->EnemySpawner = EnemySpawner;
-			return EnemyWave;
-		}
-		default:
-		{
-			UE_LOG(LogMyVamSur, Error, TEXT("Unknown wave type"));
-			return nullptr;
-		}
+		UE_LOG(LogMyVamSur, Error, TEXT("Input WaveDataAsset is nullptr"));
+		return nullptr;
 	}
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = Cast<AActor>(GetOuter());
+	SpawnParams.Instigator = nullptr;
+
+	if (UWorld* World = GetWorld())
+	{
+		AWave* Wave = nullptr;
+		switch (WaveDataAsset->WaveType)
+		{
+			case EWaveType::Enemy:
+				Wave = World->SpawnActor<AEnemyWave>(AEnemyWave::StaticClass(), SpawnParams);
+				Wave->InitWaveData(WaveDataAsset);
+				break;
+			default:
+				UE_LOG(LogMyVamSur, Error, TEXT("Unknown wave type"));
+				break;
+		}
+		return Wave;
+	}
+
+	return nullptr;
 }

@@ -20,6 +20,8 @@ void UMyVamSurCameraComponent::BeginPlay()
 
 void UMyVamSurCameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
 	UpdateViewBox();
 }
 
