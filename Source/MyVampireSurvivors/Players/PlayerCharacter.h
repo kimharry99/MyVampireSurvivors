@@ -4,13 +4,16 @@
 
 #include "Characters/MyVamSurCharacter.h"
 #include "Equipments/EquipmentInventory.h"
+#include "UI/PlayerCharacterWidget.h"
 #include "PlayerCharacter.generated.h"
 
-class AEquipmentItem;
-class UMyVamSurCameraComponent;
-class UEquipmentComponent;
-class UPlayerPawnComponent;
 class USpringArmComponent;
+class UWidgetComponent;
+
+class AEquipmentItem;
+class UEquipmentComponent;
+class UMyVamSurCameraComponent;
+class UPlayerPawnComponent;
 class UToroidalActorComponent;
 class UToroidalPlayerComponent;
 
@@ -38,6 +41,12 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UMyVamSurCameraComponent> FollowCamera;
+
+	UPROPERTY(EditDefaultsOnly, Category = UI, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UPlayerCharacterWidget> HPBarWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Category = UI, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UWidgetComponent> HPBarWidget;
 
 	UPROPERTY(VisibleAnywhere, Category="Player")
 	TObjectPtr<UPlayerPawnComponent> PlayerPawn;
