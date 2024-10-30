@@ -2,9 +2,12 @@
 
 
 #include "EnemyWave.h"
+#include "Enemies/Enemy.h"
+#include "Enemies/EnemySpawner.h"
 #include "Enemies/EnemySpawnRecord.h"
 #include "GameModes/MyVamSurGameMode.h"
 #include "Waves/EnemyWaveDataAsset.h"
+#include "Waves/WaveFactory.h"
 
 void AEnemyWave::BeginPlay()
 {

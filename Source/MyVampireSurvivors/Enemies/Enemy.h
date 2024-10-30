@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Characters/MyVamSurCharacter.h"
 #include "Enemy.generated.h"
 

@@ -2,13 +2,13 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Enemies/EnemySpawner.h"
 #include "Wave.h"
-#include "WaveFactory.h"
 #include "EnemyWave.generated.h"
 
+class AEnemy;
+class AEnemySpawner;
 class UEnemyWaveDataAsset;
+class UWaveDataAsset;
 
 UCLASS()
 class MYVAMPIRESURVIVORS_API AEnemyWave : public AWave

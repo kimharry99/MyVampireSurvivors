@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "WaveDataAsset.h"
-#include "Wave.h"
-#include "Enemies/EnemySpawner.h"
 #include "WaveFactory.generated.h"
+
+class AWave;
+class UWaveDataAsset;
 
 UCLASS()
 class MYVAMPIRESURVIVORS_API UWaveFactory : public UObject

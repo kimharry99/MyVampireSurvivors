@@ -3,7 +3,8 @@
 
 #include "WaveFactory.h"
 #include "MyVamSurLogChannels.h"
-#include "EnemyWave.h"
+#include "Waves/EnemyWave.h"
+#include "Waves/WaveDataAsset.h"
 
 AWave* UWaveFactory::CreateWave(const UWaveDataAsset* WaveDataAsset) const
 {
