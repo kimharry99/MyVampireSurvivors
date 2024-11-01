@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "Enemies/ChasingEnemyAI.h"
+#include "Items/PickableItem.h"
 #include "ToroidalMaps/ToroidalNPAComponent.h"
 
 AEnemy::AEnemy()
@@ -44,6 +45,27 @@ void AEnemy::StartDeath()
 {
 	Super::StartDeath();
 
+	SpawnDropItem();
 	OnEnemyDied.Broadcast(this);
 	Destroy();
+}
+
+void AEnemy::SpawnDropItem()
+{
+	if (DropItemClass == nullptr)
+	{
+		return;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		FVector SpawnLocation = GetActorLocation();
+		FRotator SpawnRotation = GetActorRotation();
+
+		World->SpawnActor<APickableItem>(DropItemClass, SpawnLocation, SpawnRotation, SpawnParams);
+	}
 }
