@@ -20,6 +20,9 @@ void AMyVamSurPlayerController::BeginPlay()
 	AGameStateBase* GameState = World->GetGameState();
 	check(GameState);
 	HUDWidget->BindGameState(GameState);
+
+	check(PlayerState);
+	HUDWidget->BindPlayerState(PlayerState);
 }
 
 void AMyVamSurPlayerController::PlayerTick(float DeltaSeconds)

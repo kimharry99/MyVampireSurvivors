@@ -7,4 +7,10 @@
 void UExpData::AddExp(int GainedExp)
 {
 	CurrentExp += GainedExp;
+	OnExpChanged.Broadcast();
+}
+
+float UExpData::GetExpRatio() const
+{
+	return (float)CurrentExp / (float)MaxExp;
 }

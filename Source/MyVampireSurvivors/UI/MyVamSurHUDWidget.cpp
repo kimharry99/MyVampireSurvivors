@@ -3,13 +3,19 @@
 
 #include "UI/MyVamSurHUDWidget.h"
 
+#include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 
 #include "GameModes/MyVamSurGameState.h"
+#include "Players/ExpData.h"
+#include "Players/MyVamSurPlayerState.h"
 
 void UMyVamSurHUDWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	PBExp = Cast<UProgressBar>(GetWidgetFromName(TEXT("PBExp")));
+	check(PBExp);
 
 	TextTime = Cast<UTextBlock>(GetWidgetFromName(TEXT("TextTime")));
 	check(TextTime);
@@ -20,6 +26,10 @@ void UMyVamSurHUDWidget::NativeDestruct()
 	if (MyVamSurGameState)
 	{
 		MyVamSurGameState->OnGameTimeChanged.RemoveAll(this);
+	}
+	if (MyVamSurPlayerState)
+	{
+		MyVamSurPlayerState->GetExpData()->OnExpChanged.RemoveAll(this);
 	}
 
 	Super::NativeDestruct();
@@ -40,6 +50,21 @@ void UMyVamSurHUDWidget::BindGameState(AGameStateBase* GameState)
 	}
 }
 
+void UMyVamSurHUDWidget::BindPlayerState(APlayerState* PlayerState)
+{
+	if (AMyVamSurPlayerState* NewMyVamsurPlayerState = Cast<AMyVamSurPlayerState>(PlayerState))
+	{
+		if (MyVamSurPlayerState)
+		{
+			MyVamSurPlayerState->GetExpData()->OnExpChanged.RemoveAll(this);
+		}
+
+		MyVamSurPlayerState = NewMyVamsurPlayerState;
+		MyVamSurPlayerState->GetExpData()->OnExpChanged.AddDynamic(this, &UMyVamSurHUDWidget::UpdateExpBar);
+		UpdateExpBar();
+	}
+}
+
 void UMyVamSurHUDWidget::UpdateTextTime(double NewGameTime)
 {
 	if (TextTime)
@@ -49,5 +74,14 @@ void UMyVamSurHUDWidget::UpdateTextTime(double NewGameTime)
 
 		const FString TimeText = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
 		TextTime->SetText(FText::FromString(TimeText));
+	}
+}
+
+void UMyVamSurHUDWidget::UpdateExpBar()
+{
+	if (PBExp)
+	{
+		const float ExpRatio = MyVamSurPlayerState->GetExpData()->GetExpRatio();
+		PBExp->SetPercent(ExpRatio);
 	}
 }
