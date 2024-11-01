@@ -4,9 +4,26 @@
 #include "GameModes/MyVamSurGameState.h"
 #include "Waves/WaveManager.h"
 
+AMyVamSurGameState::AMyVamSurGameState()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
+
+void AMyVamSurGameState::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	UpdateGameTime();
+}
+
 void AMyVamSurGameState::SetWaveManager(const AWaveManager* InWaveManager)
 {
 	WaveManager = InWaveManager;
+}
+
+float AMyVamSurGameState::GetGameTime() const
+{
+	return GameTime;
 }
 
 int AMyVamSurGameState::GetCurrentWaveNumber() const
@@ -17,4 +34,10 @@ int AMyVamSurGameState::GetCurrentWaveNumber() const
 float AMyVamSurGameState::GetTimeUntilNextWave() const
 {
 	return WaveManager->GetTimeUntilNextWave();
+}
+
+void AMyVamSurGameState::UpdateGameTime()
+{
+	GameTime = GetWorld()->GetTimeSeconds();
+	OnGameTimeChanged.Broadcast(GameTime);
 }

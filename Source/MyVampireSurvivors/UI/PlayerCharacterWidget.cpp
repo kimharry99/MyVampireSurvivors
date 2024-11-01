@@ -6,7 +6,6 @@
 #include "Components/ProgressBar.h"
 
 #include "Characters/HealthData.h"
-#include "MyVamSurLogChannels.h"
 
 void UPlayerCharacterWidget::NativeConstruct()
 {
@@ -19,13 +18,13 @@ void UPlayerCharacterWidget::NativeConstruct()
 }
 
 void UPlayerCharacterWidget::NativeDestruct()
-{
-	Super::NativeDestruct();
-	
+{	
 	if (TrackingHealthData)
 	{
 		TrackingHealthData->OnHealthChanged.RemoveAll(this);
 	}
+
+	Super::NativeDestruct();
 }
 
 void UPlayerCharacterWidget::BindHealthData(UHealthData* NewHealthData)
@@ -53,6 +52,5 @@ void UPlayerCharacterWidget::UpdateHealth()
 		return;
 	}
 
-	UE_LOG(LogMyVamSur, Log, TEXT("UpdateHealth: %f"), TrackingHealthData->GetHpRatio());
 	HealthBar->SetPercent(TrackingHealthData->GetHpRatio());
 }
