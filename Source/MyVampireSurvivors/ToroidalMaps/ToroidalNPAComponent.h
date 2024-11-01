@@ -28,7 +28,7 @@ protected:
 private:
 	/** Cached player character. */
 	UPROPERTY()
-	TObjectPtr<const APlayerCharacter> Player;
+	TObjectPtr<APlayerCharacter> Player;
 
 	FBox CalculatePlayerSight(const APlayerCharacter* PlayerCharacter) const;
 

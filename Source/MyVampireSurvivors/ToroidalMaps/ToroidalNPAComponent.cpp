@@ -16,6 +16,8 @@ void UToroidalNPAComponent::BeginPlay()
 	check(FirstPlayer);
 	Player = FirstPlayer->GetPawn<APlayerCharacter>();
 	check(Player);
+
+	Player->AddTickSubsequentToroidalComponent(this);
 }
 
 void UToroidalNPAComponent::RepositionActor()

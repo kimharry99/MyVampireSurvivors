@@ -2,10 +2,11 @@
 
 
 #include "Enemy.h"
+
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+
 #include "Enemies/ChasingEnemyAI.h"
-#include "Players/PlayerCharacter.h"
 #include "ToroidalMaps/ToroidalNPAComponent.h"
 
 AEnemy::AEnemy()
@@ -37,12 +38,6 @@ void AEnemy::PostInitializeComponents()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-
-	APlayerCharacter* Player = GetWorld()->GetFirstPlayerController()->GetPawn<APlayerCharacter>();
-	if (Player)
-	{
-		Player->AddTickSubsequentToroidalComponent(ToroidalNPAComponent);
-	}
 }
 
 void AEnemy::StartDeath()
