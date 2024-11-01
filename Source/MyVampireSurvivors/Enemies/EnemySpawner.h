@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Enemy.h"
 #include "EnemySpawner.generated.h"
+
+template <class TClass> class TSubclassOf;
+class AEnemy;
 
 /**
  * EnemySpanwer spawns enemies at random locations.

@@ -2,7 +2,10 @@
 
 
 #include "EnemySpawner.h"
+
 #include "Kismet/GameplayStatics.h"
+
+#include "Enemies/Enemy.h"
 #include "ToroidalMaps/ToroidalMap.h"
 
 void AEnemySpawner::BeginPlay()

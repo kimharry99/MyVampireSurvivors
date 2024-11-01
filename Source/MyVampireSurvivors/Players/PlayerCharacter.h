@@ -4,9 +4,9 @@
 
 #include "Characters/MyVamSurCharacter.h"
 #include "Equipments/EquipmentInventory.h"
-#include "UI/PlayerCharacterWidget.h"
 #include "PlayerCharacter.generated.h"
 
+template<class UClass> class TSubclassOf;
 class USpringArmComponent;
 class UWidgetComponent;
 
@@ -14,6 +14,7 @@ class AEquipmentItem;
 class UEquipmentComponent;
 class UMyVamSurCameraComponent;
 class UPlayerPawnComponent;
+class UPlayerCharacterWidget;
 class UToroidalActorComponent;
 class UToroidalPlayerComponent;
 

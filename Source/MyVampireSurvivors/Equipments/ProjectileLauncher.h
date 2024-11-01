@@ -2,10 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Equipments/ActiveEquipmentItem.h"
-#include "Weapons/ProjectileWeapon.h"
 #include "ProjectileLauncher.generated.h"
+
+template <class Tclass> class TSubclassOf;
+class AProjectileWeapon;
 
 /**
  * ProjectileLauncher

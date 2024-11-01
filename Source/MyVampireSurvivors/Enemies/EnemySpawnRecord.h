@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Enemy.h"
 #include "EnemySpawnRecord.generated.h"
+
+template <class TClass> class TSubclassOf;
+class AEnemy;
 
 /**
  * A structure for representing enemy spawning event.
