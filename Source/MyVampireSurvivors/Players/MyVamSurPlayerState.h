@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerState.h"
 #include "MyVamSurPlayerState.generated.h"
 
+class UExpData;
 class UHealthData;
 
 /**
@@ -20,8 +21,12 @@ public:
 	AMyVamSurPlayerState();
 
 	UHealthData* GetHealthData() const;
+	UExpData* GetExpData() const;
 
 private:
 	UPROPERTY()
 	TObjectPtr<UHealthData> HealthData;
+
+	UPROPERTY()
+	TObjectPtr<UExpData> ExpData;
 };

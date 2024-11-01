@@ -12,10 +12,12 @@
 
 #include "Camera/MyVamSurCameraComponent.h"
 #include "Equipments/EquipmentComponent.h"
+#include "Players/ExpData.h"
 #include "Players/MyVamSurPlayerState.h"
 #include "Players/PlayerPawnComponent.h"
 #include "ToroidalMaps/ToroidalPlayerComponent.h"
 #include "UI/PlayerCharacterWidget.h"
+#include "MyVamSurLogChannels.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -84,6 +86,15 @@ void APlayerCharacter::Tick(float DeltaTime)
 const FBox APlayerCharacter::GetViewBox() const
 {
 	return FollowCamera->GetWorldViewBox();
+}
+
+void APlayerCharacter::AddExp(int GainedExp)
+{
+	if (AMyVamSurPlayerState* MyVamSurPlayerState = GetPlayerState<AMyVamSurPlayerState>())
+	{
+		MyVamSurPlayerState->GetExpData()->AddExp(GainedExp);
+		UE_LOG(LogMyVamSur, Log, TEXT("Player %s gained %d exp."), *GetName(), GainedExp);
+	}
 }
 
 void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component)
