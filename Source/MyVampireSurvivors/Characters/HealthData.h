@@ -6,6 +6,7 @@
 #include "HealthData.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOutOfHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHealthChanged);
 
 UCLASS()
 class MYVAMPIRESURVIVORS_API UHealthData : public UObject
@@ -13,10 +14,12 @@ class MYVAMPIRESURVIVORS_API UHealthData : public UObject
 	GENERATED_BODY()
 
 public:
-	void InitializeHealth(float MaxHealthValue);
+	float GetHpRatio() const;
 
+	void InitializeHealth(float MaxHealthValue);
 	void TakeDamage(float Damage);
 
+	FOnHealthChanged OnHealthChanged;
 	FOnOutOfHealth OnOutOfHealth;
 
 private:

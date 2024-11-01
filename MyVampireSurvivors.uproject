@@ -14,7 +14,8 @@
 				"Paper2D",
 				"AIModule",
 				"CoreUObject",
-				"UnrealEd"
+				"UnrealEd",
+				"UMG"
 			]
 		}
 	],
