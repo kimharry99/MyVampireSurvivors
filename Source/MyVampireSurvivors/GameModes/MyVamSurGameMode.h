@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "Waves/WaveManager.h"
 #include "MyVamSurGameMode.generated.h"
 
+template <class TClass> class TSubclassOf;
+
 class AEnemySpawner;
+class AWaveManager;
 class UToroidalWorldSystem;
 
 /**

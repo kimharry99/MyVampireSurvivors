@@ -3,6 +3,8 @@
 
 #include "Equipments/ProjectileLauncher.h"
 
+#include "Weapons/ProjectileWeapon.h"
+
 void AProjectileLauncher::UseEquipment()
 {
 	Super::UseEquipment();

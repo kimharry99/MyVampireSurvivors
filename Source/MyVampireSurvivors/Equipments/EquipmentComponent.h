@@ -7,6 +7,9 @@
 #include "Equipments/EquipmentInventory.h"
 #include "EquipmentComponent.generated.h"
 
+template <class TClass> class TSubclassOf;
+class AEquipmentItem;
+
 UCLASS()
 class MYVAMPIRESURVIVORS_API UEquipmentComponent : public UActorComponent
 {

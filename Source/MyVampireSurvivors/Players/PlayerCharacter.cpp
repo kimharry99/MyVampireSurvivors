@@ -15,6 +15,7 @@
 #include "Players/MyVamSurPlayerState.h"
 #include "Players/PlayerPawnComponent.h"
 #include "ToroidalMaps/ToroidalPlayerComponent.h"
+#include "UI/PlayerCharacterWidget.h"
 
 APlayerCharacter::APlayerCharacter()
 {

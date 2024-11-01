@@ -2,7 +2,9 @@
 
 
 #include "MyVamSurGameMode.h"
+
 #include "EngineUtils.h"
+
 #include "Enemies/EnemySpawner.h"
 #include "GameModes/MyVamSurGameState.h"
 #include "Players/PlayerCharacter.h"
@@ -10,6 +12,7 @@
 #include "Players/MyVamSurPlayerController.h"
 #include "ToroidalMaps/ToroidalMap.h"
 #include "ToroidalMaps/ToroidalWorldSystem.h"
+#include "Waves/WaveManager.h"
 
 AMyVamSurGameMode::AMyVamSurGameMode()
 {
