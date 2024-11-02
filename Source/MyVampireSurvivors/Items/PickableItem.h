@@ -23,6 +23,8 @@ public:
 protected:
 	virtual void OnPicked(APlayerCharacter* PlayerCharacter);
 
+	UToroidalNPAComponent* GetToroidalNPAComponent() const;
+
 private:
 	UFUNCTION()
 	void HandleItemOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult);
