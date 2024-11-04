@@ -8,44 +8,30 @@
 class APlayerController;
 class APawn;
 
-void UHealthComponent::BeginPlay()
+void UHealthComponent::OnRegister()
 {
-	Super::BeginPlay();
+	Super::OnRegister();
 
-	Initialize();
-}
-
-void UHealthComponent::Initialize()
-{
-	APawn* OwnerPawn = GetPawn<APawn>();
-	check(OwnerPawn);
-
-	// Check if the owner pawn is a npc
-	if (APlayerController* PlayerController = OwnerPawn->GetController<APlayerController>())
-	{
-		if (AMyVamSurPlayerState* PlayerState = PlayerController->GetPlayerState<AMyVamSurPlayerState>())
-		{
-			HealthData = PlayerState->GetHealthData();
-		}
-	}
-	else
-	{
-		HealthData = NewObject<UHealthData>(this);
-	}
-
+	HealthData = NewObject<UHealthData>(this);
 	check(HealthData);
+
 	HealthData->InitializeHealth(DefaultMaxHealth);
 	HealthData->OnOutOfHealth.AddDynamic(this, &UHealthComponent::HandleOutOfHealth);
 }
 
-void UHealthComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void UHealthComponent::OnUnregister()
 {
-	Super::EndPlay(EndPlayReason);
-
 	if (HealthData)
 	{
 		HealthData->OnOutOfHealth.RemoveDynamic(this, &UHealthComponent::HandleOutOfHealth);
 	}
+
+	Super::OnUnregister();
+}
+
+const UHealthData* UHealthComponent::GetHealthData() const
+{
+	return HealthData;
 }
 
 void UHealthComponent::TakeDamage(float Damage)

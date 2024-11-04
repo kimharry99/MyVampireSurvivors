@@ -15,22 +15,18 @@ class MYVAMPIRESURVIVORS_API UHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:
-	void TakeDamage(float Damage);
-
-	FOnDeathStarted OnDeathStarted;
-
 protected:
 	//~UActorComponent interface
-	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void OnRegister() override;
+	virtual void OnUnregister() override;
 	//~End of UActorComponent interface
 
 private:
-	void Initialize();
-
-	UFUNCTION()
-	void HandleOutOfHealth();
+	template <typename T>
+	T* GetPawn() const
+	{
+		return Cast<T>(GetOwner());
+	}
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Data")
@@ -39,9 +35,15 @@ private:
 	UPROPERTY()
 	TObjectPtr<UHealthData> HealthData;
 
-	template <typename T>
-	T* GetPawn() const
-	{
-		return Cast<T>(GetOwner());
-	}
+public:
+	const UHealthData* GetHealthData() const;
+
+public:
+	void TakeDamage(float Damage);
+
+	FOnDeathStarted OnDeathStarted;
+
+private:
+	UFUNCTION()
+	void HandleOutOfHealth();
 };

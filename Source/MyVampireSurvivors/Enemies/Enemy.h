@@ -5,7 +5,10 @@
 #include "Characters/MyVamSurCharacter.h"
 #include "Enemy.generated.h"
 
+template <class TClass> class TSubclassOf;
+
 class AEnemy;
+class APickableItem;
 class UToroidalNPAComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDied, AEnemy*, DiedEnemy);
@@ -39,4 +42,11 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, Category="Torus")
 	TObjectPtr<UToroidalNPAComponent> ToroidalNPAComponent;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category="Enemy")
+	TSubclassOf<APickableItem> DropItemClass;
+
+private:
+	void SpawnDropItem();
 };

@@ -7,9 +7,12 @@
 #include "MyVamSurHUDWidget.generated.h"
 
 class AGameStateBase;
+class APlayerState;
+class UProgressBar;
 class UTextBlock;
 
 class AMyVamSurGameState;
+class AMyVamSurPlayerState;
 
 /**
  * 
@@ -25,17 +28,30 @@ protected:
 	virtual void NativeDestruct() override;
 	//~End of UUserWidget interface
 
-public:
-	void BindGameState(AGameStateBase* GameState);
-
 private:
 	UPROPERTY()
 	TObjectPtr<UTextBlock> TextTime;
 
 	UPROPERTY()
+	TObjectPtr<UProgressBar> PBExp;
+
+	UPROPERTY()
 	TObjectPtr<AMyVamSurGameState> MyVamSurGameState;
+
+	UPROPERTY()
+	TObjectPtr<AMyVamSurPlayerState> MyVamSurPlayerState;
+
+public:
+	void BindGameState(AGameStateBase* GameState);
+	void BindPlayerState(APlayerState* PlayerState);
 
 private:
 	UFUNCTION()
 	void UpdateTextTime(double NewGameTime);
+
+	UFUNCTION()
+	void UpdateExpBar();
+
+	void UnInitializeGameStateDelegates();
+	void UnInitializePlayerStateDelegates();
 };

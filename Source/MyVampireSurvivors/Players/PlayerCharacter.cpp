@@ -12,6 +12,7 @@
 
 #include "Camera/MyVamSurCameraComponent.h"
 #include "Equipments/EquipmentComponent.h"
+#include "Players/ExpData.h"
 #include "Players/MyVamSurPlayerState.h"
 #include "Players/PlayerPawnComponent.h"
 #include "ToroidalMaps/ToroidalPlayerComponent.h"
@@ -43,6 +44,8 @@ APlayerCharacter::APlayerCharacter()
 	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, -50.0f));
 	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
+	CharacterExp = CreateDefaultSubobject<UExpData>(TEXT("CharacterExp"));
+
 	PlayerPawn = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawn"));
 
 	ToroidalPlayer = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayer"));
@@ -62,18 +65,8 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	check(HPBarWidgetClass);
-	check(HPBarWidget);
-	HPBarWidget->SetWidgetClass(HPBarWidgetClass);
-	HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
-
-	if (AMyVamSurPlayerState* MyVamSurPlayerState = GetPlayerState<AMyVamSurPlayerState>())
-	{
-		UPlayerCharacterWidget* HPBarWidgetInstance = Cast<UPlayerCharacterWidget>(HPBarWidget->GetUserWidgetObject());
-		check(HPBarWidgetInstance);
-
-		HPBarWidgetInstance->BindHealthData(MyVamSurPlayerState->GetHealthData());
-	}
+	CreateHPBarWidget();
+	CharacterExp->Initialize();
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -84,6 +77,28 @@ void APlayerCharacter::Tick(float DeltaTime)
 const FBox APlayerCharacter::GetViewBox() const
 {
 	return FollowCamera->GetWorldViewBox();
+}
+
+void APlayerCharacter::CreateHPBarWidget()
+{
+	check(HPBarWidgetClass);
+	check(HPBarWidget);
+	HPBarWidget->SetWidgetClass(HPBarWidgetClass);
+	HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
+
+	UPlayerCharacterWidget* HPBarWidgetInstance = Cast<UPlayerCharacterWidget>(HPBarWidget->GetUserWidgetObject());
+	check(HPBarWidgetInstance);
+	HPBarWidgetInstance->BindHealthData(GetHealthData());
+}
+
+void APlayerCharacter::AddExp(int GainedExp)
+{
+	CharacterExp->AddExp(GainedExp);
+}
+
+const UExpData* APlayerCharacter::GetExpData() const
+{
+	return CharacterExp;
 }
 
 void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component)

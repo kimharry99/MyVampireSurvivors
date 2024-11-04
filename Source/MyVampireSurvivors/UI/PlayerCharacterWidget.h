@@ -25,11 +25,11 @@ protected:
 	//~End of UUserWidget interface
 
 public:
-	void BindHealthData(UHealthData* NewHealthData);
+	void BindHealthData(const UHealthData* NewHealthData);
 
 private:
 	UPROPERTY()
-	TObjectPtr<UHealthData> TrackingHealthData;
+	TObjectPtr<const UHealthData> TrackingHealthData;
 
 	UPROPERTY()
 	TObjectPtr<UProgressBar> HealthBar;

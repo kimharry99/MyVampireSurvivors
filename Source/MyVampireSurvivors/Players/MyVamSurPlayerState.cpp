@@ -2,14 +2,75 @@
 
 
 #include "Players/MyVamSurPlayerState.h"
+
 #include "Characters/HealthData.h"
+#include "Players/ExpData.h"
 
 AMyVamSurPlayerState::AMyVamSurPlayerState()
 {
-	HealthData = CreateDefaultSubobject<UHealthData>(TEXT("HealthData"));
 }
 
-UHealthData* AMyVamSurPlayerState::GetHealthData() const
+void AMyVamSurPlayerState::BeginPlay()
 {
-	return HealthData;
+	Super::BeginPlay();
+}
+
+void AMyVamSurPlayerState::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	UnInitializeExpDataDelegates();
+
+	Super::EndPlay(EndPlayReason);
+}
+
+void AMyVamSurPlayerState::HandlePlayerStateChanged()
+{
+	OnPlayerStateChanged.Broadcast();
+}
+
+void AMyVamSurPlayerState::BindHealthData(const UHealthData* NewHealthData)
+{
+	HealthData = NewHealthData;
+
+	// Add HandlePlayerStateChanged to HealthData's OnHealthChanged delegate
+}
+
+float AMyVamSurPlayerState::GetHpRatio() const
+{
+	if (HealthData == nullptr)
+	{
+		return 0.0f;
+	}
+
+	return HealthData->GetHpRatio();
+}
+
+void AMyVamSurPlayerState::BindExpData(const UExpData* NewExpData)
+{
+	UnInitializeExpDataDelegates();
+	ExpData = NewExpData;
+
+	if (ExpData)
+	{
+		ExpData->OnExpChanged.AddDynamic(this, &AMyVamSurPlayerState::HandlePlayerStateChanged);
+		ExpData->OnLevelUp.AddDynamic(this, &AMyVamSurPlayerState::HandlePlayerStateChanged);
+	}
+}
+
+float AMyVamSurPlayerState::GetExpRatio() const
+{
+	if (ExpData)
+	{
+		return ExpData->GetExpRatio();
+	}
+
+	return 0.0f;
+}
+
+void AMyVamSurPlayerState::UnInitializeExpDataDelegates()
+{
+	if (ExpData)
+	{
+		ExpData->OnExpChanged.RemoveAll(this);
+		ExpData->OnLevelUp.RemoveAll(this);
+	}
 }

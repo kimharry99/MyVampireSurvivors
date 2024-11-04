@@ -2,10 +2,12 @@
 
 
 #include "Enemy.h"
+
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+
 #include "Enemies/ChasingEnemyAI.h"
-#include "Players/PlayerCharacter.h"
+#include "Items/PickableItem.h"
 #include "ToroidalMaps/ToroidalNPAComponent.h"
 
 AEnemy::AEnemy()
@@ -37,18 +39,33 @@ void AEnemy::PostInitializeComponents()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-
-	APlayerCharacter* Player = GetWorld()->GetFirstPlayerController()->GetPawn<APlayerCharacter>();
-	if (Player)
-	{
-		Player->AddTickSubsequentToroidalComponent(ToroidalNPAComponent);
-	}
 }
 
 void AEnemy::StartDeath()
 {
 	Super::StartDeath();
 
+	SpawnDropItem();
 	OnEnemyDied.Broadcast(this);
 	Destroy();
+}
+
+void AEnemy::SpawnDropItem()
+{
+	if (DropItemClass == nullptr)
+	{
+		return;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		FVector SpawnLocation = GetActorLocation();
+		FRotator SpawnRotation = GetActorRotation();
+
+		World->SpawnActor<APickableItem>(DropItemClass, SpawnLocation, SpawnRotation, SpawnParams);
+	}
 }

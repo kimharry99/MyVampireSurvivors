@@ -6,11 +6,11 @@
 #include "GameFramework/PlayerState.h"
 #include "MyVamSurPlayerState.generated.h"
 
+class UExpData;
 class UHealthData;
 
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerStateChanged);
+
 UCLASS()
 class MYVAMPIRESURVIVORS_API AMyVamSurPlayerState : public APlayerState
 {
@@ -19,9 +19,36 @@ class MYVAMPIRESURVIVORS_API AMyVamSurPlayerState : public APlayerState
 public:
 	AMyVamSurPlayerState();
 
-	UHealthData* GetHealthData() const;
+protected:
+	//~AActor interface
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	//~End of AActor interface
+
+public:
+	FOnPlayerStateChanged OnPlayerStateChanged;
 
 private:
-	UPROPERTY()
-	TObjectPtr<UHealthData> HealthData;
+	UFUNCTION()
+	void HandlePlayerStateChanged();
+
+private:
+	UPROPERTY(Transient)
+	TObjectPtr<const UHealthData> HealthData;
+
+public:
+	void BindHealthData(const UHealthData* NewHealthData);
+
+	float GetHpRatio() const;
+
+private:
+	UPROPERTY(Transient)
+	TObjectPtr<const UExpData> ExpData;
+
+public:
+	void BindExpData(const UExpData* NewExpData);
+	float GetExpRatio() const;
+
+private:
+	void UnInitializeExpDataDelegates();
 };

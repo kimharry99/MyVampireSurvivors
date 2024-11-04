@@ -23,6 +23,7 @@ protected:
 	//~End of AActor interface
 
 	//~APlayerController interface
+	virtual void OnPossess(APawn* InPawn) override;
 	virtual void PlayerTick(float DeltaSeconds) override;
 	//~End of APlayerController interface
 
@@ -32,4 +33,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UMyVamSurHUDWidget> HUDWidget;
+
+private:
+	void CreateHUDWidget();
 };

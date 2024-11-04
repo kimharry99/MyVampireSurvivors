@@ -4,22 +4,28 @@
 #include "Players/MyVamSurPlayerController.h"
 
 #include "Players/PlayerCharacter.h"
+#include "Players/MyVamSurPlayerState.h"
 #include "UI/MyVamSurHUDWidget.h"
 
 void AMyVamSurPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	check(HUDWidgetClass);
-	HUDWidget = CreateWidget<UMyVamSurHUDWidget>(this, HUDWidgetClass);
-	check(HUDWidget);
-	HUDWidget->AddToViewport();
+	CreateHUDWidget();
+}
 
-	UWorld* World = GetWorld();
-	check(World);
-	AGameStateBase* GameState = World->GetGameState();
-	check(GameState);
-	HUDWidget->BindGameState(GameState);
+void AMyVamSurPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(InPawn))
+	{
+		if (AMyVamSurPlayerState* MyVamSurPlayerState = GetPlayerState<AMyVamSurPlayerState>())
+		{
+			MyVamSurPlayerState->BindHealthData(PlayerCharacter->GetHealthData());
+			MyVamSurPlayerState->BindExpData(PlayerCharacter->GetExpData());
+		}
+	}
 }
 
 void AMyVamSurPlayerController::PlayerTick(float DeltaSeconds)
@@ -30,4 +36,21 @@ void AMyVamSurPlayerController::PlayerTick(float DeltaSeconds)
 	{
 		PlayerCharacter->UseAllEnableEquipments();
 	}
+}
+
+void AMyVamSurPlayerController::CreateHUDWidget()
+{
+	check(HUDWidgetClass);
+	HUDWidget = CreateWidget<UMyVamSurHUDWidget>(this, HUDWidgetClass);
+	check(HUDWidget);
+	HUDWidget->AddToViewport();
+
+	UWorld* World = GetWorld();
+	check(World);
+	AGameStateBase* GameState = World->GetGameState();
+	check(GameState);
+	HUDWidget->BindGameState(GameState);
+
+	check(PlayerState);
+	HUDWidget->BindPlayerState(PlayerState);
 }
