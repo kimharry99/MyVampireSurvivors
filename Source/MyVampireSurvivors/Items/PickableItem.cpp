@@ -8,7 +8,6 @@
 
 #include "Players/PlayerCharacter.h"
 #include "ToroidalMaps/ToroidalNPAComponent.h"
-#include "MyVamSurLogChannels.h"
 
 
 APickableItem::APickableItem()
@@ -29,7 +28,6 @@ APickableItem::APickableItem()
 
 void APickableItem::OnPicked(APlayerCharacter* PlayerCharacter)
 {
-	UE_LOG(LogMyVamSur, Log, TEXT("%s item picked"), *GetName());
 	Destroy();
 }
 

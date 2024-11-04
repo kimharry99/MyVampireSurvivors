@@ -17,7 +17,6 @@
 #include "Players/PlayerPawnComponent.h"
 #include "ToroidalMaps/ToroidalPlayerComponent.h"
 #include "UI/PlayerCharacterWidget.h"
-#include "MyVamSurLogChannels.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -95,7 +94,6 @@ void APlayerCharacter::CreateHPBarWidget()
 void APlayerCharacter::AddExp(int GainedExp)
 {
 	CharacterExp->AddExp(GainedExp);
-	UE_LOG(LogMyVamSur, Log, TEXT("Player %s gained %d exp."), *GetName(), GainedExp);
 }
 
 const UExpData* APlayerCharacter::GetExpData() const
