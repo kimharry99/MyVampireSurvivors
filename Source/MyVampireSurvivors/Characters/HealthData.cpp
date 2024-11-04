@@ -3,17 +3,17 @@
 
 #include "Characters/HealthData.h"
 
-float UHealthData::GetHpRatio() const
-{
-	return CurrentHealth / MaxHealth;
-}
-
 void UHealthData::InitializeHealth(float MaxHealthValue)
 {
 	MaxHealth = MaxHealthValue;
 	CurrentHealth = MaxHealth;
 
 	OnHealthChanged.Broadcast();
+}
+
+float UHealthData::GetHpRatio() const
+{
+	return CurrentHealth / MaxHealth;
 }
 
 void UHealthData::TakeDamage(float Damage)

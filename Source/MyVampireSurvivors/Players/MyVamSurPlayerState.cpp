@@ -8,9 +8,6 @@
 
 AMyVamSurPlayerState::AMyVamSurPlayerState()
 {
-	HealthData = CreateDefaultSubobject<UHealthData>(TEXT("HealthData"));
-	check(HealthData);
-
 	ExpData = CreateDefaultSubobject<UExpData>(TEXT("ExpData"));
 	check(ExpData);
 }
@@ -22,9 +19,19 @@ void AMyVamSurPlayerState::BeginPlay()
 	ExpData->Initialize();
 }
 
-UHealthData* AMyVamSurPlayerState::GetHealthData() const
+void AMyVamSurPlayerState::BindHealthData(const UHealthData* NewHealthData)
 {
-	return HealthData;
+	HealthData = NewHealthData;
+}
+
+float AMyVamSurPlayerState::GetHpRatio() const
+{
+	if (HealthData == nullptr)
+	{
+		return 0.0f;
+	}
+
+	return HealthData->GetHpRatio();
 }
 
 UExpData* AMyVamSurPlayerState::GetExpData() const

@@ -13,16 +13,17 @@ class MYVAMPIRESURVIVORS_API UHealthData : public UObject
 {
 	GENERATED_BODY()
 
-public:
-	float GetHpRatio() const;
-
-	void InitializeHealth(float MaxHealthValue);
-	void TakeDamage(float Damage);
-
-	FOnHealthChanged OnHealthChanged;
-	FOnOutOfHealth OnOutOfHealth;
-
 private:
 	float MaxHealth = 0.0f;
 	float CurrentHealth = 0.0f;
+
+public:
+	void InitializeHealth(float MaxHealthValue);
+	float GetHpRatio() const;
+
+public:
+	void TakeDamage(float Damage);
+
+	mutable FOnHealthChanged OnHealthChanged;
+	mutable FOnOutOfHealth OnOutOfHealth;
 };

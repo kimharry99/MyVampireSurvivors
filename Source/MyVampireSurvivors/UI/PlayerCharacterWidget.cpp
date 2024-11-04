@@ -27,7 +27,7 @@ void UPlayerCharacterWidget::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-void UPlayerCharacterWidget::BindHealthData(UHealthData* NewHealthData)
+void UPlayerCharacterWidget::BindHealthData(const UHealthData* NewHealthData)
 {
 	if (TrackingHealthData)
 	{

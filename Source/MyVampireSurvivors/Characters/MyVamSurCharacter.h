@@ -7,6 +7,7 @@
 #include "MyVamSurCharacter.generated.h"
 
 class UHealthComponent;
+class UHealthData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharacterDied);
 
@@ -32,6 +33,9 @@ private:
 	/** The character's HealthComponent. */
 	UPROPERTY(EditDefaultsOnly, Category="Character|Health")
 	TObjectPtr<UHealthComponent> Health;
+
+public:
+	const UHealthData* GetHealthData() const;
 
 public:
 	/**

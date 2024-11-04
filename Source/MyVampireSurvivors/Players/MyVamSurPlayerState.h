@@ -9,9 +9,6 @@
 class UExpData;
 class UHealthData;
 
-/**
- * 
- */
 UCLASS()
 class MYVAMPIRESURVIVORS_API AMyVamSurPlayerState : public APlayerState
 {
@@ -20,18 +17,24 @@ class MYVAMPIRESURVIVORS_API AMyVamSurPlayerState : public APlayerState
 public:
 	AMyVamSurPlayerState();
 
-	UHealthData* GetHealthData() const;
-	UExpData* GetExpData() const;
-
 protected:
 	//~AActor interface
 	virtual void BeginPlay() override;
 	//~End of AActor interface
 
 private:
-	UPROPERTY()
-	TObjectPtr<UHealthData> HealthData;
+	UPROPERTY(Transient)
+	TObjectPtr<const UHealthData> HealthData;
 
+public:
+	void BindHealthData(const UHealthData* NewHealthData);
+
+	float GetHpRatio() const;
+
+private:
 	UPROPERTY()
 	TObjectPtr<UExpData> ExpData;
+
+public:
+	UExpData* GetExpData() const;
 };

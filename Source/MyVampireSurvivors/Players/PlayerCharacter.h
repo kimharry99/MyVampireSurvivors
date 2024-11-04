@@ -58,6 +58,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = UI, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UWidgetComponent> HPBarWidget;
 
+private:
+	void CreateHPBarWidget();
+
 public:
 	void AddExp(int GainedExp);
 

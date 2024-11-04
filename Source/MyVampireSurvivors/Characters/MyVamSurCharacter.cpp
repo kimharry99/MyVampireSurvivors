@@ -24,6 +24,11 @@ void AMyVamSurCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Health->OnDeathStarted.RemoveDynamic(this, &AMyVamSurCharacter::StartDeath);
 }
 
+const UHealthData* AMyVamSurCharacter::GetHealthData() const
+{
+	return Health->GetHealthData();
+}
+
 void AMyVamSurCharacter::ReceiveAttack(float DamageAmount, AController* Attacker)
 {
 	FDamageEvent DamageEvent;

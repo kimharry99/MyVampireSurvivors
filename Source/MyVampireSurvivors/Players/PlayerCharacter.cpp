@@ -64,18 +64,7 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	check(HPBarWidgetClass);
-	check(HPBarWidget);
-	HPBarWidget->SetWidgetClass(HPBarWidgetClass);
-	HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
-
-	if (AMyVamSurPlayerState* MyVamSurPlayerState = GetPlayerState<AMyVamSurPlayerState>())
-	{
-		UPlayerCharacterWidget* HPBarWidgetInstance = Cast<UPlayerCharacterWidget>(HPBarWidget->GetUserWidgetObject());
-		check(HPBarWidgetInstance);
-
-		HPBarWidgetInstance->BindHealthData(MyVamSurPlayerState->GetHealthData());
-	}
+	CreateHPBarWidget();
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -86,6 +75,18 @@ void APlayerCharacter::Tick(float DeltaTime)
 const FBox APlayerCharacter::GetViewBox() const
 {
 	return FollowCamera->GetWorldViewBox();
+}
+
+void APlayerCharacter::CreateHPBarWidget()
+{
+	check(HPBarWidgetClass);
+	check(HPBarWidget);
+	HPBarWidget->SetWidgetClass(HPBarWidgetClass);
+	HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
+
+	UPlayerCharacterWidget* HPBarWidgetInstance = Cast<UPlayerCharacterWidget>(HPBarWidget->GetUserWidgetObject());
+	check(HPBarWidgetInstance);
+	HPBarWidgetInstance->BindHealthData(GetHealthData());
 }
 
 void APlayerCharacter::AddExp(int GainedExp)
