@@ -11,8 +11,8 @@
 AExpGem::AExpGem()
 {
 	HomingItemMovementComponent = CreateDefaultSubobject<UHomingItemMovementComponent>(TEXT("HomingItemMovementComponent"));
-	HomingItemMovementComponent->HomingAccelerationMagnitude = 1000.0f;
-	HomingItemMovementComponent->MaxSpeed = 1000.0f;
+	HomingItemMovementComponent->HomingAccelerationMagnitude = 1000000.0f;
+	HomingItemMovementComponent->MaxSpeed = 300.0f;
 }
 
 void AExpGem::PostInitializeComponents()
