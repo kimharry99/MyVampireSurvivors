@@ -23,6 +23,11 @@ public:
 	UHealthData* GetHealthData() const;
 	UExpData* GetExpData() const;
 
+protected:
+	//~AActor interface
+	virtual void BeginPlay() override;
+	//~End of AActor interface
+
 private:
 	UPROPERTY()
 	TObjectPtr<UHealthData> HealthData;

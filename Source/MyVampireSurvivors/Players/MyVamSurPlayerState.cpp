@@ -15,6 +15,13 @@ AMyVamSurPlayerState::AMyVamSurPlayerState()
 	check(ExpData);
 }
 
+void AMyVamSurPlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	ExpData->Initialize();
+}
+
 UHealthData* AMyVamSurPlayerState::GetHealthData() const
 {
 	return HealthData;

@@ -6,6 +6,7 @@
 #include "ExpData.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnExpChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelUp);
 
 UCLASS()
 class MYVAMPIRESURVIVORS_API UExpData : public UObject
@@ -13,17 +14,28 @@ class MYVAMPIRESURVIVORS_API UExpData : public UObject
 	GENERATED_BODY()
 
 public:
-	void AddExp(int GainedExp);
+	void Initialize();
+
 	float GetExpRatio() const;
-	
+	int GetMaxExp() const;
+
+	void AddExp(int GainedExp);
+
+public:
 	FOnExpChanged OnExpChanged;
+	FOnLevelUp OnLevelUp;
 
 private:
 	UPROPERTY(Transient)
 	int CurrentExp = 0;
 
-	int MaxExp = 100;
+	UPROPERTY(Transient)
+	int CurrentMaxExp = 1;
 
 	UPROPERTY(Transient)
 	int CurrentLevel = 1;
+
+private:
+	void LevelUp();
+	void UpdateMaxExp();
 };

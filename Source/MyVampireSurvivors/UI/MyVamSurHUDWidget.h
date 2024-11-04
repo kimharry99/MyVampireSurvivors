@@ -51,4 +51,7 @@ private:
 
 	UFUNCTION()
 	void UpdateExpBar();
+
+	void UnInitializeGameStateDelegates();
+	void UnInitializePlayerStateDelegates();
 };

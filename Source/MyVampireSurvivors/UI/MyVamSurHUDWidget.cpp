@@ -23,14 +23,8 @@ void UMyVamSurHUDWidget::NativeConstruct()
 
 void UMyVamSurHUDWidget::NativeDestruct()
 {
-	if (MyVamSurGameState)
-	{
-		MyVamSurGameState->OnGameTimeChanged.RemoveAll(this);
-	}
-	if (MyVamSurPlayerState)
-	{
-		MyVamSurPlayerState->GetExpData()->OnExpChanged.RemoveAll(this);
-	}
+	UnInitializeGameStateDelegates();
+	UnInitializePlayerStateDelegates();
 
 	Super::NativeDestruct();
 }
@@ -39,10 +33,7 @@ void UMyVamSurHUDWidget::BindGameState(AGameStateBase* GameState)
 {
 	if(AMyVamSurGameState* NewMyVamSurGameState = Cast<AMyVamSurGameState>(GameState))
 	{
-		if (MyVamSurGameState)
-		{
-			MyVamSurGameState->OnGameTimeChanged.RemoveAll(this);
-		}
+		UnInitializeGameStateDelegates();
 
 		MyVamSurGameState = NewMyVamSurGameState;
 		MyVamSurGameState->OnGameTimeChanged.AddDynamic(this, &UMyVamSurHUDWidget::UpdateTextTime);
@@ -54,13 +45,11 @@ void UMyVamSurHUDWidget::BindPlayerState(APlayerState* PlayerState)
 {
 	if (AMyVamSurPlayerState* NewMyVamsurPlayerState = Cast<AMyVamSurPlayerState>(PlayerState))
 	{
-		if (MyVamSurPlayerState)
-		{
-			MyVamSurPlayerState->GetExpData()->OnExpChanged.RemoveAll(this);
-		}
+		UnInitializePlayerStateDelegates();
 
 		MyVamSurPlayerState = NewMyVamsurPlayerState;
 		MyVamSurPlayerState->GetExpData()->OnExpChanged.AddDynamic(this, &UMyVamSurHUDWidget::UpdateExpBar);
+		MyVamSurPlayerState->GetExpData()->OnLevelUp.AddDynamic(this, &UMyVamSurHUDWidget::UpdateExpBar);
 		UpdateExpBar();
 	}
 }
@@ -83,5 +72,22 @@ void UMyVamSurHUDWidget::UpdateExpBar()
 	{
 		const float ExpRatio = MyVamSurPlayerState->GetExpData()->GetExpRatio();
 		PBExp->SetPercent(ExpRatio);
+	}
+}
+
+void UMyVamSurHUDWidget::UnInitializeGameStateDelegates()
+{
+	if (MyVamSurGameState)
+	{
+		MyVamSurGameState->OnGameTimeChanged.RemoveAll(this);
+	}
+}
+
+void UMyVamSurHUDWidget::UnInitializePlayerStateDelegates()
+{
+	if (MyVamSurPlayerState)
+	{
+		MyVamSurPlayerState->GetExpData()->OnExpChanged.RemoveAll(this);
+		MyVamSurPlayerState->GetExpData()->OnLevelUp.RemoveAll(this);
 	}
 }
