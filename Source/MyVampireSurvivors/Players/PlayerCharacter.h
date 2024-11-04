@@ -12,6 +12,7 @@ class UWidgetComponent;
 
 class AEquipmentItem;
 class UEquipmentComponent;
+class UExpData;
 class UMyVamSurCameraComponent;
 class UPlayerPawnComponent;
 class UPlayerCharacterWidget;
@@ -61,8 +62,14 @@ private:
 private:
 	void CreateHPBarWidget();
 
+private:
+	UPROPERTY()
+	TObjectPtr<UExpData> CharacterExp;
+
 public:
 	void AddExp(int GainedExp);
+
+	const UExpData* GetExpData() const;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Player")

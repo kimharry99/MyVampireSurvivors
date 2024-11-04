@@ -23,6 +23,7 @@ void AMyVamSurPlayerController::OnPossess(APawn* InPawn)
 		if (AMyVamSurPlayerState* MyVamSurPlayerState = GetPlayerState<AMyVamSurPlayerState>())
 		{
 			MyVamSurPlayerState->BindHealthData(PlayerCharacter->GetHealthData());
+			MyVamSurPlayerState->BindExpData(PlayerCharacter->GetExpData());
 		}
 	}
 }

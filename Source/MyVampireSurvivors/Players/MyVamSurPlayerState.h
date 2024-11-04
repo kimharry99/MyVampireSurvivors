@@ -9,6 +9,8 @@
 class UExpData;
 class UHealthData;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerStateChanged);
+
 UCLASS()
 class MYVAMPIRESURVIVORS_API AMyVamSurPlayerState : public APlayerState
 {
@@ -20,7 +22,15 @@ public:
 protected:
 	//~AActor interface
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	//~End of AActor interface
+
+public:
+	FOnPlayerStateChanged OnPlayerStateChanged;
+
+private:
+	UFUNCTION()
+	void HandlePlayerStateChanged();
 
 private:
 	UPROPERTY(Transient)
@@ -32,9 +42,13 @@ public:
 	float GetHpRatio() const;
 
 private:
-	UPROPERTY()
-	TObjectPtr<UExpData> ExpData;
+	UPROPERTY(Transient)
+	TObjectPtr<const UExpData> ExpData;
 
 public:
-	UExpData* GetExpData() const;
+	void BindExpData(const UExpData* NewExpData);
+	float GetExpRatio() const;
+
+private:
+	void UnInitializeExpDataDelegates();
 };

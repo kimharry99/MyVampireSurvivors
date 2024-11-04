@@ -28,10 +28,6 @@ protected:
 	virtual void NativeDestruct() override;
 	//~End of UUserWidget interface
 
-public:
-	void BindGameState(AGameStateBase* GameState);
-	void BindPlayerState(APlayerState* PlayerState);
-
 private:
 	UPROPERTY()
 	TObjectPtr<UTextBlock> TextTime;
@@ -44,6 +40,10 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<AMyVamSurPlayerState> MyVamSurPlayerState;
+
+public:
+	void BindGameState(AGameStateBase* GameState);
+	void BindPlayerState(APlayerState* PlayerState);
 
 private:
 	UFUNCTION()

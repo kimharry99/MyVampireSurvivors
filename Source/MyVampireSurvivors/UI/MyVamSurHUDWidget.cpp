@@ -7,7 +7,6 @@
 #include "Components/TextBlock.h"
 
 #include "GameModes/MyVamSurGameState.h"
-#include "Players/ExpData.h"
 #include "Players/MyVamSurPlayerState.h"
 
 void UMyVamSurHUDWidget::NativeConstruct()
@@ -48,46 +47,56 @@ void UMyVamSurHUDWidget::BindPlayerState(APlayerState* PlayerState)
 		UnInitializePlayerStateDelegates();
 
 		MyVamSurPlayerState = NewMyVamsurPlayerState;
-		MyVamSurPlayerState->GetExpData()->OnExpChanged.AddDynamic(this, &UMyVamSurHUDWidget::UpdateExpBar);
-		MyVamSurPlayerState->GetExpData()->OnLevelUp.AddDynamic(this, &UMyVamSurHUDWidget::UpdateExpBar);
+		MyVamSurPlayerState->OnPlayerStateChanged.AddDynamic(this, &UMyVamSurHUDWidget::UpdateExpBar);
 		UpdateExpBar();
 	}
 }
 
 void UMyVamSurHUDWidget::UpdateTextTime(double NewGameTime)
 {
-	if (TextTime)
+	if (TextTime == nullptr)
 	{
-		const int Minutes = FMath::Clamp(FMath::FloorToInt(NewGameTime / 60.0), 0, 59);
-		const int Seconds = FMath::FloorToInt(FMath::Fmod(NewGameTime, 60.0f));
-
-		const FString TimeText = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
-		TextTime->SetText(FText::FromString(TimeText));
+		return;
 	}
+
+	const int Minutes = FMath::Clamp(FMath::FloorToInt(NewGameTime / 60.0), 0, 59);
+	const int Seconds = FMath::FloorToInt(FMath::Fmod(NewGameTime, 60.0f));
+
+	const FString TimeText = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
+	TextTime->SetText(FText::FromString(TimeText));
 }
 
 void UMyVamSurHUDWidget::UpdateExpBar()
 {
-	if (PBExp)
+	if (PBExp == nullptr)
 	{
-		const float ExpRatio = MyVamSurPlayerState->GetExpData()->GetExpRatio();
-		PBExp->SetPercent(ExpRatio);
+		return;
 	}
+	if (MyVamSurPlayerState == nullptr)
+	{
+		return;
+	}
+
+	const float ExpRatio = MyVamSurPlayerState->GetExpRatio();
+	PBExp->SetPercent(ExpRatio);
 }
 
 void UMyVamSurHUDWidget::UnInitializeGameStateDelegates()
 {
-	if (MyVamSurGameState)
+	if (MyVamSurGameState == nullptr)
 	{
-		MyVamSurGameState->OnGameTimeChanged.RemoveAll(this);
+		return;
 	}
+
+	MyVamSurGameState->OnGameTimeChanged.RemoveAll(this);
 }
 
 void UMyVamSurHUDWidget::UnInitializePlayerStateDelegates()
 {
-	if (MyVamSurPlayerState)
+	if (MyVamSurPlayerState == nullptr)
 	{
-		MyVamSurPlayerState->GetExpData()->OnExpChanged.RemoveAll(this);
-		MyVamSurPlayerState->GetExpData()->OnLevelUp.RemoveAll(this);
+		return;
 	}
+
+	MyVamSurPlayerState->OnPlayerStateChanged.RemoveAll(this);
 }

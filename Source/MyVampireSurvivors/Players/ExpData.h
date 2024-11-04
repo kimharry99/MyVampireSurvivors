@@ -22,8 +22,8 @@ public:
 	void AddExp(int GainedExp);
 
 public:
-	FOnExpChanged OnExpChanged;
-	FOnLevelUp OnLevelUp;
+	mutable FOnExpChanged OnExpChanged;
+	mutable	FOnLevelUp OnLevelUp;
 
 private:
 	UPROPERTY(Transient)

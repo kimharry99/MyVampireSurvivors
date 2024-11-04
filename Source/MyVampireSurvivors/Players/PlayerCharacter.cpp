@@ -45,6 +45,8 @@ APlayerCharacter::APlayerCharacter()
 	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, -50.0f));
 	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
+	CharacterExp = CreateDefaultSubobject<UExpData>(TEXT("CharacterExp"));
+
 	PlayerPawn = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawn"));
 
 	ToroidalPlayer = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayer"));
@@ -65,6 +67,7 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	CreateHPBarWidget();
+	CharacterExp->Initialize();
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -91,11 +94,13 @@ void APlayerCharacter::CreateHPBarWidget()
 
 void APlayerCharacter::AddExp(int GainedExp)
 {
-	if (AMyVamSurPlayerState* MyVamSurPlayerState = GetPlayerState<AMyVamSurPlayerState>())
-	{
-		MyVamSurPlayerState->GetExpData()->AddExp(GainedExp);
-		UE_LOG(LogMyVamSur, Log, TEXT("Player %s gained %d exp."), *GetName(), GainedExp);
-	}
+	CharacterExp->AddExp(GainedExp);
+	UE_LOG(LogMyVamSur, Log, TEXT("Player %s gained %d exp."), *GetName(), GainedExp);
+}
+
+const UExpData* APlayerCharacter::GetExpData() const
+{
+	return CharacterExp;
 }
 
 void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component)
