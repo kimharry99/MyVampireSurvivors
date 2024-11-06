@@ -3,6 +3,8 @@
 
 #include "Equipments/ActiveEquipmentItem.h"
 
+#include "MyVamSurLogChannels.h"
+
 AActiveEquipmentItem::AActiveEquipmentItem()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -36,7 +38,25 @@ void AActiveEquipmentItem::UseEquipment()
 	}
 }
 
+void AActiveEquipmentItem::SetEquipmentStat(int Level)
+{
+	if (const FActiveEquipmentStat* EquipmentStat = EquipmentStatTable->FindRow<FActiveEquipmentStat>(*FString::FromInt(Level), TEXT("")))
+	{
+		SetCoolDown(EquipmentStat->CoolDown);
+	}
+	else
+	{
+		UE_LOG(LogMyVamSur, Warning, TEXT("Failed to find the equipment stat."));
+	}
+}
+
 float AActiveEquipmentItem::GetCoolDown() const
 {
 	return CoolDown;
+}
+
+void AActiveEquipmentItem::SetCoolDown(float NewCoolDown)
+{
+	CoolDown = NewCoolDown;
+	RemainCoolDown = FMathf::Min(RemainCoolDown, CoolDown);
 }

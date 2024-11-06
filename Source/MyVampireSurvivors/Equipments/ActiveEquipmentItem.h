@@ -6,6 +6,22 @@
 #include "Equipments/EquipmentItem.h"
 #include "ActiveEquipmentItem.generated.h"
 
+
+USTRUCT(BlueprintType)
+struct MYVAMPIRESURVIVORS_API FActiveEquipmentStat : public FEquipmentStat
+{
+	GENERATED_BODY()
+
+	FActiveEquipmentStat()
+	: CoolDown(0.1f)
+	{
+	}
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
+	float CoolDown;
+};
+
+
 /**
  * The equipment which has cooldown.
  */
@@ -23,10 +39,20 @@ protected:
 	//~End of AActor interface
 
 public:
-	//~AEquipment interface
+	//~AEquipmentItem interface
 	virtual bool IsUsable() const override;
 	virtual void UseEquipment() override;
-	//~End of AEquipment interface
+protected:
+	virtual void SetEquipmentStat(int Level) override;
+	//~End of AEquipmentItem interface
+
+private:
+	/** Cooldown(sec) of the equipment. */
+	UPROPERTY(Transient, VisibleAnywhere, Category = "Equipment|Active")
+	float CoolDown = 1.0f;
+
+	UPROPERTY(Transient, VisibleAnywhere, Category = "Equipment|Active")
+	float RemainCoolDown = 0.0f;
 
 protected:
 	/**
@@ -35,10 +61,5 @@ protected:
 	float GetCoolDown() const;
 
 private:
-	/** Cooldown(sec) of the equipment. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Equipment|Active")
-	float CoolDown = 0.0f;
-
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Equipment|Active")
-	float RemainCoolDown = 0.0f;
+	void SetCoolDown(float NewCoolDown);
 };

@@ -2,8 +2,13 @@
 
 
 #include "Weapons/AoEWeapon.h"
+
+#include "Components/BoxComponent.h"
 #include "DrawDebugHelpers.h"
+#include "PaperFlipbookComponent.h"
+
 #include "Physics/MyVamSurCollisionChannels.h"
+#include "MyVamSurLogChannels.h"
 
 AAoEWeapon::AAoEWeapon()
 {
@@ -59,6 +64,20 @@ void AAoEWeapon::UseEquipment()
 	Super::UseEquipment();
 
 	PlayWeaponEffect();
+}
+
+void AAoEWeapon::SetEquipmentStat(int Level)
+{
+	Super::SetEquipmentStat(Level);
+
+	if (const FAoEWeaponStat* AoEWeaponStat = EquipmentStatTable->FindRow<FAoEWeaponStat>(*FString::FromInt(Level), TEXT("")))
+	{
+		Damage = AoEWeaponStat->Damage;
+	}
+	else
+	{
+		UE_LOG(LogMyVamSur, Warning, TEXT("Failed to find the equipment stat."));
+	}
 }
 
 void AAoEWeapon::PlayWeaponEffect()

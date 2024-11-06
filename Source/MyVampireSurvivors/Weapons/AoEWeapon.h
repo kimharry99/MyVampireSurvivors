@@ -2,12 +2,28 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Components/BoxComponent.h"
-#include "PaperFlipbookComponent.h"
 #include "Equipments/ActiveEquipmentItem.h"
-#include "WeaponInterface.h"
+#include "Weapons/WeaponInterface.h"
 #include "AoEWeapon.generated.h"
+
+class UBoxComponent;
+class UPaperFlipbookComponent;
+
+
+USTRUCT(BlueprintType)
+struct MYVAMPIRESURVIVORS_API FAoEWeaponStat: public FActiveEquipmentStat
+{
+	GENERATED_BODY()
+
+	FAoEWeaponStat()
+	: Damage(1.0f)
+	{
+	}
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
+	float Damage;
+};
+
 
 /**
  * Attack all enemies in a box-shaped area
@@ -51,13 +67,14 @@ protected:
 
 	//~AEquipment interface
 	virtual void UseEquipment() override;
+	virtual void SetEquipmentStat(int Level) override;
 	//~End of AEquipment interface
 
 private:
 	/**
 	 * The damage dealt by the weapon.
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Weapon")
+	UPROPERTY(Transient, VisibleAnywhere, Category = "Weapon")
 	float Damage = 0.0f;
 
 	/**

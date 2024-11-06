@@ -3,6 +3,27 @@
 
 #include "Equipments/SpreadProjectileLauncher.h"
 
+#include "MyVamSurLogChannels.h"
+
+ASpreadProjectileLauncher::ASpreadProjectileLauncher()
+{
+}
+
+void ASpreadProjectileLauncher::SetEquipmentStat(int Level)
+{
+	Super::SetEquipmentStat(Level);
+	
+	if (const FSpreadLauncherStat* SpreadLauncherStat = EquipmentStatTable->FindRow<FSpreadLauncherStat>(*FString::FromInt(Level), TEXT("")))
+	{
+		ProjectileCount = SpreadLauncherStat->ProjectileCount;
+		AngleRange = SpreadLauncherStat->AngleRange;
+	}
+	else
+	{
+		UE_LOG(LogMyVamSur, Warning, TEXT("Failed to find the equipment stat."));
+	}
+}
+
 void ASpreadProjectileLauncher::CalculateFireLocationAndRotation(OUT TArray<FVector>& OutFireLocations, OUT TArray<FRotator>& OutFireRotations)
 {
 	const float FirePositionDistance = 50.0f;
