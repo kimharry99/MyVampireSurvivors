@@ -13,7 +13,6 @@ void UExpData::Initialize()
 
 	UpdateMaxExp();
 	OnExpChanged.Broadcast();
-	OnLevelUp.Broadcast();
 }
 
 void UExpData::AddExp(int GainedExp)

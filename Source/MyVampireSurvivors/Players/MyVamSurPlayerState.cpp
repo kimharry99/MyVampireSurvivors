@@ -27,11 +27,25 @@ void AMyVamSurPlayerState::HandlePlayerStateChanged()
 	OnPlayerStateChanged.Broadcast();
 }
 
+void AMyVamSurPlayerState::UnInitializeExpDataDelegates()
+{
+	if (ExpData)
+	{
+		ExpData->OnExpChanged.RemoveAll(this);
+		ExpData->OnLevelUp.RemoveAll(this);
+	}
+}
+
 void AMyVamSurPlayerState::BindHealthData(const UHealthData* NewHealthData)
 {
 	HealthData = NewHealthData;
 
 	// Add HandlePlayerStateChanged to HealthData's OnHealthChanged delegate
+}
+
+void AMyVamSurPlayerState::UnBindHealthData()
+{
+	BindHealthData(nullptr);
 }
 
 float AMyVamSurPlayerState::GetHpRatio() const
@@ -53,7 +67,13 @@ void AMyVamSurPlayerState::BindExpData(const UExpData* NewExpData)
 	{
 		ExpData->OnExpChanged.AddDynamic(this, &AMyVamSurPlayerState::HandlePlayerStateChanged);
 		ExpData->OnLevelUp.AddDynamic(this, &AMyVamSurPlayerState::HandlePlayerStateChanged);
+		ExpData->OnLevelUp.AddDynamic(this, &AMyVamSurPlayerState::HandleCharacterLevelUp);
 	}
+}
+
+void AMyVamSurPlayerState::UnBindExpData()
+{
+	BindExpData(nullptr);
 }
 
 float AMyVamSurPlayerState::GetExpRatio() const
@@ -66,11 +86,7 @@ float AMyVamSurPlayerState::GetExpRatio() const
 	return 0.0f;
 }
 
-void AMyVamSurPlayerState::UnInitializeExpDataDelegates()
+void AMyVamSurPlayerState::HandleCharacterLevelUp()
 {
-	if (ExpData)
-	{
-		ExpData->OnExpChanged.RemoveAll(this);
-		ExpData->OnLevelUp.RemoveAll(this);
-	}
+	OnCharacterLevelUp.Broadcast();
 }
