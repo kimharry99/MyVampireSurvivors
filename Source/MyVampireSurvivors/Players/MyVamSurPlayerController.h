@@ -7,7 +7,9 @@
 #include "MyVamSurPlayerController.generated.h"
 
 template <class TClass> class TSubclassOf;
-class UMyVamSurHUDWidget;
+
+class UMyVamSurBaseWidget;
+
 
 /**
  * 
@@ -34,17 +36,15 @@ protected:
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = UI)
-	TSubclassOf<UMyVamSurHUDWidget> HUDWidgetClass;
+	TSubclassOf<UMyVamSurBaseWidget> BaseWidgetClass;
 
-	UPROPERTY()
-	TObjectPtr<UMyVamSurHUDWidget> HUDWidget;
+	UPROPERTY(BlueprintReadOnly, Category = UI, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UMyVamSurBaseWidget> BaseWidget;
 
 private:
-	void CreateHUDWidget();
+	void CreateBaseWidget();
 
 private:
 	UFUNCTION()
 	void HandleCharacterLevelUp();
-
-	void DisplayLevelUpMenu();
 };

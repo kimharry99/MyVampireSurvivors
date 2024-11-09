@@ -5,14 +5,14 @@
 
 #include "Players/PlayerCharacter.h"
 #include "Players/MyVamSurPlayerState.h"
-#include "UI/MyVamSurHUDWidget.h"
+#include "UI/MyVamSurBaseWidget.h"
 #include "MyVamSurLogChannels.h"
 
 void AMyVamSurPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CreateHUDWidget();
+	CreateBaseWidget();
 
 	if (AMyVamSurPlayerState* MyVamSurPlayerState = GetPlayerState<AMyVamSurPlayerState>())
 	{
@@ -73,28 +73,19 @@ void AMyVamSurPlayerController::ResumeGame()
 	}
 }
 
-void AMyVamSurPlayerController::CreateHUDWidget()
+void AMyVamSurPlayerController::CreateBaseWidget()
 {
-	check(HUDWidgetClass);
-	HUDWidget = CreateWidget<UMyVamSurHUDWidget>(this, HUDWidgetClass);
-	check(HUDWidget);
-	HUDWidget->AddToViewport();
-
-	UWorld* World = GetWorld();
-	check(World);
-	AGameStateBase* GameState = World->GetGameState();
-	check(GameState);
-	HUDWidget->BindGameState(GameState);
-
-	check(PlayerState);
-	HUDWidget->BindPlayerState(PlayerState);
+	check(BaseWidgetClass);
+	BaseWidget = CreateWidget<UMyVamSurBaseWidget>(this, BaseWidgetClass);
+	check(BaseWidget);
+	BaseWidget->AddToViewport();
 }
 
 void AMyVamSurPlayerController::HandleCharacterLevelUp()
 {
-	DisplayLevelUpMenu();
-}
-
-void AMyVamSurPlayerController::DisplayLevelUpMenu()
-{
+	if (BaseWidget)
+	{
+		BaseWidget->DisplayLevelUpMenu();
+		SetPause(true);
+	}
 }

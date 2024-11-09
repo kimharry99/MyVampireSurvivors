@@ -15,7 +15,8 @@
 				"AIModule",
 				"CoreUObject",
 				"UnrealEd",
-				"UMG"
+				"UMG",
+				"CommonUI"
 			]
 		}
 	],

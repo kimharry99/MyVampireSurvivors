@@ -18,6 +18,16 @@ void UMyVamSurHUDWidget::NativeConstruct()
 
 	TextTime = Cast<UTextBlock>(GetWidgetFromName(TEXT("TextTime")));
 	check(TextTime);
+
+	UWorld* World = GetWorld();
+	check(World);
+	AGameStateBase* GameState = World->GetGameState();
+	check(GameState);
+	BindGameState(GameState);
+
+	APlayerController* PlayerController = GetOwningPlayer();
+	check(PlayerController);
+	BindPlayerState(PlayerController->PlayerState);
 }
 
 void UMyVamSurHUDWidget::NativeDestruct()
