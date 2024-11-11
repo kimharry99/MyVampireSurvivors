@@ -10,6 +10,7 @@ template <class TClass> class TSubclassOf;
 
 class AEnemySpawner;
 class AWaveManager;
+class UEquipmentManager;
 class UToroidalWorldSystem;
 
 /**
@@ -36,6 +37,8 @@ public:
 
 	AEnemySpawner* GetEnemySpawner() const;
 
+	UEquipmentManager* GetEquipmentManager() const;
+
 private:
 	UPROPERTY()
 	TObjectPtr<UToroidalWorldSystem> ToroidalWorldSystem;
@@ -49,6 +52,11 @@ private:
 	UPROPERTY()
 	TObjectPtr<AWaveManager> WaveManager;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Equipment")
+	TSubclassOf<UEquipmentManager> EquipmentManagerClass;
+
+	UPROPERTY()
+	TObjectPtr<UEquipmentManager> EquipmentManager;
 
 private:
 	/**
@@ -63,4 +71,6 @@ private:
 	 * Spawn the wave manager actor.
 	 */
 	void AddWaveManagerToGame();
+
+	void CreateEquipmentManager();
 };

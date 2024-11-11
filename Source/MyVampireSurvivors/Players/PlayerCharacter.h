@@ -11,7 +11,8 @@ class USpringArmComponent;
 class UWidgetComponent;
 
 class AEquipmentItem;
-class UEquipmentComponent;
+class UEquipmentInventoryComponent;
+class UEquipmentManager;
 class UExpData;
 class UMyVamSurCameraComponent;
 class UPlayerPawnComponent;
@@ -35,6 +36,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaSeconds) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndpPlayReason) override;
 	//~End of AActor interface
 
 private:
@@ -67,9 +69,14 @@ private:
 	TObjectPtr<UExpData> CharacterExp;
 
 public:
+	void InitializeCharacterExp();
 	void AddExp(int GainedExp);
 
 	const UExpData* GetExpData() const;
+
+private:
+	UFUNCTION()
+	void HandleCharacterLevelUp();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Player")
@@ -85,8 +92,12 @@ public:
 	void AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component);
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Player|Equipment")
-	TObjectPtr<UEquipmentComponent> Inventory;
+	/** Pointer to the equipment supplier that is cached for convenience. */
+	UPROPERTY()
+	TObjectPtr<UEquipmentManager> EquipmentManager;
+
+	UPROPERTY(EditDefaultsOnly) // For testing, declare no macro for production
+	TObjectPtr<UEquipmentInventoryComponent> InventoryComponent;
 
 public:
 	/**
@@ -102,4 +113,8 @@ public:
 	 * @param Equipment Equipment to equip.
 	 */
 	void EquipEquipment(AEquipmentItem* Equipment);
+
+private:
+	UEquipmentManager* GetEquipmentManagerFromGameMode() const;
+	void InitializeEquipmentManager(UEquipmentManager* InManager);
 };

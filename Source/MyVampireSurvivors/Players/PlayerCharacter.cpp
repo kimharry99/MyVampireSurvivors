@@ -11,7 +11,9 @@
 #include "PaperFlipbook.h"
 
 #include "Camera/MyVamSurCameraComponent.h"
-#include "Equipments/EquipmentComponent.h"
+#include "Equipments/EquipmentInventoryComponent.h"
+#include "Equipments/EquipmentManager.h"
+#include "GameModes/MyVamSurGameMode.h"
 #include "Players/ExpData.h"
 #include "Players/MyVamSurPlayerState.h"
 #include "Players/PlayerPawnComponent.h"
@@ -50,7 +52,7 @@ APlayerCharacter::APlayerCharacter()
 
 	ToroidalPlayer = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayer"));
 
-	Inventory = CreateDefaultSubobject<UEquipmentComponent>(TEXT("Inventory"));
+	InventoryComponent = CreateDefaultSubobject<UEquipmentInventoryComponent>(TEXT("Inventory"));
 }
 
 void APlayerCharacter::PostInitializeComponents()
@@ -66,7 +68,21 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	CreateHPBarWidget();
-	CharacterExp->Initialize();
+	InitializeCharacterExp();
+
+	UEquipmentManager* Manager = GetEquipmentManagerFromGameMode();
+	check(Manager);
+	InitializeEquipmentManager(Manager);
+}
+
+void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (CharacterExp)
+	{
+		CharacterExp->OnLevelUp.RemoveAll(this);
+	}
+
+	Super::EndPlay(EndPlayReason);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -91,6 +107,12 @@ void APlayerCharacter::CreateHPBarWidget()
 	HPBarWidgetInstance->BindHealthData(GetHealthData());
 }
 
+void APlayerCharacter::InitializeCharacterExp()
+{
+	CharacterExp->Initialize();
+	CharacterExp->OnLevelUp.AddDynamic(this, &APlayerCharacter::HandleCharacterLevelUp);
+}
+
 void APlayerCharacter::AddExp(int GainedExp)
 {
 	CharacterExp->AddExp(GainedExp);
@@ -101,6 +123,10 @@ const UExpData* APlayerCharacter::GetExpData() const
 	return CharacterExp;
 }
 
+void APlayerCharacter::HandleCharacterLevelUp()
+{
+}
+
 void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component)
 {
 	if (Component)
@@ -109,12 +135,40 @@ void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponen
 	}
 }
 
+UEquipmentManager* APlayerCharacter::GetEquipmentManagerFromGameMode() const
+{
+	if (UWorld* World = GetWorld())
+	{
+		if (AMyVamSurGameMode* GameMode = World->GetAuthGameMode<AMyVamSurGameMode>())
+		{
+			return GameMode->GetEquipmentManager();
+		}
+	}
+
+	return nullptr;
+}
+
+void APlayerCharacter::InitializeEquipmentManager(UEquipmentManager* InManager)
+{
+	if (EquipmentManager == InManager)
+	{
+		return;
+	}
+
+	if (EquipmentManager)
+	{
+		// Uninitialize the old equipment supplier.
+	}
+
+	EquipmentManager = InManager;
+}
+
 void APlayerCharacter::EquipEquipment(AEquipmentItem* Equipment)
 {
-	Inventory->AddEquipmentItem(Equipment);
+	InventoryComponent->AddEquipmentItem(Equipment);
 }
 
 void APlayerCharacter::UseAllEnableEquipments()
 {
-	Inventory->UseAllEnableEquipments();
+	InventoryComponent->UseAllEnableEquipments();
 }
