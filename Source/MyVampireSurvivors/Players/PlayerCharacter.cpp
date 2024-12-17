@@ -11,7 +11,7 @@
 #include "PaperFlipbook.h"
 
 #include "Camera/MyVamSurCameraComponent.h"
-#include "Equipments/EquipmentComponent.h"
+#include "Equipments/EquipmentInventoryComponent.h"
 #include "GameModes/MyVamSurGameMode.h"
 #include "Players/ExpData.h"
 #include "Players/MyVamSurPlayerState.h"
@@ -51,7 +51,7 @@ APlayerCharacter::APlayerCharacter()
 
 	ToroidalPlayer = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayer"));
 
-	Inventory = CreateDefaultSubobject<UEquipmentComponent>(TEXT("Inventory"));
+	InventoryComponent = CreateDefaultSubobject<UEquipmentInventoryComponent>(TEXT("Inventory"));
 }
 
 void APlayerCharacter::PostInitializeComponents()
@@ -132,10 +132,10 @@ void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponen
 
 void APlayerCharacter::EquipEquipment(AEquipmentItem* Equipment)
 {
-	Inventory->AddEquipmentItem(Equipment);
+	InventoryComponent->AddEquipmentItem(Equipment);
 }
 
 void APlayerCharacter::UseAllEnableEquipments()
 {
-	Inventory->UseAllEnableEquipments();
+	InventoryComponent->UseAllEnableEquipments();
 }

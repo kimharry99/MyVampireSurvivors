@@ -5,18 +5,18 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Equipments/EquipmentInventory.h"
-#include "EquipmentComponent.generated.h"
+#include "EquipmentInventoryComponent.generated.h"
 
 template <class TClass> class TSubclassOf;
 class AEquipmentItem;
 
 UCLASS()
-class MYVAMPIRESURVIVORS_API UEquipmentComponent : public UActorComponent
+class MYVAMPIRESURVIVORS_API UEquipmentInventoryComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	UEquipmentComponent();
+	UEquipmentInventoryComponent();
 
 public:
 	/**

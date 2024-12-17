@@ -3,16 +3,16 @@
 
 #include "Equipments/EquipmentManager.h"
 
-#include "Equipments/EquipmentComponent.h"
+#include "Equipments/EquipmentInventoryComponent.h"
 
-void UEquipmentManager::GiveEquipmentReward(UEquipmentComponent* TargetInventory)
+void UEquipmentManager::GiveEquipmentReward(UEquipmentInventoryComponent* TargetInventory)
 {
 }
 
-void UEquipmentManager::AddEquipmentToInventory(UEquipmentComponent* TargetInventory)
+void UEquipmentManager::AddEquipmentToInventory(UEquipmentInventoryComponent* TargetInventory)
 {
 }
 
-void UEquipmentManager::UpgradeEquipmentInInventory(UEquipmentComponent* TargetInventory)
+void UEquipmentManager::UpgradeEquipmentInInventory(UEquipmentInventoryComponent* TargetInventory)
 {
 }

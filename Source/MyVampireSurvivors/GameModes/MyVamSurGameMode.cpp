@@ -33,6 +33,16 @@ void AMyVamSurGameMode::PreInitializeComponents()
 	CreateEquipmentManager();
 }
 
+UToroidalWorldSystem* AMyVamSurGameMode::GetToroidalWorldSystem() const
+{
+	return ToroidalWorldSystem;
+}
+
+AEnemySpawner* AMyVamSurGameMode::GetEnemySpawner() const
+{
+	return EnemySpawner;
+}
+
 UEquipmentManager* AMyVamSurGameMode::GetEquipmentManager() const
 {
 	return EquipmentManager;
@@ -76,16 +86,6 @@ void AMyVamSurGameMode::AddWaveManagerToGame()
 	AMyVamSurGameState* MyGameState = GetGameState<AMyVamSurGameState>();
 	check(MyGameState);
 	MyGameState->SetWaveManager(WaveManager);
-}
-
-UToroidalWorldSystem* AMyVamSurGameMode::GetToroidalWorldSystem() const
-{
-	return ToroidalWorldSystem;
-}
-
-AEnemySpawner* AMyVamSurGameMode::GetEnemySpawner() const
-{
-	return EnemySpawner;
 }
 
 void AMyVamSurGameMode::CreateEquipmentManager()

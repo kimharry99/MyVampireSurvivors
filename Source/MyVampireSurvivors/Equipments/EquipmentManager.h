@@ -5,7 +5,8 @@
 #include "CoreMinimal.h"
 #include "EquipmentManager.generated.h"
 
-class UEquipmentComponent;
+class UEquipmentInventoryComponent;
+
 
 /**
  * 
@@ -16,9 +17,9 @@ class MYVAMPIRESURVIVORS_API UEquipmentManager : public UObject
 	GENERATED_BODY()
 
 public:
-	void GiveEquipmentReward(UEquipmentComponent* TargetInventory);
+	void GiveEquipmentReward(UEquipmentInventoryComponent* TargetInventory);
 
 private:
-	void AddEquipmentToInventory(UEquipmentComponent* TargetInventory);
-	void UpgradeEquipmentInInventory(UEquipmentComponent* TargetInventory);
+	void AddEquipmentToInventory(UEquipmentInventoryComponent* TargetInventory);
+	void UpgradeEquipmentInInventory(UEquipmentInventoryComponent* TargetInventory);
 };

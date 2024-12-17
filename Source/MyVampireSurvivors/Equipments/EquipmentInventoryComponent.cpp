@@ -1,17 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Equipments/EquipmentComponent.h"
+#include "Equipments/EquipmentInventoryComponent.h"
+
 #include "Equipments/EquipmentItem.h"
 #include "PaperFlipbookComponent.h"
 #include "Players/PlayerCharacter.h"
 
-UEquipmentComponent::UEquipmentComponent()
+UEquipmentInventoryComponent::UEquipmentInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UEquipmentComponent::AddEquipmentItem(AEquipmentItem* Item)
+void UEquipmentInventoryComponent::AddEquipmentItem(AEquipmentItem* Item)
 {
 	if(Item == nullptr)
 	{
@@ -30,7 +31,7 @@ void UEquipmentComponent::AddEquipmentItem(AEquipmentItem* Item)
 	}
 }
 
-void UEquipmentComponent::UseAllEnableEquipments()
+void UEquipmentInventoryComponent::UseAllEnableEquipments()
 {
 	TArray<AEquipmentItem*> EnableEquipments = Inventory.GetAllEnableEquipments();
 	for (AEquipmentItem* Equipment : EnableEquipments)
@@ -39,7 +40,7 @@ void UEquipmentComponent::UseAllEnableEquipments()
 	}
 }
 
-void UEquipmentComponent::BeginPlay()
+void UEquipmentInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	// FIXME: Remove this code after testing

@@ -11,7 +11,7 @@ class USpringArmComponent;
 class UWidgetComponent;
 
 class AEquipmentItem;
-class UEquipmentComponent;
+class UEquipmentInventoryComponent;
 class UExpData;
 class UMyVamSurCameraComponent;
 class UPlayerPawnComponent;
@@ -91,8 +91,8 @@ public:
 	void AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component);
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Player|Equipment")
-	TObjectPtr<UEquipmentComponent> Inventory;
+	UPROPERTY(EditDefaultsOnly) // For testing, declare no macro for production
+	TObjectPtr<UEquipmentInventoryComponent> InventoryComponent;
 
 public:
 	/**
