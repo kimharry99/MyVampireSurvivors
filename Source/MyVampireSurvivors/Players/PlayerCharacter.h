@@ -35,6 +35,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaSeconds) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndpPlayReason) override;
 	//~End of AActor interface
 
 private:
@@ -67,15 +68,20 @@ private:
 	TObjectPtr<UExpData> CharacterExp;
 
 public:
+	void InitializeCharacterExp();
 	void AddExp(int GainedExp);
 
 	const UExpData* GetExpData() const;
 
 private:
+	UFUNCTION()
+	void HandleCharacterLevelUp();
+
+private:
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	TObjectPtr<UPlayerPawnComponent> PlayerPawn;
 
-	UPROPERTY(VisibleAnywhere, Category="Torus")
+	UPROPERTY(VisibleAnywhere, Category = "Torus")
 	TObjectPtr<UToroidalPlayerComponent> ToroidalPlayer;
 
 public:
@@ -98,7 +104,7 @@ public:
 	 * Equip a equipment to the player character.
 	 * Add the equipment to the inventory.
 	 * The equipment actor will be attached to the player character.
-	 * 
+	 *
 	 * @param Equipment Equipment to equip.
 	 */
 	void EquipEquipment(AEquipmentItem* Equipment);

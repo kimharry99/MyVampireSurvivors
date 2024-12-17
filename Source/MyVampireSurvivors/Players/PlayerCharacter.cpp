@@ -12,6 +12,7 @@
 
 #include "Camera/MyVamSurCameraComponent.h"
 #include "Equipments/EquipmentComponent.h"
+#include "GameModes/MyVamSurGameMode.h"
 #include "Players/ExpData.h"
 #include "Players/MyVamSurPlayerState.h"
 #include "Players/PlayerPawnComponent.h"
@@ -66,7 +67,17 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	CreateHPBarWidget();
-	CharacterExp->Initialize();
+	InitializeCharacterExp();
+}
+
+void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (CharacterExp)
+	{
+		CharacterExp->OnLevelUp.RemoveAll(this);
+	}
+
+	Super::EndPlay(EndPlayReason);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -91,6 +102,12 @@ void APlayerCharacter::CreateHPBarWidget()
 	HPBarWidgetInstance->BindHealthData(GetHealthData());
 }
 
+void APlayerCharacter::InitializeCharacterExp()
+{
+	CharacterExp->Initialize();
+	CharacterExp->OnLevelUp.AddDynamic(this, &APlayerCharacter::HandleCharacterLevelUp);
+}
+
 void APlayerCharacter::AddExp(int GainedExp)
 {
 	CharacterExp->AddExp(GainedExp);
@@ -99,6 +116,10 @@ void APlayerCharacter::AddExp(int GainedExp)
 const UExpData* APlayerCharacter::GetExpData() const
 {
 	return CharacterExp;
+}
+
+void APlayerCharacter::HandleCharacterLevelUp()
+{
 }
 
 void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component)
