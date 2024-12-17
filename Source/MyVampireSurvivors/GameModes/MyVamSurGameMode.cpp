@@ -5,6 +5,7 @@
 
 #include "EngineUtils.h"
 
+#include "Equipments/EquipmentManager.h"
 #include "Enemies/EnemySpawner.h"
 #include "GameModes/MyVamSurGameState.h"
 #include "Players/PlayerCharacter.h"
@@ -29,6 +30,12 @@ void AMyVamSurGameMode::PreInitializeComponents()
 	AddToroidalWorldSystemToGame();
 	AddEnemySpawnerToGame();
 	AddWaveManagerToGame();
+	CreateEquipmentManager();
+}
+
+UEquipmentManager* AMyVamSurGameMode::GetEquipmentManager() const
+{
+	return EquipmentManager;
 }
 
 void AMyVamSurGameMode::AddToroidalWorldSystemToGame()
@@ -79,4 +86,13 @@ UToroidalWorldSystem* AMyVamSurGameMode::GetToroidalWorldSystem() const
 AEnemySpawner* AMyVamSurGameMode::GetEnemySpawner() const
 {
 	return EnemySpawner;
+}
+
+void AMyVamSurGameMode::CreateEquipmentManager()
+{
+	check(EquipmentManagerClass);
+
+	UWorld* World = GetWorld();
+
+	EquipmentManager = NewObject<UEquipmentManager>(World, EquipmentManagerClass);
 }
