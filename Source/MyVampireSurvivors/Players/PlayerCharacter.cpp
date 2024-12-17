@@ -12,6 +12,7 @@
 
 #include "Camera/MyVamSurCameraComponent.h"
 #include "Equipments/EquipmentInventoryComponent.h"
+#include "Equipments/EquipmentManager.h"
 #include "GameModes/MyVamSurGameMode.h"
 #include "Players/ExpData.h"
 #include "Players/MyVamSurPlayerState.h"
@@ -68,6 +69,10 @@ void APlayerCharacter::BeginPlay()
 
 	CreateHPBarWidget();
 	InitializeCharacterExp();
+
+	UEquipmentManager* Manager = GetEquipmentManagerFromGameMode();
+	check(Manager);
+	InitializeEquipmentManager(Manager);
 }
 
 void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -128,6 +133,34 @@ void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponen
 	{
 		Component->AddTickPrerequisiteComponent(FollowCamera);
 	}
+}
+
+UEquipmentManager* APlayerCharacter::GetEquipmentManagerFromGameMode() const
+{
+	if (UWorld* World = GetWorld())
+	{
+		if (AMyVamSurGameMode* GameMode = World->GetAuthGameMode<AMyVamSurGameMode>())
+		{
+			return GameMode->GetEquipmentManager();
+		}
+	}
+
+	return nullptr;
+}
+
+void APlayerCharacter::InitializeEquipmentManager(UEquipmentManager* InManager)
+{
+	if (EquipmentManager == InManager)
+	{
+		return;
+	}
+
+	if (EquipmentManager)
+	{
+		// Uninitialize the old equipment supplier.
+	}
+
+	EquipmentManager = InManager;
 }
 
 void APlayerCharacter::EquipEquipment(AEquipmentItem* Equipment)

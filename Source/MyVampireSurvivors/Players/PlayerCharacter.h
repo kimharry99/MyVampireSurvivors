@@ -12,6 +12,7 @@ class UWidgetComponent;
 
 class AEquipmentItem;
 class UEquipmentInventoryComponent;
+class UEquipmentManager;
 class UExpData;
 class UMyVamSurCameraComponent;
 class UPlayerPawnComponent;
@@ -91,6 +92,10 @@ public:
 	void AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component);
 
 private:
+	/** Pointer to the equipment supplier that is cached for convenience. */
+	UPROPERTY()
+	TObjectPtr<UEquipmentManager> EquipmentManager;
+
 	UPROPERTY(EditDefaultsOnly) // For testing, declare no macro for production
 	TObjectPtr<UEquipmentInventoryComponent> InventoryComponent;
 
@@ -108,4 +113,8 @@ public:
 	 * @param Equipment Equipment to equip.
 	 */
 	void EquipEquipment(AEquipmentItem* Equipment);
+
+private:
+	UEquipmentManager* GetEquipmentManagerFromGameMode() const;
+	void InitializeEquipmentManager(UEquipmentManager* InManager);
 };
