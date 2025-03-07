@@ -69,16 +69,16 @@ protected:
 	//~End of AActor interface
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<USpringArmComponent> CameraBoom;
 
-	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<UMyVamSurCameraComponent> FollowCamera;
 
-	UPROPERTY(EditDefaultsOnly, Category = UI, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = UI)
 	TSubclassOf<UPlayerCharacterWidget> HPBarWidgetClass;
 
-	UPROPERTY(VisibleAnywhere, Category = UI, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = UI)
 	TObjectPtr<UWidgetComponent> HPBarWidget;
 
 	void CreateHPBarWidget();
@@ -97,7 +97,7 @@ private:
 
 	URewardManager* GetRewardManagerFromGameMode() const;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(VisibleAnywhere, Category = Equipment)
 	TObjectPtr<UEquipmentInventoryComponent> InventoryComponent;
 
 	UPROPERTY()
