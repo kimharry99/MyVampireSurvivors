@@ -31,6 +31,35 @@ class MYVAMPIRESURVIVORS_API APlayerCharacter : public AMyVamSurCharacter
 public:
 	APlayerCharacter();
 
+public:
+	/**
+	 * Get the view box of the camera.
+	 *
+	 * @return The view box of the camera.
+	 */
+	const FBox GetViewBox() const;
+
+	void InitializeCharacterExp();
+	void AddExp(int GainedExp);
+
+	const UExpData* GetExpData() const;
+
+	/**
+	 * Add a toroidal actor component that needs to be ticked after the player character.
+	 */
+	void AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component);
+
+	const UEquipmentInventoryComponent* GetInventoryComponent() const;
+
+	/**
+	 * Equip a equipment to the player character.
+	 * Add the equipment to the inventory.
+	 * The equipment actor will be attached to the player character.
+	 *
+	 * @param EquipmentClass Equipment to equip.
+	 */
+	void EquipEquipment(TSubclassOf<AEquipment> EquipmentClass);
+
 protected:
 	//~AActor interface
 	virtual void BeginPlay() override;
@@ -46,56 +75,29 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UMyVamSurCameraComponent> FollowCamera;
 
-public:
-	/**
-	 * Get the view box of the camera.
-	 *
-	 * @return The view box of the camera.
-	 */
-	const FBox GetViewBox() const;
-
-private:
 	UPROPERTY(EditDefaultsOnly, Category = UI, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UPlayerCharacterWidget> HPBarWidgetClass;
 
 	UPROPERTY(VisibleAnywhere, Category = UI, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UWidgetComponent> HPBarWidget;
 
-private:
 	void CreateHPBarWidget();
 
-private:
 	UPROPERTY()
 	TObjectPtr<UExpData> CharacterExp;
 
-public:
-	void InitializeCharacterExp();
-	void AddExp(int GainedExp);
-
-	const UExpData* GetExpData() const;
-
-private:
 	UFUNCTION()
 	void HandleCharacterLevelUp();
 
-private:
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	TObjectPtr<UPlayerPawnComponent> PlayerPawn;
 
 	UPROPERTY(VisibleAnywhere, Category = "Torus")
 	TObjectPtr<UToroidalPlayerComponent> ToroidalPlayer;
 
-public:
-	/**
-	 * Add a toroidal actor component that needs to be ticked after the player character.
-	 */
-	void AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component);
-
-private:
 	URewardManager* GetRewardManagerFromGameMode() const;
 
-private:
-	UPROPERTY(EditDefaultsOnly) // For testing, declare no macro for production
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UEquipmentInventoryComponent> InventoryComponent;
 
 	UPROPERTY()
@@ -103,20 +105,7 @@ private:
 
 	// FIXME: Remove this code after testing
 	//~Begin of testing code
-public:
 	UPROPERTY(EditAnywhere, Category = "Testing")
 	TArray<TSubclassOf<AEquipment>> Equipments;
 	//~End of testing code
-
-public:
-	const UEquipmentInventoryComponent* GetInventoryComponent() const;
-
-	/**
-	 * Equip a equipment to the player character.
-	 * Add the equipment to the inventory.
-	 * The equipment actor will be attached to the player character.
-	 *
-	 * @param EquipmentClass Equipment to equip.
-	 */
-	void EquipEquipment(TSubclassOf<AEquipment> EquipmentClass);
 };
