@@ -6,7 +6,7 @@
 #include "HealthData.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOutOfHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnValueChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHealthChanged);
 
 UCLASS(DefaultToInstanced)
 class MYVAMPIRESURVIVORS_API UHealthData : public UObject
@@ -24,6 +24,6 @@ public:
 public:
 	void TakeDamage(float Damage);
 
-	mutable FOnValueChanged OnHealthChanged;
+	mutable FOnHealthChanged OnHealthChanged;
 	mutable FOnOutOfHealth OnOutOfHealth;
 };

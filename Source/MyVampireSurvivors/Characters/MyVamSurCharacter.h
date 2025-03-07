@@ -6,7 +6,7 @@
 #include "PaperZDCharacter.h"
 #include "MyVamSurCharacter.generated.h"
 
-class UHealthComponent;
+class UHealthData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharacterDied);
 
@@ -23,6 +23,10 @@ public:
 	AMyVamSurCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
+	//~AActor interface
+	virtual void BeginPlay() override;
+	//~End of AActor interface
+
 	/** Called when the character dies. */
 	FOnCharacterDied OnCharacterDied;
 
@@ -41,10 +45,12 @@ protected:
 	UFUNCTION()
 	virtual void StartDeath();
 
-	FORCEINLINE UHealthComponent* GetHealthComponent() const { return HealthComponent; };
+	FORCEINLINE UHealthData* GetHealthData() const { return HealthData; };
 
 private:
-	/** The character's HealthComponent. */
-	UPROPERTY(VisibleAnywhere, Category="Character|Health")
-	TObjectPtr<UHealthComponent> HealthComponent;
+	UPROPERTY()
+	TObjectPtr<UHealthData> HealthData;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Data")
+	float DefaultMaxHealth = 1.0f;
 };

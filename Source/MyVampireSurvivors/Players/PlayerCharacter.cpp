@@ -116,9 +116,9 @@ void APlayerCharacter::CreateHPBarWidget()
 	UPlayerCharacterWidget* HPBarWidgetInstance = Cast<UPlayerCharacterWidget>(HPBarWidget->GetUserWidgetObject());
 	check(HPBarWidgetInstance);
 
-	UHealthComponent* HealthComp = GetHealthComponent();
-	check(HealthComp);
-	HPBarWidgetInstance->BindHealthComponent(HealthComp);
+	UHealthData* HPData = GetHealthData();
+	check(HPData);
+	HPBarWidgetInstance->BindHealthData(HPData);
 }
 
 void APlayerCharacter::AddExp(int GainedExp)

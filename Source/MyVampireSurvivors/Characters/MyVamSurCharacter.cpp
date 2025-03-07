@@ -3,8 +3,9 @@
 
 #include "Characters/MyVamSurCharacter.h"
 
-#include "Characters/HealthComponent.h"
 #include "Components/CapsuleComponent.h"
+
+#include "Characters/HealthData.h"
 #include "Physics/MyVamSurCollisionChannels.h"
 
 
@@ -15,13 +16,20 @@ AMyVamSurCharacter::AMyVamSurCharacter(const FObjectInitializer& ObjectInitializ
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("PlayerCharacter"));
 
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
-	HealthComponent->OnDeathStarted.AddDynamic(this, &AMyVamSurCharacter::StartDeath);
+	HealthData = CreateDefaultSubobject<UHealthData>(TEXT("HealthData"));
+	HealthData->OnOutOfHealth.AddDynamic(this, &ThisClass::StartDeath);
+}
+
+void AMyVamSurCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	HealthData->InitializeHealth(DefaultMaxHealth);
 }
 
 void AMyVamSurCharacter::ReceiveAttack(float DamageAmount, AController* Attacker)
 {
-	HealthComponent->TakeDamage(DamageAmount);
+	HealthData->TakeDamage(DamageAmount);
 }
 
 void AMyVamSurCharacter::StartDeath()
