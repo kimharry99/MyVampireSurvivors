@@ -19,23 +19,6 @@ class MYVAMPIRESURVIVORS_API UHealthComponent : public UActorComponent
 public:
 	UHealthComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-private:
-	template <typename T>
-	T* GetPawn() const
-	{
-		return Cast<T>(GetOwner());
-	}
-
-private:
-	UPROPERTY(EditDefaultsOnly, Category = "Data")
-	float DefaultMaxHealth = 0.0f;
-
-	UPROPERTY(Instanced)
-	TObjectPtr<UHealthData> HealthData;
-
-public:
-	const UHealthData* GetHealthData() const;
-
 public:
 	float GetHPRatio() const;
 
@@ -45,6 +28,12 @@ public:
 	FOnHealthChanged OnHealthChanged;
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Data")
+	float DefaultMaxHealth = 0.0f;
+
+	UPROPERTY(Instanced)
+	TObjectPtr<UHealthData> HealthData;
+
 	UFUNCTION()
 	void HandleOutOfHealth();
 };

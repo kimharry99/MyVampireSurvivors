@@ -16,11 +16,6 @@ UHealthComponent::UHealthComponent(const FObjectInitializer& ObjectInitializer)
 	HealthData->OnOutOfHealth.AddDynamic(this, &ThisClass::HandleOutOfHealth);
 }
 
-const UHealthData* UHealthComponent::GetHealthData() const
-{
-	return HealthData;
-}
-
 float UHealthComponent::GetHPRatio() const
 {
 	return HealthData->GetHpRatio();
