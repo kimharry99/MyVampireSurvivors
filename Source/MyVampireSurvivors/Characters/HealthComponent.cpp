@@ -5,9 +5,6 @@
 #include "Characters/HealthData.h"
 #include "Players/MyVamSurPlayerState.h"
 
-class APlayerController;
-class APawn;
-
 UHealthComponent::UHealthComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

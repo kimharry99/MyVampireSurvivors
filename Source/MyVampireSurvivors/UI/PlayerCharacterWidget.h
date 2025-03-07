@@ -8,7 +8,6 @@
 
 class UProgressBar;
 
-class UHealthData;
 class UHealthComponent;
 
 /**
@@ -29,9 +28,6 @@ public:
 	void BindHealthComponent(UHealthComponent* NewHealthComponent);
 
 private:
-	UPROPERTY()
-	TObjectPtr<const UHealthData> TrackingHealthData;
-
 	TWeakObjectPtr<UHealthComponent> TrackingHealthComponent;
 
 	UPROPERTY()

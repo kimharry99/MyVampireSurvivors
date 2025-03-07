@@ -7,7 +7,6 @@
 #include "MyVamSurCharacter.generated.h"
 
 class UHealthComponent;
-class UHealthData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharacterDied);
 

@@ -5,7 +5,6 @@
 
 #include "Components/ProgressBar.h"
 
-#include "Characters/HealthData.h"
 #include "Characters/HealthComponent.h"
 
 void UPlayerCharacterWidget::NativeConstruct()
