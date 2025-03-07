@@ -50,6 +50,10 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, -50.0f));
 	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
+	CharacterExp = CreateDefaultSubobject<UExpData>(TEXT("CharacterExp"));
+	CharacterExp->Initialize();
+	CharacterExp->OnLevelUp.AddDynamic(this, &APlayerCharacter::HandleCharacterLevelUp);
+
 	PlayerPawn = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawn"));
 
 	ToroidalPlayer = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayer"));
@@ -63,7 +67,6 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	CreateHPBarWidget();
-	InitializeCharacterExp();
 
 	//FIXME
 	for (const TSubclassOf<AEquipment>& EquipmentClass : Equipments)
@@ -86,8 +89,6 @@ void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void APlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	CharacterExp = NewObject<UExpData>(this);
 
 	ToroidalPlayer->AddTickPrerequisiteComponent(GetCharacterMovement());
 	FollowCamera->AddTickPrerequisiteComponent(ToroidalPlayer);
@@ -113,17 +114,6 @@ void APlayerCharacter::CreateHPBarWidget()
 	UPlayerCharacterWidget* HPBarWidgetInstance = Cast<UPlayerCharacterWidget>(HPBarWidget->GetUserWidgetObject());
 	check(HPBarWidgetInstance);
 	HPBarWidgetInstance->BindHealthData(GetHealthData());
-}
-
-void APlayerCharacter::InitializeCharacterExp()
-{
-	if (!CharacterExp)
-	{
-		return;
-	}
-
-	CharacterExp->Initialize();
-	CharacterExp->OnLevelUp.AddDynamic(this, &APlayerCharacter::HandleCharacterLevelUp);
 }
 
 void APlayerCharacter::AddExp(int GainedExp)

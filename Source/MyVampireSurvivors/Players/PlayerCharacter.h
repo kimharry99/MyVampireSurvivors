@@ -46,7 +46,6 @@ public:
 	 */
 	const FBox GetViewBox() const;
 
-	void InitializeCharacterExp();
 	void AddExp(int GainedExp);
 
 	const UExpData* GetExpData() const;
