@@ -21,7 +21,7 @@ class MYVAMPIRESURVIVORS_API AMyVamSurCharacter : public APaperZDCharacter
 	GENERATED_BODY()
 
 public:
-	AMyVamSurCharacter();
+	AMyVamSurCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
 	//~AActor interface

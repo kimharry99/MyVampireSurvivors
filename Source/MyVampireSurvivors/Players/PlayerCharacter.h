@@ -29,7 +29,7 @@ class MYVAMPIRESURVIVORS_API APlayerCharacter : public AMyVamSurCharacter
 	GENERATED_BODY()
 
 public:
-	APlayerCharacter();
+	APlayerCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
 	//~AActor interface

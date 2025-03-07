@@ -7,7 +7,9 @@
 #include "Physics/MyVamSurCollisionChannels.h"
 #include "Characters/HealthComponent.h"
 
-AMyVamSurCharacter::AMyVamSurCharacter()
+
+AMyVamSurCharacter::AMyVamSurCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	SetCanBeDamaged(true);
 

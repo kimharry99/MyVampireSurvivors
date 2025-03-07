@@ -24,7 +24,8 @@
 #include "UI/PlayerCharacterWidget.h"
 
 
-APlayerCharacter::APlayerCharacter()
+APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 
