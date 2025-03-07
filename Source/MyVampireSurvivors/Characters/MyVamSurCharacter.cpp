@@ -2,10 +2,10 @@
 
 
 #include "Characters/MyVamSurCharacter.h"
-#include "Engine/DamageEvents.h"
+
+#include "Characters/HealthComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Physics/MyVamSurCollisionChannels.h"
-#include "Characters/HealthComponent.h"
 
 
 AMyVamSurCharacter::AMyVamSurCharacter(const FObjectInitializer& ObjectInitializer)
