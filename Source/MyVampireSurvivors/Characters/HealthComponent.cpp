@@ -8,6 +8,11 @@
 class APlayerController;
 class APawn;
 
+UHealthComponent::UHealthComponent(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+}
+
 void UHealthComponent::OnRegister()
 {
 	Super::OnRegister();

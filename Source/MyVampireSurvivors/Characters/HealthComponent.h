@@ -16,6 +16,9 @@ class MYVAMPIRESURVIVORS_API UHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+public:
+	UHealthComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
 protected:
 	//~UActorComponent interface
 	virtual void OnRegister() override;
