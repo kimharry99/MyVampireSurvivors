@@ -26,6 +26,14 @@ void AMyVamSurCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Health->OnDeathStarted.RemoveDynamic(this, &AMyVamSurCharacter::StartDeath);
 }
 
+float AMyVamSurCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+{
+	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	Health->TakeDamage(ActualDamage);
+
+	return ActualDamage;
+}
+
 const UHealthData* AMyVamSurCharacter::GetHealthData() const
 {
 	return Health->GetHealthData();
@@ -36,14 +44,6 @@ void AMyVamSurCharacter::ReceiveAttack(float DamageAmount, AController* Attacker
 	FDamageEvent DamageEvent;
 	AActor* DamageCauser = Attacker ? Attacker->GetPawn() : nullptr;
 	TakeDamage(DamageAmount, DamageEvent, Attacker, DamageCauser);
-}
-
-float AMyVamSurCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
-{
-	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	Health->TakeDamage(ActualDamage);
-
-	return ActualDamage;
 }
 
 void AMyVamSurCharacter::StartDeath()
