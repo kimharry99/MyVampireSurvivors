@@ -67,6 +67,9 @@ void APlayerCharacter::BeginPlay()
 
 	CreateHPBarWidget();
 
+	check(CharacterExp);
+	CharacterExp->InitializeExp();
+
 	//FIXME
 	for (const TSubclassOf<AEquipment>& EquipmentClass : Equipments)
 	{
