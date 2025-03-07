@@ -20,20 +20,20 @@ void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	check(HealthData);
 	HealthData->InitializeHealth(DefaultMaxHealth);
 }
 
 float UHealthComponent::GetHPRatio() const
 {
+	check(HealthData);
 	return HealthData->GetHpRatio();
 }
 
 void UHealthComponent::TakeDamage(float Damage)
 {
-	if (HealthData)
-	{
-		HealthData->TakeDamage(Damage);
-	}
+	check(HealthData);
+	HealthData->TakeDamage(Damage);
 }
 
 void UHealthComponent::HandleOutOfHealth()
