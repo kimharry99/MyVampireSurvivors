@@ -56,16 +56,6 @@ APlayerCharacter::APlayerCharacter()
 	EquipmentActivator = CreateDefaultSubobject<UEquipmentAutoActivator>(TEXT("EquipmentActivator"));
 }
 
-void APlayerCharacter::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	CharacterExp = NewObject<UExpData>(this);
-
-	ToroidalPlayer->AddTickPrerequisiteComponent(GetCharacterMovement());
-	FollowCamera->AddTickPrerequisiteComponent(ToroidalPlayer);
-}
-
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -89,6 +79,16 @@ void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 
 	Super::EndPlay(EndPlayReason);
+}
+
+void APlayerCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	CharacterExp = NewObject<UExpData>(this);
+
+	ToroidalPlayer->AddTickPrerequisiteComponent(GetCharacterMovement());
+	FollowCamera->AddTickPrerequisiteComponent(ToroidalPlayer);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)

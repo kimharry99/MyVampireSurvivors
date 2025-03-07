@@ -32,6 +32,13 @@ public:
 	APlayerCharacter();
 
 public:
+	//~AActor interface
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndpPlayReason) override;
+	virtual void PostInitializeComponents() override;
+	virtual void Tick(float DeltaSeconds) override;
+	//~End of AActor interface
+
 	/**
 	 * Get the view box of the camera.
 	 *
@@ -62,10 +69,6 @@ public:
 
 protected:
 	//~AActor interface
-	virtual void BeginPlay() override;
-	virtual void PostInitializeComponents() override;
-	virtual void Tick(float DeltaSeconds) override;
-	virtual void EndPlay(const EEndPlayReason::Type EndpPlayReason) override;
 	//~End of AActor interface
 
 private:
