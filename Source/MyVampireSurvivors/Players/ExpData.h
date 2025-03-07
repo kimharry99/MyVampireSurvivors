@@ -14,14 +14,14 @@ class MYVAMPIRESURVIVORS_API UExpData : public UObject
 	GENERATED_BODY()
 
 public:
-	void Initialize();
+	UExpData(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+public:
 	float GetExpRatio() const;
 	int GetMaxExp() const;
 
 	void AddExp(int GainedExp);
 
-public:
 	mutable FOnExpChanged OnExpChanged;
 	mutable	FOnLevelUp OnLevelUp;
 

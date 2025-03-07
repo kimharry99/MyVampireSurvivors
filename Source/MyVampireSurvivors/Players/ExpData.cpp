@@ -6,7 +6,8 @@
 #include "System/MyVamSurGameInstance.h"
 #include "MyVamSurLogChannels.h"
 
-void UExpData::Initialize()
+UExpData::UExpData(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	CurrentExp = 0;
 	CurrentLevel = 1;

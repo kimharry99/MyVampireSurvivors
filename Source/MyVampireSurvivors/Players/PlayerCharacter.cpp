@@ -51,7 +51,6 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
 	CharacterExp = CreateDefaultSubobject<UExpData>(TEXT("CharacterExp"));
-	CharacterExp->Initialize();
 	CharacterExp->OnLevelUp.AddDynamic(this, &APlayerCharacter::HandleCharacterLevelUp);
 
 	PlayerPawn = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawn"));
