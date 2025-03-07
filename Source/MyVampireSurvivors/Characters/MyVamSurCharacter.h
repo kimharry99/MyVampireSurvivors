@@ -24,10 +24,6 @@ public:
 	AMyVamSurCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
-	//~AActor interface
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	//~End of AActor interface
-
 	const UHealthData* GetHealthData() const;
 
 	/** Called when the character dies. */

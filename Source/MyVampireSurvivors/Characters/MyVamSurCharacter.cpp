@@ -19,13 +19,6 @@ AMyVamSurCharacter::AMyVamSurCharacter(const FObjectInitializer& ObjectInitializ
 	HealthComponent->OnDeathStarted.AddDynamic(this, &AMyVamSurCharacter::StartDeath);
 }
 
-void AMyVamSurCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	HealthComponent->OnDeathStarted.RemoveDynamic(this, &AMyVamSurCharacter::StartDeath);
-
-	Super::EndPlay(EndPlayReason);
-}
-
 const UHealthData* AMyVamSurCharacter::GetHealthData() const
 {
 	return HealthComponent->GetHealthData();
