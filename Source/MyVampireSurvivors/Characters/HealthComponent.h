@@ -9,6 +9,7 @@
 class UHealthData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathStarted);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHealthChanged);
 
 UCLASS()
 class MYVAMPIRESURVIVORS_API UHealthComponent : public UActorComponent
@@ -39,9 +40,12 @@ public:
 	const UHealthData* GetHealthData() const;
 
 public:
+	float GetHPRatio() const;
+
 	void TakeDamage(float Damage);
 
 	FOnDeathStarted OnDeathStarted;
+	FOnHealthChanged OnHealthChanged;
 
 private:
 	UFUNCTION()

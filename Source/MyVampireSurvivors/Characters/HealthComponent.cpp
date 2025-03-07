@@ -34,6 +34,11 @@ const UHealthData* UHealthComponent::GetHealthData() const
 	return HealthData;
 }
 
+float UHealthComponent::GetHPRatio() const
+{
+	return HealthData->GetHpRatio();
+}
+
 void UHealthComponent::TakeDamage(float Damage)
 {
 	if (HealthData)

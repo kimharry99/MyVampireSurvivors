@@ -24,8 +24,6 @@ public:
 	AMyVamSurCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
-	const UHealthData* GetHealthData() const;
-
 	/** Called when the character dies. */
 	FOnCharacterDied OnCharacterDied;
 
@@ -43,6 +41,8 @@ protected:
 	 */
 	UFUNCTION()
 	virtual void StartDeath();
+
+	FORCEINLINE UHealthComponent* GetHealthComponent() const { return HealthComponent; };
 
 private:
 	/** The character's HealthComponent. */

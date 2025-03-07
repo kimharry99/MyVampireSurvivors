@@ -9,6 +9,7 @@
 class UProgressBar;
 
 class UHealthData;
+class UHealthComponent;
 
 /**
  * 
@@ -25,11 +26,13 @@ protected:
 	//~End of UUserWidget interface
 
 public:
-	void BindHealthData(const UHealthData* NewHealthData);
+	void BindHealthComponent(UHealthComponent* NewHealthComponent);
 
 private:
 	UPROPERTY()
 	TObjectPtr<const UHealthData> TrackingHealthData;
+
+	TWeakObjectPtr<UHealthComponent> TrackingHealthComponent;
 
 	UPROPERTY()
 	TObjectPtr<UProgressBar> HealthBar;

@@ -19,11 +19,6 @@ AMyVamSurCharacter::AMyVamSurCharacter(const FObjectInitializer& ObjectInitializ
 	HealthComponent->OnDeathStarted.AddDynamic(this, &AMyVamSurCharacter::StartDeath);
 }
 
-const UHealthData* AMyVamSurCharacter::GetHealthData() const
-{
-	return HealthComponent->GetHealthData();
-}
-
 void AMyVamSurCharacter::ReceiveAttack(float DamageAmount, AController* Attacker)
 {
 	HealthComponent->TakeDamage(DamageAmount);
