@@ -10,6 +10,7 @@
 #include "Players/PlayerCharacter.h"
 #include "Players/MyVamSurPlayerState.h"
 #include "Players/MyVamSurPlayerController.h"
+#include "Rewards/RewardManager.h"
 #include "ToroidalMaps/ToroidalMap.h"
 #include "ToroidalMaps/ToroidalWorldSystem.h"
 #include "Waves/WaveManager.h"
@@ -20,6 +21,8 @@ AMyVamSurGameMode::AMyVamSurGameMode()
 	DefaultPawnClass = APlayerCharacter::StaticClass();
 	PlayerControllerClass = AMyVamSurPlayerController::StaticClass();
 	PlayerStateClass = AMyVamSurPlayerState::StaticClass();
+
+	RewardManagerClass = URewardManager::StaticClass();
 }
 
 void AMyVamSurGameMode::PreInitializeComponents()
@@ -29,6 +32,22 @@ void AMyVamSurGameMode::PreInitializeComponents()
 	AddToroidalWorldSystemToGame();
 	AddEnemySpawnerToGame();
 	AddWaveManagerToGame();
+	CreateRewardManager();
+}
+
+UToroidalWorldSystem* AMyVamSurGameMode::GetToroidalWorldSystem() const
+{
+	return ToroidalWorldSystem;
+}
+
+AEnemySpawner* AMyVamSurGameMode::GetEnemySpawner() const
+{
+	return EnemySpawner;
+}
+
+URewardManager* AMyVamSurGameMode::GetRewardManager() const
+{
+	return RewardManager;
 }
 
 void AMyVamSurGameMode::AddToroidalWorldSystemToGame()
@@ -71,12 +90,9 @@ void AMyVamSurGameMode::AddWaveManagerToGame()
 	MyGameState->SetWaveManager(WaveManager);
 }
 
-UToroidalWorldSystem* AMyVamSurGameMode::GetToroidalWorldSystem() const
+void AMyVamSurGameMode::CreateRewardManager()
 {
-	return ToroidalWorldSystem;
-}
-
-AEnemySpawner* AMyVamSurGameMode::GetEnemySpawner() const
-{
-	return EnemySpawner;
+	check(RewardManagerClass);
+	UWorld* World = GetWorld();
+	RewardManager = NewObject<URewardManager>(World, RewardManagerClass);
 }

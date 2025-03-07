@@ -10,6 +10,7 @@ class UExpData;
 class UHealthData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerStateChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharacterLevelUp);
 
 UCLASS()
 class MYVAMPIRESURVIVORS_API AMyVamSurPlayerState : public APlayerState
@@ -27,10 +28,13 @@ protected:
 
 public:
 	FOnPlayerStateChanged OnPlayerStateChanged;
+	FOnCharacterLevelUp OnCharacterLevelUp;
 
 private:
 	UFUNCTION()
 	void HandlePlayerStateChanged();
+
+	void UnInitializeExpDataDelegates();
 
 private:
 	UPROPERTY(Transient)
@@ -38,6 +42,7 @@ private:
 
 public:
 	void BindHealthData(const UHealthData* NewHealthData);
+	void UnBindHealthData();
 
 	float GetHpRatio() const;
 
@@ -47,8 +52,10 @@ private:
 
 public:
 	void BindExpData(const UExpData* NewExpData);
+	void UnBindExpData();
 	float GetExpRatio() const;
 
 private:
-	void UnInitializeExpDataDelegates();
+	UFUNCTION()
+	void HandleCharacterLevelUp();
 };

@@ -11,17 +11,21 @@
 #include "PaperFlipbook.h"
 
 #include "Camera/MyVamSurCameraComponent.h"
-#include "Equipments/EquipmentComponent.h"
+#include "Equipments/EquipmentInventoryComponent.h"
+#include "Equipments/EquipmentAutoActivator.h"
+#include "GameModes/MyVamSurGameMode.h"
+#include "MyVamSurLogChannels.h"
 #include "Players/ExpData.h"
+#include "Players/MyVamSurPlayerController.h"
 #include "Players/MyVamSurPlayerState.h"
 #include "Players/PlayerPawnComponent.h"
+#include "Rewards/RewardManager.h"
 #include "ToroidalMaps/ToroidalPlayerComponent.h"
 #include "UI/PlayerCharacterWidget.h"
 
+
 APlayerCharacter::APlayerCharacter()
 {
-	PrimaryActorTick.bCanEverTick = true;
-
 	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ToroidalActor"));
@@ -44,18 +48,19 @@ APlayerCharacter::APlayerCharacter()
 	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, -50.0f));
 	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
-	CharacterExp = CreateDefaultSubobject<UExpData>(TEXT("CharacterExp"));
-
 	PlayerPawn = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawn"));
 
 	ToroidalPlayer = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayer"));
 
-	Inventory = CreateDefaultSubobject<UEquipmentComponent>(TEXT("Inventory"));
+	InventoryComponent = CreateDefaultSubobject<UEquipmentInventoryComponent>(TEXT("Inventory"));
+	EquipmentActivator = CreateDefaultSubobject<UEquipmentAutoActivator>(TEXT("EquipmentActivator"));
 }
 
 void APlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	CharacterExp = NewObject<UExpData>(this);
 
 	ToroidalPlayer->AddTickPrerequisiteComponent(GetCharacterMovement());
 	FollowCamera->AddTickPrerequisiteComponent(ToroidalPlayer);
@@ -66,7 +71,24 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	CreateHPBarWidget();
-	CharacterExp->Initialize();
+	InitializeCharacterExp();
+
+	//FIXME
+	for (const TSubclassOf<AEquipment>& EquipmentClass : Equipments)
+	{
+		InventoryComponent->AddEquipmentAndRegister(EquipmentClass, EquipmentActivator);
+	}
+	//FIXMEEND
+}
+
+void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (CharacterExp)
+	{
+		CharacterExp->OnLevelUp.RemoveAll(this);
+	}
+
+	Super::EndPlay(EndPlayReason);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -91,14 +113,39 @@ void APlayerCharacter::CreateHPBarWidget()
 	HPBarWidgetInstance->BindHealthData(GetHealthData());
 }
 
+void APlayerCharacter::InitializeCharacterExp()
+{
+	if (!CharacterExp)
+	{
+		return;
+	}
+
+	CharacterExp->Initialize();
+	CharacterExp->OnLevelUp.AddDynamic(this, &APlayerCharacter::HandleCharacterLevelUp);
+}
+
 void APlayerCharacter::AddExp(int GainedExp)
 {
+	if (!CharacterExp)
+	{
+		return;
+	}
+
 	CharacterExp->AddExp(GainedExp);
 }
 
 const UExpData* APlayerCharacter::GetExpData() const
 {
 	return CharacterExp;
+}
+
+void APlayerCharacter::HandleCharacterLevelUp()
+{
+	URewardManager* RewardManager = GetRewardManagerFromGameMode();
+	if (RewardManager)
+	{
+		RewardManager->GiveReward(this);
+	}
 }
 
 void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component)
@@ -109,12 +156,28 @@ void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponen
 	}
 }
 
-void APlayerCharacter::EquipEquipment(AEquipmentItem* Equipment)
+URewardManager* APlayerCharacter::GetRewardManagerFromGameMode() const
 {
-	Inventory->AddEquipmentItem(Equipment);
+	if (UWorld* World = GetWorld())
+	{
+		if (AMyVamSurGameMode* GameMode = World->GetAuthGameMode<AMyVamSurGameMode>())
+		{
+			return GameMode->GetRewardManager();
+		}
+	}
+
+	return nullptr;
 }
 
-void APlayerCharacter::UseAllEnableEquipments()
+const UEquipmentInventoryComponent* APlayerCharacter::GetInventoryComponent() const
 {
-	Inventory->UseAllEnableEquipments();
+	return InventoryComponent;
+}
+
+void APlayerCharacter::EquipEquipment(TSubclassOf<AEquipment> EquipmentClass)
+{
+	if (InventoryComponent)
+	{
+		InventoryComponent->AddEquipmentAndRegister(EquipmentClass, EquipmentActivator);
+	}
 }

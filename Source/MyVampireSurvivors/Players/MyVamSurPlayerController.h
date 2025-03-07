@@ -7,7 +7,11 @@
 #include "MyVamSurPlayerController.generated.h"
 
 template <class TClass> class TSubclassOf;
-class UMyVamSurHUDWidget;
+
+class UEquipmentInventoryComponent;
+class UMyVamSurBaseWidget;
+class URewardMenuWidget;
+
 
 /**
  * 
@@ -20,20 +24,28 @@ class MYVAMPIRESURVIVORS_API AMyVamSurPlayerController : public APlayerControlle
 protected:
 	//~AActor interface
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	//~End of AActor interface
 
 	//~APlayerController interface
-	virtual void OnPossess(APawn* InPawn) override;
+	virtual void OnPossess(APawn* PawnToPossess) override;
+	virtual void OnUnPossess() override;
 	virtual void PlayerTick(float DeltaSeconds) override;
 	//~End of APlayerController interface
 
+	UFUNCTION(BlueprintCallable, Category = Game)
+	void ResumeGame();
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = UI)
-	TSubclassOf<UMyVamSurHUDWidget> HUDWidgetClass;
+	TSubclassOf<UMyVamSurBaseWidget> BaseWidgetClass;
 
-	UPROPERTY()
-	TObjectPtr<UMyVamSurHUDWidget> HUDWidget;
+	UPROPERTY(BlueprintReadOnly, Category = UI, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UMyVamSurBaseWidget> BaseWidget;
 
 private:
-	void CreateHUDWidget();
+	void CreateBaseWidget();
+
+public:
+	URewardMenuWidget* ActivateRewardMenu();
 };

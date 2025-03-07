@@ -5,20 +5,31 @@
 
 #include "Players/PlayerCharacter.h"
 #include "Players/MyVamSurPlayerState.h"
-#include "UI/MyVamSurHUDWidget.h"
+#include "UI/MyVamSurBaseWidget.h"
+#include "MyVamSurLogChannels.h"
 
 void AMyVamSurPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CreateHUDWidget();
+	CreateBaseWidget();
 }
 
-void AMyVamSurPlayerController::OnPossess(APawn* InPawn)
+void AMyVamSurPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::OnPossess(InPawn);
+	if (AMyVamSurPlayerState* MyVamSurPlayerState = GetPlayerState<AMyVamSurPlayerState>())
+	{
+		MyVamSurPlayerState->OnCharacterLevelUp.RemoveAll(this);
+	}
 
-	if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(InPawn))
+	Super::EndPlay(EndPlayReason);
+}
+
+void AMyVamSurPlayerController::OnPossess(APawn* PawnToPossess)
+{
+	Super::OnPossess(PawnToPossess);
+
+	if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(PawnToPossess))
 	{
 		if (AMyVamSurPlayerState* MyVamSurPlayerState = GetPlayerState<AMyVamSurPlayerState>())
 		{
@@ -28,29 +39,45 @@ void AMyVamSurPlayerController::OnPossess(APawn* InPawn)
 	}
 }
 
+void AMyVamSurPlayerController::OnUnPossess()
+{
+	if (AMyVamSurPlayerState* MyVamSurPlayerState = GetPlayerState<AMyVamSurPlayerState>())
+	{
+		MyVamSurPlayerState->UnBindHealthData();
+		MyVamSurPlayerState->UnBindExpData();
+	}
+
+	Super::OnUnPossess();
+}
+
 void AMyVamSurPlayerController::PlayerTick(float DeltaSeconds)
 {
 	Super::PlayerTick(DeltaSeconds);
+}
 
-	if(APlayerCharacter* PlayerCharacter = GetPawn<APlayerCharacter>())
+void AMyVamSurPlayerController::ResumeGame()
+{
+	if (IsPaused())
 	{
-		PlayerCharacter->UseAllEnableEquipments();
+		SetPause(false);
 	}
 }
 
-void AMyVamSurPlayerController::CreateHUDWidget()
+void AMyVamSurPlayerController::CreateBaseWidget()
 {
-	check(HUDWidgetClass);
-	HUDWidget = CreateWidget<UMyVamSurHUDWidget>(this, HUDWidgetClass);
-	check(HUDWidget);
-	HUDWidget->AddToViewport();
+	check(BaseWidgetClass);
+	BaseWidget = CreateWidget<UMyVamSurBaseWidget>(this, BaseWidgetClass);
+	check(BaseWidget);
+	BaseWidget->AddToViewport();
+}
 
-	UWorld* World = GetWorld();
-	check(World);
-	AGameStateBase* GameState = World->GetGameState();
-	check(GameState);
-	HUDWidget->BindGameState(GameState);
+URewardMenuWidget* AMyVamSurPlayerController::ActivateRewardMenu()
+{
+	if (BaseWidget)
+	{
+		SetPause(true);
+		return BaseWidget->DisplayLevelUpMenu();
+	}
 
-	check(PlayerState);
-	HUDWidget->BindPlayerState(PlayerState);
+	return nullptr;
 }

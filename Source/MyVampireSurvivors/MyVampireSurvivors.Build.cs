@@ -14,7 +14,17 @@ public class MyVampireSurvivors : ModuleRules
 
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG" });
+		PublicDependencyModuleNames.AddRange(
+			new string[] {
+				"Core",
+				"CoreUObject",
+				"Engine",
+				"InputCore",
+				"EnhancedInput",
+				"UMG",
+				"CommonUI"
+			}
+		);
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd" });
 

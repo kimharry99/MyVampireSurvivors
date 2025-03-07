@@ -3,19 +3,20 @@
 #pragma once
 
 #include "Characters/MyVamSurCharacter.h"
-#include "Equipments/EquipmentInventory.h"
 #include "PlayerCharacter.generated.h"
 
 template<class UClass> class TSubclassOf;
 class USpringArmComponent;
 class UWidgetComponent;
 
-class AEquipmentItem;
-class UEquipmentComponent;
+class AEquipment;
+class UEquipmentAutoActivator;
+class UEquipmentInventoryComponent;
 class UExpData;
 class UMyVamSurCameraComponent;
 class UPlayerPawnComponent;
 class UPlayerCharacterWidget;
+class URewardManager;
 class UToroidalActorComponent;
 class UToroidalPlayerComponent;
 
@@ -35,6 +36,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaSeconds) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndpPlayReason) override;
 	//~End of AActor interface
 
 private:
@@ -67,15 +69,20 @@ private:
 	TObjectPtr<UExpData> CharacterExp;
 
 public:
+	void InitializeCharacterExp();
 	void AddExp(int GainedExp);
 
 	const UExpData* GetExpData() const;
 
 private:
+	UFUNCTION()
+	void HandleCharacterLevelUp();
+
+private:
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	TObjectPtr<UPlayerPawnComponent> PlayerPawn;
 
-	UPROPERTY(VisibleAnywhere, Category="Torus")
+	UPROPERTY(VisibleAnywhere, Category = "Torus")
 	TObjectPtr<UToroidalPlayerComponent> ToroidalPlayer;
 
 public:
@@ -85,21 +92,31 @@ public:
 	void AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component);
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Player|Equipment")
-	TObjectPtr<UEquipmentComponent> Inventory;
+	URewardManager* GetRewardManagerFromGameMode() const;
+
+private:
+	UPROPERTY(EditDefaultsOnly) // For testing, declare no macro for production
+	TObjectPtr<UEquipmentInventoryComponent> InventoryComponent;
+
+	UPROPERTY()
+	TObjectPtr<UEquipmentAutoActivator> EquipmentActivator;
+
+	// FIXME: Remove this code after testing
+	//~Begin of testing code
+public:
+	UPROPERTY(EditAnywhere, Category = "Testing")
+	TArray<TSubclassOf<AEquipment>> Equipments;
+	//~End of testing code
 
 public:
-	/**
-	 * Use all enable equipments in the inventory.
-	 */
-	void UseAllEnableEquipments();
+	const UEquipmentInventoryComponent* GetInventoryComponent() const;
 
 	/**
 	 * Equip a equipment to the player character.
 	 * Add the equipment to the inventory.
 	 * The equipment actor will be attached to the player character.
-	 * 
-	 * @param Equipment Equipment to equip.
+	 *
+	 * @param EquipmentClass Equipment to equip.
 	 */
-	void EquipEquipment(AEquipmentItem* Equipment);
+	void EquipEquipment(TSubclassOf<AEquipment> EquipmentClass);
 };
