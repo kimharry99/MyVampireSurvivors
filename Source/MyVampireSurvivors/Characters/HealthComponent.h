@@ -19,12 +19,6 @@ class MYVAMPIRESURVIVORS_API UHealthComponent : public UActorComponent
 public:
 	UHealthComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-protected:
-	//~UActorComponent interface
-	virtual void OnRegister() override;
-	virtual void OnUnregister() override;
-	//~End of UActorComponent interface
-
 private:
 	template <typename T>
 	T* GetPawn() const
@@ -36,7 +30,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Data")
 	float DefaultMaxHealth = 0.0f;
 
-	UPROPERTY()
+	UPROPERTY(Instanced)
 	TObjectPtr<UHealthData> HealthData;
 
 public:

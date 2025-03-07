@@ -11,27 +11,9 @@ class APawn;
 UHealthComponent::UHealthComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-}
-
-void UHealthComponent::OnRegister()
-{
-	Super::OnRegister();
-
-	HealthData = NewObject<UHealthData>(this);
-	check(HealthData);
-
+	HealthData = CreateDefaultSubobject<UHealthData>(TEXT("HealthData"));
 	HealthData->InitializeHealth(DefaultMaxHealth);
-	HealthData->OnOutOfHealth.AddDynamic(this, &UHealthComponent::HandleOutOfHealth);
-}
-
-void UHealthComponent::OnUnregister()
-{
-	if (HealthData)
-	{
-		HealthData->OnOutOfHealth.RemoveDynamic(this, &UHealthComponent::HandleOutOfHealth);
-	}
-
-	Super::OnUnregister();
+	HealthData->OnOutOfHealth.AddDynamic(this, &ThisClass::HandleOutOfHealth);
 }
 
 const UHealthData* UHealthComponent::GetHealthData() const
