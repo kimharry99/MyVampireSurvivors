@@ -51,6 +51,6 @@ protected:
 
 private:
 	/** The character's HealthComponent. */
-	UPROPERTY(EditDefaultsOnly, Category="Character|Health")
-	TObjectPtr<UHealthComponent> Health;
+	UPROPERTY(VisibleAnywhere, Category="Character|Health")
+	TObjectPtr<UHealthComponent> HealthComponent;
 };

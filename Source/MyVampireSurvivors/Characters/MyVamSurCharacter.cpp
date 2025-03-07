@@ -15,28 +15,28 @@ AMyVamSurCharacter::AMyVamSurCharacter(const FObjectInitializer& ObjectInitializ
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("PlayerCharacter"));
 
-	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
-	Health->OnDeathStarted.AddDynamic(this, &AMyVamSurCharacter::StartDeath);
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	HealthComponent->OnDeathStarted.AddDynamic(this, &AMyVamSurCharacter::StartDeath);
 }
 
 void AMyVamSurCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::EndPlay(EndPlayReason);
+	HealthComponent->OnDeathStarted.RemoveDynamic(this, &AMyVamSurCharacter::StartDeath);
 
-	Health->OnDeathStarted.RemoveDynamic(this, &AMyVamSurCharacter::StartDeath);
+	Super::EndPlay(EndPlayReason);
 }
 
 float AMyVamSurCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
 	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	Health->TakeDamage(ActualDamage);
+	HealthComponent->TakeDamage(ActualDamage);
 
 	return ActualDamage;
 }
 
 const UHealthData* AMyVamSurCharacter::GetHealthData() const
 {
-	return Health->GetHealthData();
+	return HealthComponent->GetHealthData();
 }
 
 void AMyVamSurCharacter::ReceiveAttack(float DamageAmount, AController* Attacker)
