@@ -20,6 +20,10 @@ public:
 	UHealthComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
+	//~UActorComponent interface
+	virtual void BeginPlay() override;
+	//~End of UActorComponent interface
+
 	float GetHPRatio() const;
 
 	void TakeDamage(float Damage);
@@ -31,9 +35,12 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Data")
 	float DefaultMaxHealth = 0.0f;
 
-	UPROPERTY(Instanced)
+	UPROPERTY()
 	TObjectPtr<UHealthData> HealthData;
 
 	UFUNCTION()
 	void HandleOutOfHealth();
+
+	UFUNCTION()
+	void HandleHealthChanged();
 };

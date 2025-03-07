@@ -12,8 +12,15 @@ UHealthComponent::UHealthComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	HealthData = CreateDefaultSubobject<UHealthData>(TEXT("HealthData"));
-	HealthData->InitializeHealth(DefaultMaxHealth);
 	HealthData->OnOutOfHealth.AddDynamic(this, &ThisClass::HandleOutOfHealth);
+	HealthData->OnOutOfHealth.AddDynamic(this, &ThisClass::HandleHealthChanged);
+}
+
+void UHealthComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	HealthData->InitializeHealth(DefaultMaxHealth);
 }
 
 float UHealthComponent::GetHPRatio() const
@@ -32,4 +39,9 @@ void UHealthComponent::TakeDamage(float Damage)
 void UHealthComponent::HandleOutOfHealth()
 {
 	OnDeathStarted.Broadcast();
+}
+
+void UHealthComponent::HandleHealthChanged()
+{
+	OnHealthChanged.Broadcast();
 }
