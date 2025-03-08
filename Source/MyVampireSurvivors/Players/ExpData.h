@@ -8,20 +8,22 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnExpChanged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLevelUp);
 
-UCLASS()
+UCLASS(DefaultToInstanced)
 class MYVAMPIRESURVIVORS_API UExpData : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	void Initialize();
+	UExpData(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+public:
 	float GetExpRatio() const;
 	int GetMaxExp() const;
 
 	void AddExp(int GainedExp);
 
-public:
+	void InitializeExp();
+
 	mutable FOnExpChanged OnExpChanged;
 	mutable	FOnLevelUp OnLevelUp;
 

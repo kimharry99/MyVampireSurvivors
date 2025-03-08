@@ -6,7 +6,6 @@
 #include "PaperZDCharacter.h"
 #include "MyVamSurCharacter.generated.h"
 
-class UHealthComponent;
 class UHealthData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharacterDied);
@@ -21,34 +20,23 @@ class MYVAMPIRESURVIVORS_API AMyVamSurCharacter : public APaperZDCharacter
 	GENERATED_BODY()
 
 public:
-	AMyVamSurCharacter();
+	AMyVamSurCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-protected:
+public:
 	//~AActor interface
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual void BeginPlay() override;
 	//~End of AActor interface
 
-private:
-	/** The character's HealthComponent. */
-	UPROPERTY(EditDefaultsOnly, Category="Character|Health")
-	TObjectPtr<UHealthComponent> Health;
+	/** Called when the character dies. */
+	FOnCharacterDied OnCharacterDied;
 
-public:
-	const UHealthData* GetHealthData() const;
-
-public:
 	/**
 	 * Handles the character receiving an attack.
-	 * 
+	 *
 	 * @param DamageAmount How much damage to apply
 	 * @param Attacker The Controller that attacks the character.
 	 */
 	virtual void ReceiveAttack(float DamageAmount, AController* Attacker);
-
-public:
-	/** Called when the character dies. */
-	FOnCharacterDied OnCharacterDied;
 
 protected:
 	/**
@@ -56,4 +44,13 @@ protected:
 	 */
 	UFUNCTION()
 	virtual void StartDeath();
+
+	FORCEINLINE UHealthData* GetHealthData() const { return HealthData; };
+
+private:
+	UPROPERTY()
+	TObjectPtr<UHealthData> HealthData;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Data")
+	float DefaultMaxHealth = 1.0f;
 };

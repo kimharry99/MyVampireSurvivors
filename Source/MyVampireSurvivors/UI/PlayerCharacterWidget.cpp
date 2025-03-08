@@ -19,7 +19,7 @@ void UPlayerCharacterWidget::NativeConstruct()
 
 void UPlayerCharacterWidget::NativeDestruct()
 {	
-	if (TrackingHealthData)
+	if (TrackingHealthData.IsValid())
 	{
 		TrackingHealthData->OnHealthChanged.RemoveAll(this);
 	}
@@ -27,9 +27,14 @@ void UPlayerCharacterWidget::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-void UPlayerCharacterWidget::BindHealthData(const UHealthData* NewHealthData)
+void UPlayerCharacterWidget::BindHealthData(UHealthData* NewHealthData)
 {
-	if (TrackingHealthData)
+	if (TrackingHealthData == NewHealthData)
+	{
+		return;
+	}
+
+	if (TrackingHealthData.IsValid())
 	{
 		TrackingHealthData->OnHealthChanged.RemoveAll(this);
 	}
@@ -37,20 +42,16 @@ void UPlayerCharacterWidget::BindHealthData(const UHealthData* NewHealthData)
 	TrackingHealthData = NewHealthData;
 	UpdateHealth();
 
-	TrackingHealthData->OnHealthChanged.AddDynamic(this, &UPlayerCharacterWidget::UpdateHealth);
+	if (TrackingHealthData.IsValid())
+	{
+		TrackingHealthData->OnHealthChanged.AddDynamic(this, &UPlayerCharacterWidget::UpdateHealth);
+	}
 }
 
 void UPlayerCharacterWidget::UpdateHealth()
 {
-	if (TrackingHealthData == nullptr)
+	if (TrackingHealthData.IsValid())
 	{
-		return;
+		HealthBar->SetPercent(TrackingHealthData->GetHpRatio());
 	}
-
-	if (HealthBar == nullptr)
-	{
-		return;
-	}
-
-	HealthBar->SetPercent(TrackingHealthData->GetHpRatio());
 }

@@ -2,46 +2,34 @@
 
 
 #include "Characters/MyVamSurCharacter.h"
-#include "Engine/DamageEvents.h"
-#include "Components/CapsuleComponent.h"
-#include "Physics/MyVamSurCollisionChannels.h"
-#include "Characters/HealthComponent.h"
 
-AMyVamSurCharacter::AMyVamSurCharacter()
+#include "Components/CapsuleComponent.h"
+
+#include "Characters/HealthData.h"
+#include "Physics/MyVamSurCollisionChannels.h"
+
+
+AMyVamSurCharacter::AMyVamSurCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	SetCanBeDamaged(true);
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("PlayerCharacter"));
 
-	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
-	Health->OnDeathStarted.AddDynamic(this, &AMyVamSurCharacter::StartDeath);
+	HealthData = CreateDefaultSubobject<UHealthData>(TEXT("HealthData"));
+	HealthData->OnOutOfHealth.AddDynamic(this, &ThisClass::StartDeath);
 }
 
-void AMyVamSurCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void AMyVamSurCharacter::BeginPlay()
 {
-	Super::EndPlay(EndPlayReason);
+	Super::BeginPlay();
 
-	Health->OnDeathStarted.RemoveDynamic(this, &AMyVamSurCharacter::StartDeath);
-}
-
-const UHealthData* AMyVamSurCharacter::GetHealthData() const
-{
-	return Health->GetHealthData();
+	HealthData->InitializeHealth(DefaultMaxHealth);
 }
 
 void AMyVamSurCharacter::ReceiveAttack(float DamageAmount, AController* Attacker)
 {
-	FDamageEvent DamageEvent;
-	AActor* DamageCauser = Attacker ? Attacker->GetPawn() : nullptr;
-	TakeDamage(DamageAmount, DamageEvent, Attacker, DamageCauser);
-}
-
-float AMyVamSurCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
-{
-	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	Health->TakeDamage(ActualDamage);
-
-	return ActualDamage;
+	HealthData->TakeDamage(DamageAmount);
 }
 
 void AMyVamSurCharacter::StartDeath()

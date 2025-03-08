@@ -29,24 +29,16 @@ class MYVAMPIRESURVIVORS_API APlayerCharacter : public AMyVamSurCharacter
 	GENERATED_BODY()
 
 public:
-	APlayerCharacter();
-
-protected:
-	//~AActor interface
-	virtual void BeginPlay() override;
-	virtual void PostInitializeComponents() override;
-	virtual void Tick(float DeltaSeconds) override;
-	virtual void EndPlay(const EEndPlayReason::Type EndpPlayReason) override;
-	//~End of AActor interface
-
-private:
-	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<USpringArmComponent> CameraBoom;
-
-	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UMyVamSurCameraComponent> FollowCamera;
+	APlayerCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
+	//~AActor interface
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndpPlayReason) override;
+	virtual void PostInitializeComponents() override;
+	virtual void Tick(float DeltaSeconds) override;
+	//~End of AActor interface
+
 	/**
 	 * Get the view box of the camera.
 	 *
@@ -54,61 +46,15 @@ public:
 	 */
 	const FBox GetViewBox() const;
 
-private:
-	UPROPERTY(EditDefaultsOnly, Category = UI, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UPlayerCharacterWidget> HPBarWidgetClass;
-
-	UPROPERTY(VisibleAnywhere, Category = UI, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UWidgetComponent> HPBarWidget;
-
-private:
-	void CreateHPBarWidget();
-
-private:
-	UPROPERTY()
-	TObjectPtr<UExpData> CharacterExp;
-
-public:
-	void InitializeCharacterExp();
 	void AddExp(int GainedExp);
 
 	const UExpData* GetExpData() const;
 
-private:
-	UFUNCTION()
-	void HandleCharacterLevelUp();
-
-private:
-	UPROPERTY(VisibleAnywhere, Category = "Player")
-	TObjectPtr<UPlayerPawnComponent> PlayerPawn;
-
-	UPROPERTY(VisibleAnywhere, Category = "Torus")
-	TObjectPtr<UToroidalPlayerComponent> ToroidalPlayer;
-
-public:
 	/**
 	 * Add a toroidal actor component that needs to be ticked after the player character.
 	 */
 	void AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component);
 
-private:
-	URewardManager* GetRewardManagerFromGameMode() const;
-
-private:
-	UPROPERTY(EditDefaultsOnly) // For testing, declare no macro for production
-	TObjectPtr<UEquipmentInventoryComponent> InventoryComponent;
-
-	UPROPERTY()
-	TObjectPtr<UEquipmentAutoActivator> EquipmentActivator;
-
-	// FIXME: Remove this code after testing
-	//~Begin of testing code
-public:
-	UPROPERTY(EditAnywhere, Category = "Testing")
-	TArray<TSubclassOf<AEquipment>> Equipments;
-	//~End of testing code
-
-public:
 	const UEquipmentInventoryComponent* GetInventoryComponent() const;
 
 	/**
@@ -119,4 +65,49 @@ public:
 	 * @param EquipmentClass Equipment to equip.
 	 */
 	void EquipEquipment(TSubclassOf<AEquipment> EquipmentClass);
+
+protected:
+	//~AActor interface
+	//~End of AActor interface
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = Camera)
+	TObjectPtr<USpringArmComponent> CameraBoom;
+
+	UPROPERTY(VisibleAnywhere, Category = Camera)
+	TObjectPtr<UMyVamSurCameraComponent> FollowCamera;
+
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+	TSubclassOf<UPlayerCharacterWidget> HPBarWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Category = UI)
+	TObjectPtr<UWidgetComponent> HPBarWidget;
+
+	void CreateHPBarWidget();
+
+	UPROPERTY()
+	TObjectPtr<UExpData> CharacterExp;
+
+	UFUNCTION()
+	void HandleCharacterLevelUp();
+
+	UPROPERTY(VisibleAnywhere, Category = "Player")
+	TObjectPtr<UPlayerPawnComponent> PlayerPawn;
+
+	UPROPERTY(VisibleAnywhere, Category = "Torus")
+	TObjectPtr<UToroidalPlayerComponent> ToroidalPlayer;
+
+	URewardManager* GetRewardManagerFromGameMode() const;
+
+	UPROPERTY(VisibleAnywhere, Category = Equipment)
+	TObjectPtr<UEquipmentInventoryComponent> InventoryComponent;
+
+	UPROPERTY()
+	TObjectPtr<UEquipmentAutoActivator> EquipmentActivator;
+
+	// FIXME: Remove this code after testing
+	//~Begin of testing code
+	UPROPERTY(EditAnywhere, Category = "Testing")
+	TArray<TSubclassOf<AEquipment>> Equipments;
+	//~End of testing code
 };

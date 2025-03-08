@@ -6,13 +6,11 @@
 #include "System/MyVamSurGameInstance.h"
 #include "MyVamSurLogChannels.h"
 
-void UExpData::Initialize()
+UExpData::UExpData(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	CurrentExp = 0;
 	CurrentLevel = 1;
-
-	UpdateMaxExp();
-	OnExpChanged.Broadcast();
 }
 
 void UExpData::AddExp(int GainedExp)
@@ -24,6 +22,12 @@ void UExpData::AddExp(int GainedExp)
 	{
 		LevelUp();
 	}
+}
+
+void UExpData::InitializeExp()
+{
+	UpdateMaxExp();
+	OnExpChanged.Broadcast();
 }
 
 void UExpData::LevelUp()
