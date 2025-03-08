@@ -18,7 +18,6 @@ class UPlayerPawnComponent;
 class UPlayerCharacterWidget;
 class URewardManager;
 class UToroidalActorComponent;
-class UToroidalPlayerComponent;
 
 /**
  * Player character class.
@@ -93,9 +92,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	TObjectPtr<UPlayerPawnComponent> PlayerPawn;
-
-	UPROPERTY(VisibleAnywhere, Category = "Torus")
-	TObjectPtr<UToroidalPlayerComponent> ToroidalPlayer;
 
 	URewardManager* GetRewardManagerFromGameMode() const;
 

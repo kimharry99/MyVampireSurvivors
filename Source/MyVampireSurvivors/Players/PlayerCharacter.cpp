@@ -20,14 +20,17 @@
 #include "Players/MyVamSurPlayerState.h"
 #include "Players/PlayerPawnComponent.h"
 #include "Rewards/RewardManager.h"
-#include "ToroidalMaps/ToroidalPlayerComponent.h"
+#include "ToroidalMaps/ToroidalActorComponent.h"
+#include "ToroidalMaps/ToroidCharacterMovementComponent.h"
 #include "UI/PlayerCharacterWidget.h"
 
 
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+	UToroidCharacterMovementComponent* MoveComp = CastChecked<UToroidCharacterMovementComponent>(GetCharacterMovement());
+	MoveComp->MaxWalkSpeed = 300.0f;
+	MoveComp->bIsPlayingCharacter = true;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ToroidalActor"));
 	GetCapsuleComponent()->SetCapsuleHalfHeight(50.0f);
@@ -54,9 +57,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	CharacterExp->OnLevelUp.AddDynamic(this, &APlayerCharacter::HandleCharacterLevelUp);
 
 	PlayerPawn = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawn"));
-
-	ToroidalPlayer = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayer"));
-
+	
 	InventoryComponent = CreateDefaultSubobject<UEquipmentInventoryComponent>(TEXT("Inventory"));
 	EquipmentActivator = CreateDefaultSubobject<UEquipmentAutoActivator>(TEXT("EquipmentActivator"));
 }
@@ -91,9 +92,6 @@ void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void APlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	ToroidalPlayer->AddTickPrerequisiteComponent(GetCharacterMovement());
-	FollowCamera->AddTickPrerequisiteComponent(ToroidalPlayer);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)

@@ -7,10 +7,12 @@
 
 #include "Characters/HealthData.h"
 #include "Physics/MyVamSurCollisionChannels.h"
+#include "ToroidalMaps/ToroidCharacterMovementComponent.h"
 
 
 AMyVamSurCharacter::AMyVamSurCharacter(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer
+				.SetDefaultSubobjectClass<UToroidCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	SetCanBeDamaged(true);
 
