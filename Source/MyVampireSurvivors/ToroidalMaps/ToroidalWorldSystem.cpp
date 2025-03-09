@@ -39,7 +39,7 @@ void UToroidalWorldSystem::SetDistortionZone(const FBox& WorldDistortionZone)
 		FVector2D(WorldDistortionZone.Max.X, WorldDistortionZone.Max.Y)
 	);
 	
-	FIntVector2 FullZoneDelta = FMyVamSurMath::GetDirectionVector(WorldDistortionZone2D.GetCenter(), TransformToTorus(WorldDistortionZone2D.GetCenter()));
+	FIntVector2 DeltaCompleteZone = FMyVamSurMath::GetDirectionVector(WorldDistortionZone2D.GetCenter(), TransformToTorus(WorldDistortionZone2D.GetCenter()));
 	TArray<FBox2D> SubBoxes = FMyVamSurMath::DivideBox2D(WorldDistortionZone2D, MapRange);
 	for (auto& SubBox : SubBoxes)
 	{
@@ -50,7 +50,7 @@ void UToroidalWorldSystem::SetDistortionZone(const FBox& WorldDistortionZone)
 
 		FBox2D ToroidalSubBox = SubBox.MoveTo(TransformToTorus(SubBox.GetCenter()));
 		FIntVector2 Delta = FMyVamSurMath::GetDirectionVector(SubBox.GetCenter(), ToroidalSubBox.GetCenter());
-		DistortionZones.Emplace(FullZoneDelta - Delta, ToroidalSubBox);
+		DistortionZones.Emplace(DeltaCompleteZone - Delta, ToroidalSubBox);
 	}
 }
 
