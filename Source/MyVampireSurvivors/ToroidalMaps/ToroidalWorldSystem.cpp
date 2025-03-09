@@ -3,7 +3,7 @@
 
 #include "ToroidalMaps/ToroidalWorldSystem.h"
 
-#include "Math/MyMath.h"
+#include "Math/MyVamSurMath.h"
 #include "ToroidalMaps/ToroidalMap.h"
 
 

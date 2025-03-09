@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 /**
- * 
+ *
  */
 struct MYVAMPIRESURVIVORS_API FMyVamSurMath
 {

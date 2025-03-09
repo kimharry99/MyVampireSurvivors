@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Math/MyMath.h"
+#include "Math/MyVamSurMath.h"
 
 double FMyVamSurMath::GetValueCycledToRange(double Value, double RangeMin, double RangeSize)
 {
