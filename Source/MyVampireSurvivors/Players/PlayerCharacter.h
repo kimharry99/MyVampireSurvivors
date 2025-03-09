@@ -13,12 +13,10 @@ class AEquipment;
 class UEquipmentAutoActivator;
 class UEquipmentInventoryComponent;
 class UExpData;
-class UMyVamSurCameraComponent;
 class UPlayerPawnComponent;
 class UPlayerCharacterWidget;
 class URewardManager;
-class UToroidalActorComponent;
-class UToroidalPlayerComponent;
+class UToroidalCameraComponent;
 
 /**
  * Player character class.
@@ -35,25 +33,11 @@ public:
 	//~AActor interface
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndpPlayReason) override;
-	virtual void PostInitializeComponents() override;
-	virtual void Tick(float DeltaSeconds) override;
 	//~End of AActor interface
-
-	/**
-	 * Get the view box of the camera.
-	 *
-	 * @return The view box of the camera.
-	 */
-	const FBox GetViewBox() const;
 
 	void AddExp(int GainedExp);
 
 	const UExpData* GetExpData() const;
-
-	/**
-	 * Add a toroidal actor component that needs to be ticked after the player character.
-	 */
-	void AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component);
 
 	const UEquipmentInventoryComponent* GetInventoryComponent() const;
 
@@ -66,16 +50,12 @@ public:
 	 */
 	void EquipEquipment(TSubclassOf<AEquipment> EquipmentClass);
 
-protected:
-	//~AActor interface
-	//~End of AActor interface
-
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<USpringArmComponent> CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
-	TObjectPtr<UMyVamSurCameraComponent> FollowCamera;
+	TObjectPtr<UToroidalCameraComponent> FollowCamera;
 
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 	TSubclassOf<UPlayerCharacterWidget> HPBarWidgetClass;
@@ -93,9 +73,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	TObjectPtr<UPlayerPawnComponent> PlayerPawn;
-
-	UPROPERTY(VisibleAnywhere, Category = "Torus")
-	TObjectPtr<UToroidalPlayerComponent> ToroidalPlayer;
 
 	URewardManager* GetRewardManagerFromGameMode() const;
 

@@ -2,9 +2,12 @@
 
 
 #include "ToroidalMaps/ToroidalActorComponent.h"
+
+#include "MyVamSurLogChannels.h"
 #include "ToroidalMaps/ToroidalWorldSystem.h"
 
-UToroidalActorComponent::UToroidalActorComponent()
+UToroidalActorComponent::UToroidalActorComponent(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.TickGroup = TG_PostPhysics;
@@ -17,7 +20,6 @@ void UToroidalActorComponent::BeginPlay()
 	if (UWorld* World = GetWorld())
 	{
 		ToroidalWorldSystem = FToroidalWorldSystem::GetCurrent<UToroidalWorldSystem>(World);
-		check(ToroidalWorldSystem);
 	}
 }
 
@@ -25,19 +27,18 @@ void UToroidalActorComponent::TickComponent(float DeltaTime, ELevelTick TickType
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	RepositionActor();
-}
+	if (!ToroidalWorldSystem.IsValid())
+	{
+		return;
+	}
 
-void UToroidalActorComponent::RepositionActor()
-{
-	// Empty implementation
-}
-
-void UToroidalActorComponent::WrapActorLocation()
-{
 	if (AActor* Owner = GetOwner())
 	{
-		FVector NewLocation = GetToroidalWorldSystem()->WrapPosition3D(Owner->GetActorLocation());
-		Owner->SetActorLocation(NewLocation, false, nullptr, TeleportType);
+		const FVector CurrentLocation = Owner->GetActorLocation();
+		const FVector RefinedLocation = ToroidalWorldSystem->RefineLocation(CurrentLocation);
+		if (!CurrentLocation.Equals(RefinedLocation))
+		{
+			Owner->SetActorLocation(RefinedLocation, false, nullptr, ETeleportType::TeleportPhysics);
+		}
 	}
 }

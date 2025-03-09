@@ -4,34 +4,37 @@
 
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
-#include "MyVamSurCameraComponent.generated.h"
+#include "ToroidalCameraComponent.generated.h"
+
+class UToroidalWorldSystem;
 
 /**
- * 
+ *
  */
 UCLASS()
-class MYVAMPIRESURVIVORS_API UMyVamSurCameraComponent : public UCameraComponent
+class MYVAMPIRESURVIVORS_API UToroidalCameraComponent : public UCameraComponent
 {
 	GENERATED_BODY()
 
 public:
-	UMyVamSurCameraComponent();
-
-	const FBox GetWorldViewBox() const;
+	UToroidalCameraComponent();
 
 protected:
 	//~UActorComponent interface
 	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	//~End of UActorComponent interface
 
 private:
+	UFUNCTION()
+	void OnMovementUpdated(float DeltaSeconds, FVector OldLocation, FVector OldVelocity);
+
 	/** View box defined in camera space. */
 	FBox ViewBox;
 	/** View box defined in world space. */
 	FBox WorldViewBox;
 
-private:
 	void InitializeViewBox();
 	void UpdateViewBox();
+
+	TWeakObjectPtr<UToroidalWorldSystem> ToroidalWorldSystem;
 };

@@ -21,7 +21,7 @@ FVector UHomingItemMovementComponent::ComputeHomingAcceleration(const FVector& I
 	{
 		const FVector StartLocation = UpdatedComponent->GetComponentLocation();
 		const FVector TargetLocation = HomingTargetComponent->GetComponentLocation();
-		FVector HomingAcceleration = ToroidalWorldSystem->CalculateDisplacement(StartLocation, TargetLocation).GetSafeNormal() * HomingAccelerationMagnitude;
+		FVector HomingAcceleration = ToroidalWorldSystem->ComputeToroidalDisplacement(StartLocation, TargetLocation).GetSafeNormal() * HomingAccelerationMagnitude;
 		return HomingAcceleration;
 	}
 
