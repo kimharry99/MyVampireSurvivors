@@ -16,7 +16,6 @@
 #include "Players/ExpData.h"
 #include "Players/PlayerPawnComponent.h"
 #include "Rewards/RewardManager.h"
-#include "ToroidalMaps/ToroidalActorComponent.h"
 #include "ToroidalMaps/ToroidalCameraComponent.h"
 #include "UI/PlayerCharacterWidget.h"
 
@@ -52,7 +51,6 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	CharacterExp = CreateDefaultSubobject<UExpData>(TEXT("CharacterExp"));
 	CharacterExp->OnLevelUp.AddDynamic(this, &APlayerCharacter::HandleCharacterLevelUp);
 
-	ToroidalActorComponent = CreateDefaultSubobject<UToroidalActorComponent>(TEXT("ToroidalActorComponent"));
 	PlayerPawn = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawn"));
 	
 	InventoryComponent = CreateDefaultSubobject<UEquipmentInventoryComponent>(TEXT("Inventory"));

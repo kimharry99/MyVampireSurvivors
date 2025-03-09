@@ -8,15 +8,12 @@
 
 #include "Enemies/ChasingEnemyAI.h"
 #include "Items/PickableItem.h"
-#include "ToroidalMaps/ToroidalActorComponent.h"
 
 AEnemy::AEnemy()
 {
 	AIControllerClass = AChasingEnemyAI::StaticClass();
 	AutoPossessAI = EAutoPossessAI::Spawned;
 	bUseControllerRotationYaw = false;
-
-	ToroidalActorComponent = CreateDefaultSubobject<UToroidalActorComponent>(TEXT("ToroidalActorComponent"));
 
 	// Set the collision handling method to always spawn
 	SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;

@@ -9,7 +9,6 @@ template <class TClass> class TSubclassOf;
 
 class AEnemy;
 class APickableItem;
-class UToroidalActorComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDied, AEnemy*, DiedEnemy);
 
@@ -42,9 +41,6 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Enemy")
 	TSubclassOf<APickableItem> DropItemClass;
-
-	UPROPERTY()
-	TObjectPtr<UToroidalActorComponent> ToroidalActorComponent;
 
 private:
 	void SpawnDropItem();

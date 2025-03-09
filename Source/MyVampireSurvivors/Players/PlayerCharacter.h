@@ -16,7 +16,6 @@ class UExpData;
 class UPlayerPawnComponent;
 class UPlayerCharacterWidget;
 class URewardManager;
-class UToroidalActorComponent;
 class UToroidalCameraComponent;
 
 /**
@@ -71,9 +70,6 @@ private:
 
 	UFUNCTION()
 	void HandleCharacterLevelUp();
-
-	UPROPERTY(VisibleAnywhere, Category = "ToroidalWorld")
-	TObjectPtr<UToroidalActorComponent> ToroidalActorComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	TObjectPtr<UPlayerPawnComponent> PlayerPawn;

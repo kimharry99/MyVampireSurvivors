@@ -18,6 +18,8 @@ AMyVamSurCharacter::AMyVamSurCharacter(const FObjectInitializer& ObjectInitializ
 
 	HealthData = CreateDefaultSubobject<UHealthData>(TEXT("HealthData"));
 	HealthData->OnOutOfHealth.AddDynamic(this, &ThisClass::StartDeath);
+
+	ToroidalActorComponent = CreateDefaultSubobject<UToroidalActorComponent>(TEXT("ToroidalActorComponent"));
 }
 
 void AMyVamSurCharacter::BeginPlay()
