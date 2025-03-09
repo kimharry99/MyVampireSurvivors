@@ -4,6 +4,7 @@
 #include "ToroidCharacterMovementComponent.h"
 
 #include "MyVamSurLogChannels.h"
+#include "Players/PlayerCharacter.h"
 #include "ToroidalWorldSystem.h"
 
 void UToroidCharacterMovementComponent::BeginPlay()
@@ -28,13 +29,16 @@ void UToroidCharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, co
 
 	if (UpdatedComponent)
 	{
-		const FVector CurrentLocation = UpdatedComponent->GetComponentLocation();
-		const FVector RefinedLocation = ToroidalWorldSystem->WrapPosition3D(CurrentLocation);
-		if (CurrentLocation == RefinedLocation)
+		if (const APlayerCharacter* PlayerCharacter = GetOwner<APlayerCharacter>())
 		{
-			return;
-		}
+			ToroidalWorldSystem->SetDistortionZone(PlayerCharacter->GetViewBox());
 
-		UpdatedComponent->SetWorldLocation(RefinedLocation, false, nullptr, ETeleportType::TeleportPhysics);
+			const FVector CurrentLocation = UpdatedComponent->GetComponentLocation();
+			const FVector RefinedLocation = ToroidalWorldSystem->RefineLocation(CurrentLocation);
+			if (CurrentLocation != RefinedLocation)
+			{
+				UpdatedComponent->SetWorldLocation(RefinedLocation, false, nullptr, ETeleportType::TeleportPhysics);
+			}
+		}
 	}
 }

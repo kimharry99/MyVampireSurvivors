@@ -4,6 +4,47 @@
 #include "ToroidalMaps/ToroidalWorldSystem.h"
 #include "ToroidalMaps/ToroidalMap.h"
 
+
+template <typename T>
+T GetClosestValue(const T Target, const T A, const T B)
+{
+	return (FMath::Abs(Target - A) < FMath::Abs(Target - B)) ? A : B;
+}
+
+TArray<FBox2D> DivideBox2D(const FBox2D& Box, const TArray<double>& VerticalLines, const TArray<double>& HorizontalLines)
+{
+	TArray<FBox2D> SubBoxes;
+
+	TArray<double> SortedX = VerticalLines;
+	SortedX.Add(Box.Min.X);
+	SortedX.Add(Box.Max.X);
+	SortedX.Sort();
+
+	TArray<double> SortedY = HorizontalLines;
+	SortedY.Add(Box.Min.Y);
+	SortedY.Add(Box.Max.Y);
+	SortedY.Sort();
+
+	for (int i = 0; i < SortedX.Num() - 1; ++i)
+	{
+		for (int j = 0; j < SortedY.Num() - 1; ++j)
+		{
+			FVector2D Min(SortedX[i], SortedY[j]);
+			FVector2D Max(SortedX[i + 1], SortedY[j + 1]);
+
+			SubBoxes.Add(FBox2D(Min, Max));
+		}
+	}
+
+	return SubBoxes;
+}
+
+FIntVector2 GetDirectionVector(const FVector2D& From, const FVector2D& To)
+{
+	const FVector2D Direction = To - From;
+	return FIntVector2(FMath::Sign(static_cast<int>(Direction.X)), FMath::Sign(static_cast<int>(Direction.Y)));
+}
+
 void UToroidalWorldSystem::Initialize(AToroidalMap* LevelToroidalMap)
 {
 	ToroidalMap = LevelToroidalMap;
@@ -45,6 +86,49 @@ bool UToroidalWorldSystem::IsInsideBoxOnTorus(const FVector& Point, const FBox& 
 	return bIsInsideX && bIsInsideY;
 }
 
+void UToroidalWorldSystem::SetDistortionZone(const FBox& WorldDistortionZone)
+{
+	DistortionZones.Empty();
+
+	FBox MapRange = ToroidalMap->GetMapRange();
+	// Check if there are any parts outside the map.
+	if (MapRange.IsInsideXY(WorldDistortionZone))
+	{
+		return;
+	}
+
+	FBox2D WorldDistortionZone2D(
+		FVector2D(WorldDistortionZone.Min.X, WorldDistortionZone.Min.Y),
+		FVector2D(WorldDistortionZone.Max.X, WorldDistortionZone.Max.Y)
+	);
+
+	TArray<double> VerticalLines;
+	double ClosestX = GetClosestValue(WorldDistortionZone2D.GetCenter().X, MapRange.Min.X, MapRange.Max.X);
+	if (FMath::IsWithin(ClosestX, WorldDistortionZone2D.Min.X, WorldDistortionZone2D.Max.X))
+	{
+		VerticalLines.Add(ClosestX);
+	}
+
+	TArray<double> HorizontalLines;
+	double ClosestY = GetClosestValue(WorldDistortionZone2D.GetCenter().Y, MapRange.Min.Y, MapRange.Max.Y);
+	if (FMath::IsWithin(ClosestY, WorldDistortionZone2D.Min.Y, WorldDistortionZone2D.Max.Y))
+	{
+		HorizontalLines.Add(ClosestY);
+	}
+
+	TArray<FBox2D> SubBoxes = DivideBox2D(WorldDistortionZone2D, VerticalLines, HorizontalLines);
+	for (auto& SubBox : SubBoxes)
+	{
+		if (SubBox.IsInsideOrOn(WorldDistortionZone2D.GetCenter()))
+		{
+			continue;
+		}
+
+		FIntVector2 Delta = GetDirectionVector(SubBox.GetCenter(), TransformToTorus(SubBox.GetCenter()));
+		DistortionZones.Emplace((Delta * -1), SubBox);
+	}
+}
+
 FVector UToroidalWorldSystem::CalculateDisplacement(const FVector& From, const FVector& To) const
 {
 	const FVector WrappedFrom = WrapPosition3D(From);
@@ -56,6 +140,12 @@ FVector UToroidalWorldSystem::CalculateDisplacement(const FVector& From, const F
 	const double DeltaY = CalculateSignedDistance1D(WrappedFrom.Y, WrappedTo.Y, Height);
 
 	return FVector(DeltaX, DeltaY, 0.0);
+}
+
+FVector UToroidalWorldSystem::RefineLocation(const FVector& Location) const
+{
+	FVector ToroidalLocation(TransformToTorus(Location));
+	return TransformToWorld(ToroidalLocation);
 }
 
 double UToroidalWorldSystem::WrapValue(double Value, double RangeMin, double RangeSize) const
@@ -81,4 +171,47 @@ double UToroidalWorldSystem::CalculateSignedDistance1D(double From, double To, d
 	
 	const double Distance = CalculateDistance1D(From, To, RangeSize);
 	return Sign * Distance;
+}
+
+FVector UToroidalWorldSystem::TransformToTorus(const FVector& Location) const
+{
+	FVector2D Location2D = FVector2D(Location.X, Location.Y);
+	FVector2D ToroidalLocation = TransformToTorus(Location2D);
+
+	return FVector(ToroidalLocation.X, ToroidalLocation.Y, Location.Z);
+}
+
+FVector2D UToroidalWorldSystem::TransformToTorus(const FVector2D& Location) const
+{
+	FBox MapRange = ToroidalMap->GetMapRange();
+	if (MapRange.IsInside(FVector(Location.X, Location.Y, MapRange.GetCenter().Z)))
+	{
+		return Location;
+	}
+
+	const double Width = MapRange.GetSize().X;
+	const double Height = MapRange.GetSize().Y;
+	const double NewLocationX = WrapValue(Location.X, MapRange.Min.X, Width);
+	const double NewLocationY = WrapValue(Location.Y, MapRange.Min.Y, Height);
+
+	return FVector2D(NewLocationX, NewLocationY);
+}
+
+FVector UToroidalWorldSystem::TransformToWorld(const FVector& Location) const
+{
+	FVector2D LocationXY(Location.X, Location.Y);
+	for (const auto& [Direction, DistortionZone] : DistortionZones)
+	{
+		if (DistortionZone.IsInside(LocationXY))
+		{
+			const FBox MapRange = ToroidalMap->GetMapRange();
+			const double Width = MapRange.GetSize().X;
+			const double Height = MapRange.GetSize().Y;
+
+			LocationXY.X += static_cast<double>(Direction.X) * Width;
+			LocationXY.Y += static_cast<double>(Direction.Y) * Height;
+		}
+	}
+
+	return FVector(LocationXY.X, LocationXY.Y, Location.Z);
 }

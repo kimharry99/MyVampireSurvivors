@@ -24,6 +24,7 @@ namespace FToroidalWorldSystem
 	}
 }
 
+
 /**
  * Utility class to manage the toroidal world system.
  */
@@ -54,10 +55,15 @@ public:
 	 */
 	bool IsInsideBoxOnTorus(const FVector& Point, const FBox& Box) const;
 
+	void SetDistortionZone(const FBox& WorldDistortionZone);
+
 	/**
 	 * Calculate displacement to the closest point corresponding to the destination on a toroidal map.
 	 */
 	FVector CalculateDisplacement(const FVector& From, const FVector& To) const;
+
+	/** Refine location defined in world space */
+	FVector RefineLocation(const FVector& Location) const;
 
 private:
 	double WrapValue(double Value, double RangeMin, double RangeSize) const;
@@ -68,4 +74,11 @@ private:
 	double CalculateDistance1D(double From, double To, double RangeSize) const;
 
 	double CalculateSignedDistance1D(double From, double To, double RangeSize) const;
+
+	FVector TransformToTorus(const FVector& Location) const;
+	FVector2D TransformToTorus(const FVector2D& Location) const;
+
+	FVector TransformToWorld(const FVector& Location) const;
+
+	TArray<TPair<FIntVector2, FBox2D>> DistortionZones;
 };
