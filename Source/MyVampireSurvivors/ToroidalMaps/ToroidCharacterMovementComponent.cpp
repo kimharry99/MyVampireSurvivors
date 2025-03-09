@@ -21,24 +21,26 @@ void UToroidCharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, co
 {
 	Super::OnMovementUpdated(DeltaSeconds, OldLocation, OldVelocity);
 
-	// TODO: Implement NPC logic case
-	if (!bIsPlayingCharacter || !ToroidalWorldSystem.IsValid())
+	if (!ToroidalWorldSystem.IsValid())
 	{
 		return;
 	}
 
 	if (UpdatedComponent)
 	{
-		if (const APlayerCharacter* PlayerCharacter = GetOwner<APlayerCharacter>())
+		if (bIsPlayingCharacter)
 		{
-			ToroidalWorldSystem->SetDistortionZone(PlayerCharacter->GetViewBox());
-
-			const FVector CurrentLocation = UpdatedComponent->GetComponentLocation();
-			const FVector RefinedLocation = ToroidalWorldSystem->RefineLocation(CurrentLocation);
-			if (CurrentLocation != RefinedLocation)
+			if (const APlayerCharacter* PlayerCharacter = GetOwner<APlayerCharacter>())
 			{
-				UpdatedComponent->SetWorldLocation(RefinedLocation, false, nullptr, ETeleportType::TeleportPhysics);
+				ToroidalWorldSystem->SetDistortionZone(PlayerCharacter->GetViewBox());
 			}
+		}
+
+		const FVector CurrentLocation = UpdatedComponent->GetComponentLocation();
+		const FVector RefinedLocation = ToroidalWorldSystem->RefineLocation(CurrentLocation);
+		if (CurrentLocation != RefinedLocation)
+		{
+			UpdatedComponent->SetWorldLocation(RefinedLocation, false, nullptr, ETeleportType::TeleportPhysics);
 		}
 	}
 }

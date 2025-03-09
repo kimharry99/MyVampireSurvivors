@@ -86,8 +86,9 @@ void UToroidalWorldSystem::SetDistortionZone(const FBox& WorldDistortionZone)
 			continue;
 		}
 
-		FIntVector2 Delta = FMyVamSurMath::GetDirectionVector(SubBox.GetCenter(), TransformToTorus(SubBox.GetCenter()));
-		DistortionZones.Emplace((Delta * -1), SubBox);
+		FBox2D ToroidalSubBox = SubBox.MoveTo(TransformToTorus(SubBox.GetCenter()));
+		FIntVector2 Delta = FMyVamSurMath::GetDirectionVector(SubBox.GetCenter(), ToroidalSubBox.GetCenter());
+		DistortionZones.Emplace((Delta * -1), ToroidalSubBox);
 	}
 }
 
