@@ -40,10 +40,6 @@ public:
 	FOnEnemyDied OnEnemyDied;
 
 private:
-	UPROPERTY(VisibleAnywhere, Category="Torus")
-	TObjectPtr<UToroidalNPAComponent> ToroidalNPAComponent;
-
-private:
 	UPROPERTY(EditDefaultsOnly, Category="Enemy")
 	TSubclassOf<APickableItem> DropItemClass;
 
