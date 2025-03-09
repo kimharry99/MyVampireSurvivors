@@ -3,6 +3,8 @@
 
 #include "ToroidCharacterMovementComponent.h"
 
+#include "DrawDebugHelpers.h"
+
 #include "MyVamSurLogChannels.h"
 #include "Players/PlayerCharacter.h"
 #include "ToroidalWorldSystem.h"
@@ -28,19 +30,25 @@ void UToroidCharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, co
 
 	if (UpdatedComponent)
 	{
-		if (bIsPlayingCharacter)
-		{
-			if (const APlayerCharacter* PlayerCharacter = GetOwner<APlayerCharacter>())
-			{
-				ToroidalWorldSystem->SetDistortionZone(PlayerCharacter->GetViewBox());
-			}
-		}
-
 		const FVector CurrentLocation = UpdatedComponent->GetComponentLocation();
-		const FVector RefinedLocation = ToroidalWorldSystem->RefineLocation(CurrentLocation);
+		const FVector RefinedLocation = ToroidalWorldSystem->RefineLocation(CurrentLocation, false);
 		if (CurrentLocation != RefinedLocation)
 		{
 			UpdatedComponent->SetWorldLocation(RefinedLocation, false, nullptr, ETeleportType::TeleportPhysics);
 		}
+	}
+
+	if (const APlayerCharacter* PlayerCharacter = GetOwner<APlayerCharacter>())
+	{
+		ToroidalWorldSystem->SetDistortionZone(FBox::BuildAABB(UpdatedComponent->GetComponentLocation(), PlayerCharacter->GetViewBox().GetExtent()));
+
+#if WITH_EDITOR
+		for (const FBox2D& DistortionZone : ToroidalWorldSystem->GetDistortionZones())
+		{
+			FVector Center = FVector(DistortionZone.GetCenter().X, DistortionZone.GetCenter().Y, 0.0);
+			FVector Extent = FVector(DistortionZone.GetExtent().X, DistortionZone.GetExtent().Y, 50.0);
+			DrawDebugBox(GetWorld(), Center, Extent, FColor::Red, false, 0.01f, 0, 20.f);
+		}
+# endif // WITH_EDITOR
 	}
 }

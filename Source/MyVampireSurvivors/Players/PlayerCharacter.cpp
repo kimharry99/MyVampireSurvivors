@@ -26,7 +26,8 @@
 
 
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer
+				.SetDefaultSubobjectClass<UToroidCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	UToroidCharacterMovementComponent* MoveComp = CastChecked<UToroidCharacterMovementComponent>(GetCharacterMovement());
 	MoveComp->MaxWalkSpeed = 300.0f;
@@ -143,7 +144,7 @@ void APlayerCharacter::HandleCharacterLevelUp()
 	}
 }
 
-void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component)
+void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent_Deprecated* Component)
 {
 	if (Component)
 	{

@@ -56,6 +56,7 @@ public:
 	bool IsInsideBoxOnTorus(const FVector& Point, const FBox& Box) const;
 
 	void SetDistortionZone(const FBox& WorldDistortionZone);
+	TArray<FBox2D> GetDistortionZones() const;
 
 	/**
 	 * Calculate displacement to the closest point corresponding to the destination on a toroidal map.
@@ -63,7 +64,7 @@ public:
 	FVector CalculateDisplacement(const FVector& From, const FVector& To) const;
 
 	/** Refine location defined in world space */
-	FVector RefineLocation(const FVector& Location) const;
+	FVector RefineLocation(const FVector& Location, const bool bActiveDistortion = true) const;
 
 private:
 	double WrapValue(double Value, double RangeMin, double RangeSize) const;
@@ -78,7 +79,7 @@ private:
 	FVector TransformToTorus(const FVector& Location) const;
 	FVector2D TransformToTorus(const FVector2D& Location) const;
 
-	FVector TransformToWorld(const FVector& Location) const;
+	FVector TransformToWorld(const FVector& Location, const bool bActiveDistortion) const;
 
 	TArray<TPair<FIntVector2, FBox2D>> DistortionZones;
 };

@@ -12,7 +12,7 @@ class APlayerCharacter;
  * Component for Non-Player Actors in a toroidal map.
  */
 UCLASS()
-class MYVAMPIRESURVIVORS_API UToroidalNPAComponent : public UToroidalActorComponent
+class MYVAMPIRESURVIVORS_API UToroidalNPAComponent : public UToroidalActorComponent_Deprecated
 {
 	GENERATED_BODY()
 
@@ -21,9 +21,9 @@ protected:
 	virtual void BeginPlay() override;
 	//~End of UActorComponent interface
 
-	//~UToroidalActorComponent interface
+	//~UToroidalActorComponent_Deprecated interface
 	virtual void RepositionActor() override;
-	//~End of UToroidalActorComponent interface
+	//~End of UToroidalActorComponent_Deprecated interface
 
 private:
 	/** Cached player character. */

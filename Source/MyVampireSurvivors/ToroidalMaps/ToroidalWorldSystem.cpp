@@ -92,6 +92,17 @@ void UToroidalWorldSystem::SetDistortionZone(const FBox& WorldDistortionZone)
 	}
 }
 
+TArray<FBox2D> UToroidalWorldSystem::GetDistortionZones() const
+{
+	TArray<FBox2D> Result;
+	for (const auto& [_, Zone] : DistortionZones)
+	{
+		Result.Add(Zone);
+	}
+
+	return Result;
+}
+
 FVector UToroidalWorldSystem::CalculateDisplacement(const FVector& From, const FVector& To) const
 {
 	const FVector WrappedFrom = WrapPosition3D(From);
@@ -105,10 +116,10 @@ FVector UToroidalWorldSystem::CalculateDisplacement(const FVector& From, const F
 	return FVector(DeltaX, DeltaY, 0.0);
 }
 
-FVector UToroidalWorldSystem::RefineLocation(const FVector& Location) const
+FVector UToroidalWorldSystem::RefineLocation(const FVector& Location, bool bActiveDistortion) const
 {
 	FVector ToroidalLocation(TransformToTorus(Location));
-	return TransformToWorld(ToroidalLocation);
+	return TransformToWorld(ToroidalLocation, bActiveDistortion);
 }
 
 double UToroidalWorldSystem::WrapValue(double Value, double RangeMin, double RangeSize) const
@@ -160,19 +171,24 @@ FVector2D UToroidalWorldSystem::TransformToTorus(const FVector2D& Location) cons
 	return FVector2D(NewLocationX, NewLocationY);
 }
 
-FVector UToroidalWorldSystem::TransformToWorld(const FVector& Location) const
+FVector UToroidalWorldSystem::TransformToWorld(const FVector& Location, const bool bActiveDistortion) const
 {
 	FVector2D LocationXY(Location.X, Location.Y);
-	for (const auto& [Direction, DistortionZone] : DistortionZones)
+	if (bActiveDistortion)
 	{
-		if (DistortionZone.IsInside(LocationXY))
+		for (const auto& [Direction, DistortionZone] : DistortionZones)
 		{
-			const FBox MapRange = ToroidalMap->GetMapRange();
-			const double Width = MapRange.GetSize().X;
-			const double Height = MapRange.GetSize().Y;
+			if (DistortionZone.IsInside(LocationXY))
+			{
+				const FBox MapRange = ToroidalMap->GetMapRange();
+				const double Width = MapRange.GetSize().X;
+				const double Height = MapRange.GetSize().Y;
 
-			LocationXY.X += static_cast<double>(Direction.X) * Width;
-			LocationXY.Y += static_cast<double>(Direction.Y) * Height;
+				LocationXY.X += static_cast<double>(Direction.X) * Width;
+				LocationXY.Y += static_cast<double>(Direction.Y) * Height;
+
+				break;
+			}
 		}
 	}
 
