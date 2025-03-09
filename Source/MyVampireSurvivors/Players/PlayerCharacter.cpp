@@ -8,26 +8,24 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "PaperFlipbookComponent.h"
-#include "PaperFlipbook.h"
 
-#include "Camera/MyVamSurCameraComponent.h"
-#include "Equipments/EquipmentInventoryComponent.h"
 #include "Equipments/EquipmentAutoActivator.h"
+#include "Equipments/EquipmentInventoryComponent.h"
 #include "GameModes/MyVamSurGameMode.h"
 #include "MyVamSurLogChannels.h"
 #include "Players/ExpData.h"
-#include "Players/MyVamSurPlayerController.h"
-#include "Players/MyVamSurPlayerState.h"
 #include "Players/PlayerPawnComponent.h"
 #include "Rewards/RewardManager.h"
-#include "ToroidalMaps/ToroidalPlayerComponent.h"
+#include "ToroidalMaps/ToroidalCameraComponent.h"
 #include "UI/PlayerCharacterWidget.h"
 
 
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+	UCharacterMovementComponent* MoveComp = GetCharacterMovement();
+	check(MoveComp);
+	MoveComp->MaxWalkSpeed = 300.0f;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ToroidalActor"));
 	GetCapsuleComponent()->SetCapsuleHalfHeight(50.0f);
@@ -40,7 +38,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	CameraBoom->SetRelativeRotation(FRotator(-90.0f, -90.0f, 0.0f));
 	CameraBoom->bDoCollisionTest = false;
 
-	FollowCamera = CreateDefaultSubobject<UMyVamSurCameraComponent>(TEXT("FollowCamera"));
+	FollowCamera = CreateDefaultSubobject<UToroidalCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->SetProjectionMode(ECameraProjectionMode::Orthographic);
 	FollowCamera->SetOrthoWidth(1024.0f);
@@ -54,9 +52,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	CharacterExp->OnLevelUp.AddDynamic(this, &APlayerCharacter::HandleCharacterLevelUp);
 
 	PlayerPawn = CreateDefaultSubobject<UPlayerPawnComponent>(TEXT("PlayerPawn"));
-
-	ToroidalPlayer = CreateDefaultSubobject<UToroidalPlayerComponent>(TEXT("ToroidalPlayer"));
-
+	
 	InventoryComponent = CreateDefaultSubobject<UEquipmentInventoryComponent>(TEXT("Inventory"));
 	EquipmentActivator = CreateDefaultSubobject<UEquipmentAutoActivator>(TEXT("EquipmentActivator"));
 }
@@ -86,24 +82,6 @@ void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 
 	Super::EndPlay(EndPlayReason);
-}
-
-void APlayerCharacter::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	ToroidalPlayer->AddTickPrerequisiteComponent(GetCharacterMovement());
-	FollowCamera->AddTickPrerequisiteComponent(ToroidalPlayer);
-}
-
-void APlayerCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
-const FBox APlayerCharacter::GetViewBox() const
-{
-	return FollowCamera->GetWorldViewBox();
 }
 
 void APlayerCharacter::CreateHPBarWidget()
@@ -142,14 +120,6 @@ void APlayerCharacter::HandleCharacterLevelUp()
 	if (RewardManager)
 	{
 		RewardManager->GiveReward(this);
-	}
-}
-
-void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent* Component)
-{
-	if (Component)
-	{
-		Component->AddTickPrerequisiteComponent(FollowCamera);
 	}
 }
 

@@ -12,40 +12,20 @@ class UToroidalWorldSystem;
  * Component for actors in a toroidal map.
  * Can handle the actor position.
  */
-UCLASS(Abstract)
+UCLASS()
 class MYVAMPIRESURVIVORS_API UToroidalActorComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	UToroidalActorComponent();
+public:
+	UToroidalActorComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-protected:
+public:
 	//~UActorComponent interface
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	//~End of UActorComponent interface
 
-protected:
-	/**
-	 * Reposition the actor in the toroidal map.
-	 */
-	virtual void RepositionActor();
-
-	/**
-	 * Wrap the actor location in the toroidal map.
-	 */
-	void WrapActorLocation();
-
-protected:
-	FORCEINLINE UToroidalWorldSystem* GetToroidalWorldSystem() const
-	{
-		return ToroidalWorldSystem;
-	}
-
-	ETeleportType TeleportType = ETeleportType::TeleportPhysics;
-
 private:
-	UPROPERTY()
-	TObjectPtr<UToroidalWorldSystem> ToroidalWorldSystem;
+	TWeakObjectPtr<UToroidalWorldSystem> ToroidalWorldSystem;
 };

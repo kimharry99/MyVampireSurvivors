@@ -10,7 +10,7 @@ class UCapsuleComponent;
 class UPaperSpriteComponent;
 
 class APlayerCharacter;
-class UToroidalNPAComponent;
+class UToroidalActorComponent;
 
 UCLASS(Abstract)
 class MYVAMPIRESURVIVORS_API APickableItem : public AActor
@@ -23,8 +23,6 @@ public:
 protected:
 	virtual void OnPicked(APlayerCharacter* PlayerCharacter);
 
-	UToroidalNPAComponent* GetToroidalNPAComponent() const;
-
 private:
 	UFUNCTION()
 	void HandleItemOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult);
@@ -36,6 +34,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category= "Item")
 	TObjectPtr<UPaperSpriteComponent> Sprite;
 
-	UPROPERTY()
-	TObjectPtr<UToroidalNPAComponent> ToroidalNPAComponent;
+	UPROPERTY(VisibleAnywhere, Category = "ToroidalWorld")
+	TObjectPtr<UToroidalActorComponent> ToroidalActorComponent;
 };

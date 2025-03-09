@@ -9,7 +9,6 @@ template <class TClass> class TSubclassOf;
 
 class AEnemy;
 class APickableItem;
-class UToroidalNPAComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDied, AEnemy*, DiedEnemy);
 
@@ -38,10 +37,6 @@ protected:
 
 public:
 	FOnEnemyDied OnEnemyDied;
-
-private:
-	UPROPERTY(VisibleAnywhere, Category="Torus")
-	TObjectPtr<UToroidalNPAComponent> ToroidalNPAComponent;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Enemy")

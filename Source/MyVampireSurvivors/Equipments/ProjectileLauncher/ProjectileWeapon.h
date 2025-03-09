@@ -9,7 +9,7 @@
 class UPaperFlipbookComponent;
 class UProjectileMovementComponent;
 class USphereComponent;
-class UToroidalNPAComponent;
+class UToroidalActorComponent;
 
 /**
  * ProjectileWeapon.
@@ -53,8 +53,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon|Projectile", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
-	UPROPERTY(VisibleAnywhere, Category = "Torus")
-	TObjectPtr<UToroidalNPAComponent> ToroidalNPAComponent;
+	UPROPERTY(VisibleAnywhere, Category = "ToroidalWorld")
+	TObjectPtr<UToroidalActorComponent> ToroidalActorComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon|Projectile", meta = (AllowPrivateAccess = "true"))
 	float LifeTime = 0.5f;

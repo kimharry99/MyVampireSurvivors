@@ -6,7 +6,6 @@
 #include "Items/HomingItemMovementComponent.h"
 #include "Players/MyVamSurPlayerController.h"
 #include "Players/PlayerCharacter.h"
-#include "ToroidalMaps/ToroidalNPAComponent.h"
 
 AExpGem::AExpGem()
 {
@@ -22,7 +21,6 @@ void AExpGem::PostInitializeComponents()
 	if (HomingItemMovementComponent)
 	{
 		HomingItemMovementComponent->UpdatedComponent = RootComponent;
-		GetToroidalNPAComponent()->AddTickPrerequisiteComponent(HomingItemMovementComponent);
 	}
 }
 

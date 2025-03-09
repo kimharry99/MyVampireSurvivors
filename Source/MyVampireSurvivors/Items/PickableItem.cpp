@@ -7,7 +7,7 @@
 #include "PaperSpriteComponent.h"
 
 #include "Players/PlayerCharacter.h"
-#include "ToroidalMaps/ToroidalNPAComponent.h"
+#include "ToroidalMaps/ToroidalActorComponent.h"
 
 
 APickableItem::APickableItem()
@@ -23,17 +23,12 @@ APickableItem::APickableItem()
 	Sprite->SetEnableGravity(false);
 	Sprite->SetCollisionProfileName(TEXT("NoCollision"));
 
-	ToroidalNPAComponent = CreateDefaultSubobject<UToroidalNPAComponent>(TEXT("ToroidalNPAComponent"));
+	ToroidalActorComponent = CreateDefaultSubobject<UToroidalActorComponent>(TEXT("ToroidalActorComponent"));
 }
 
 void APickableItem::OnPicked(APlayerCharacter* PlayerCharacter)
 {
 	Destroy();
-}
-
-UToroidalNPAComponent* APickableItem::GetToroidalNPAComponent() const
-{
-	return ToroidalNPAComponent;
 }
 
 void APickableItem::HandleItemOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)

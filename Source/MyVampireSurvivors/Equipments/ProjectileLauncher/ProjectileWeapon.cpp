@@ -10,7 +10,7 @@
 
 #include "Combats/DefaultAttackAction.h"
 #include "Combats/CombatManager.h"
-#include "ToroidalMaps/ToroidalNPAComponent.h"
+#include "ToroidalMaps/ToroidalActorComponent.h"
 #include "MyVamSurLogChannels.h"
 
 AProjectileWeapon::AProjectileWeapon()
@@ -40,17 +40,12 @@ AProjectileWeapon::AProjectileWeapon()
 	ProjectileMovementComponent->InitialSpeed = 1000.0f;
 	ProjectileMovementComponent->MaxSpeed = 5000.0f;
 
-	ToroidalNPAComponent = CreateDefaultSubobject<UToroidalNPAComponent>(TEXT("ToroidalNPAComponent"));
+	ToroidalActorComponent = CreateDefaultSubobject<UToroidalActorComponent>(TEXT("ToroidalNPAComponent"));
 }
 
 void AProjectileWeapon::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	if (ToroidalNPAComponent)
-	{
-		ToroidalNPAComponent->AddTickPrerequisiteComponent(ProjectileMovementComponent);
-	}
 }
 
 void AProjectileWeapon::BeginPlay()
@@ -60,10 +55,6 @@ void AProjectileWeapon::BeginPlay()
 	SetLifeSpan(LifeTime);
 
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-	if (PlayerPawn)
-	{
-		ToroidalNPAComponent->AddTickPrerequisiteActor(PlayerPawn);
-	}
 }
 
 void AProjectileWeapon::EndPlay(const EEndPlayReason::Type EndPlayReason)

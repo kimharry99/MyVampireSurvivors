@@ -7,6 +7,7 @@
 #include "MyVamSurCharacter.generated.h"
 
 class UHealthData;
+class UToroidalActorComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCharacterDied);
 
@@ -53,4 +54,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Data")
 	float DefaultMaxHealth = 1.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "ToroidalWorld")
+	TObjectPtr<UToroidalActorComponent> ToroidalActorComponent;
 };

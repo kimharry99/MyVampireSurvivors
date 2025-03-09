@@ -8,7 +8,6 @@
 
 #include "Enemies/ChasingEnemyAI.h"
 #include "Items/PickableItem.h"
-#include "ToroidalMaps/ToroidalNPAComponent.h"
 
 AEnemy::AEnemy()
 {
@@ -22,18 +21,11 @@ AEnemy::AEnemy()
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Enemy"));
 
 	GetCharacterMovement()->MaxWalkSpeed = 10.0f;
-
-	ToroidalNPAComponent = CreateDefaultSubobject<UToroidalNPAComponent>(TEXT("ToroidalNPAComponent"));
 }
 
 void AEnemy::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	if (ToroidalNPAComponent)
-	{
-		ToroidalNPAComponent->AddTickPrerequisiteComponent(GetCharacterMovement());
-	}
 }
 
 void AEnemy::BeginPlay()

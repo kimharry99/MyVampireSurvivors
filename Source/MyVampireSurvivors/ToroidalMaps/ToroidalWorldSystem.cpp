@@ -2,83 +2,122 @@
 
 
 #include "ToroidalMaps/ToroidalWorldSystem.h"
+
+#include "Math/MyVamSurMath.h"
 #include "ToroidalMaps/ToroidalMap.h"
+
 
 void UToroidalWorldSystem::Initialize(AToroidalMap* LevelToroidalMap)
 {
 	ToroidalMap = LevelToroidalMap;
 }
 
-FVector UToroidalWorldSystem::WrapPosition3D(const FVector& Position) const
+TArray<FBox2D> UToroidalWorldSystem::GetDistortionZones() const
 {
-	FBox MapRange = ToroidalMap->GetMapRange();
-	if (MapRange.IsInsideXY(Position))
+	TArray<FBox2D> Result;
+	for (const auto& [_, Zone] : DistortionZones)
 	{
-		return Position;
+		Result.Add(Zone);
 	}
 
-	const double Width = MapRange.GetSize().X;
-	const double Height = MapRange.GetSize().Y;
-	const double NewPositionX = WrapValue(Position.X, MapRange.Min.X, Width);
-	const double NewPositionY = WrapValue(Position.Y, MapRange.Min.Y, Height);
-	const double NewPositionZ = Position.Z;
-
-	return FVector(NewPositionX, NewPositionY, NewPositionZ);
+	return Result;
 }
 
-bool UToroidalWorldSystem::IsInsideBoxOnTorus(const FVector& Point, const FBox& Box) const
+void UToroidalWorldSystem::SetDistortionZone(const FBox& WorldDistortionZone)
 {
-	// Wrap the center of the Box
-	const FVector WrappedCenter = WrapPosition3D(Box.GetCenter());
+	DistortionZones.Empty();
+
+	FBox MapRange = ToroidalMap->GetMapRange();
+	// Check if there are any parts outside the map.
+	if (MapRange.IsInsideXY(WorldDistortionZone))
+	{
+		return;
+	}
+
+	FBox ToroidalCompleteZone = WorldDistortionZone.MoveTo(TransformToTorus(WorldDistortionZone.GetCenter()));
+	FBox2D ToroidalCompleteZone2D = FBox2D(
+		FVector2D(ToroidalCompleteZone.Min.X, ToroidalCompleteZone.Min.Y),
+		FVector2D(ToroidalCompleteZone.Max.X, ToroidalCompleteZone.Max.Y)
+	);
 	
-	// Wrap the Point
-	const FVector WrappedPoint = WrapPosition3D(Point);
+	TArray<FBox2D> SubZones = FMyVamSurMath::DivideBox2D(ToroidalCompleteZone2D, MapRange);
+	for (auto& SubZone : SubZones)
+	{
+		FBox2D ToroidalSubZone = SubZone.MoveTo(TransformToTorus(SubZone.GetCenter()));
+		FIntVector2 Delta = FMyVamSurMath::GetDirectionVector(SubZone.GetCenter(), ToroidalSubZone.GetCenter());
+		if (Delta.X == 0 && Delta.Y == 0)
+		{
+			continue;
+		}
 
-	// Check if the Point is inside the Box on toroidal topology
-	const FVector Extent = Box.GetExtent();
-	const double MapWidth = ToroidalMap->GetMapRange().GetSize().X;
-	const double MapHeight = ToroidalMap->GetMapRange().GetSize().Y;
-
-	// Compare the box extent with a toroidal distance between the center and the point
-	const bool bIsInsideX = CalculateDistance1D(WrappedCenter.X, WrappedPoint.X, MapWidth) <= Extent.X;
-	const bool bIsInsideY = CalculateDistance1D(WrappedCenter.Y, WrappedPoint.Y, MapHeight) <= Extent.Y;
-	return bIsInsideX && bIsInsideY;
+		DistortionZones.Emplace(Delta * -1, ToroidalSubZone);
+	}
 }
 
 FVector UToroidalWorldSystem::CalculateDisplacement(const FVector& From, const FVector& To) const
 {
-	const FVector WrappedFrom = WrapPosition3D(From);
-	const FVector WrappedTo = WrapPosition3D(To);
+	const FVector FromOnTorus = TransformToTorus(From);
+	const FVector ToOnTorus = TransformToTorus(To);
 
 	const double Width = ToroidalMap->GetMapRange().GetSize().X;
 	const double Height = ToroidalMap->GetMapRange().GetSize().Y;
-	const double DeltaX = CalculateSignedDistance1D(WrappedFrom.X, WrappedTo.X, Width);
-	const double DeltaY = CalculateSignedDistance1D(WrappedFrom.Y, WrappedTo.Y, Height);
+
+	const double DeltaX = FMyVamSurMath::GetSignedCircularDistance(FromOnTorus.X, ToOnTorus.X, Width);
+	const double DeltaY = FMyVamSurMath::GetSignedCircularDistance(FromOnTorus.Y, ToOnTorus.Y, Height);
 
 	return FVector(DeltaX, DeltaY, 0.0);
 }
 
-double UToroidalWorldSystem::WrapValue(double Value, double RangeMin, double RangeSize) const
+FVector UToroidalWorldSystem::RefineLocation(const FVector& Location, bool bActiveDistortion) const
 {
-	double WrappedValue = FMath::Fmod(Value - RangeMin, RangeSize) + RangeMin;
-	if (WrappedValue < RangeMin)
+	FVector ToroidalLocation(TransformToTorus(Location));
+	return TransformToWorld(ToroidalLocation, bActiveDistortion);
+}
+
+FVector2D UToroidalWorldSystem::TransformToTorus(const FVector2D& Location) const
+{
+	FBox MapRange = ToroidalMap->GetMapRange();
+	if (MapRange.IsInside(FVector(Location.X, Location.Y, MapRange.GetCenter().Z)))
 	{
-		WrappedValue += RangeSize;
+		return Location;
 	}
-	return WrappedValue;
+
+	const double Width = MapRange.GetSize().X;
+	const double Height = MapRange.GetSize().Y;
+	const double NewLocationX = FMyVamSurMath::GetValueCycledToRange(Location.X, MapRange.Min.X, Width);
+	const double NewLocationY = FMyVamSurMath::GetValueCycledToRange(Location.Y, MapRange.Min.Y, Height);
+
+	return FVector2D(NewLocationX, NewLocationY);
 }
 
-double UToroidalWorldSystem::CalculateDistance1D(double From, double To, double RangeSize) const
+FVector UToroidalWorldSystem::TransformToTorus(const FVector& Location) const
 {
-	double Distance = FMath::Abs(To - From);
-	return FMath::Min(Distance, RangeSize - Distance);
+	FVector2D Location2D = FVector2D(Location.X, Location.Y);
+	FVector2D ToroidalLocation = TransformToTorus(Location2D);
+
+	return FVector(ToroidalLocation.X, ToroidalLocation.Y, Location.Z);
 }
 
-double UToroidalWorldSystem::CalculateSignedDistance1D(double From, double To, double RangeSize) const
+FVector UToroidalWorldSystem::TransformToWorld(const FVector& Location, const bool bActiveDistortion) const
 {
-	const double Displacement = To - From;
-	const double Sign = FMath::Abs(Displacement) <= RangeSize / 2.0 ? FMath::Sign(Displacement) : -FMath::Sign(Displacement);
-	
-	const double Distance = CalculateDistance1D(From, To, RangeSize);
-	return Sign * Distance;
+	FVector2D LocationXY(Location.X, Location.Y);
+	if (bActiveDistortion)
+	{
+		for (const auto& [Direction, DistortionZone] : DistortionZones)
+		{
+			if (DistortionZone.IsInside(LocationXY))
+			{
+				const FBox MapRange = ToroidalMap->GetMapRange();
+				const double Width = MapRange.GetSize().X;
+				const double Height = MapRange.GetSize().Y;
+
+				LocationXY.X += static_cast<double>(Direction.X) * Width;
+				LocationXY.Y += static_cast<double>(Direction.Y) * Height;
+
+				break;
+			}
+		}
+	}
+
+	return FVector(LocationXY.X, LocationXY.Y, Location.Z);
 }
