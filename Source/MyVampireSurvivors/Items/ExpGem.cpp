@@ -22,7 +22,6 @@ void AExpGem::PostInitializeComponents()
 	if (HomingItemMovementComponent)
 	{
 		HomingItemMovementComponent->UpdatedComponent = RootComponent;
-		GetToroidalNPAComponent()->AddTickPrerequisiteComponent(HomingItemMovementComponent);
 	}
 }
 
