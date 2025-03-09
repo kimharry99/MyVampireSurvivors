@@ -6,6 +6,8 @@
 #include "Camera/CameraComponent.h"
 #include "ToroidalCameraComponent.generated.h"
 
+class UToroidalWorldSystem;
+
 /**
  * 
  */
@@ -15,14 +17,13 @@ class MYVAMPIRESURVIVORS_API UToroidalCameraComponent : public UCameraComponent
 	GENERATED_BODY()
 
 public:
-	UToroidalCameraComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UToroidalCameraComponent();
 
 	const FBox GetWorldViewBox() const;
 
 protected:
 	//~UActorComponent interface
 	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	//~End of UActorComponent interface
 
 private:
@@ -34,5 +35,9 @@ private:
 private:
 	void InitializeViewBox();
 	void UpdateViewBox();
-	
+
+	UFUNCTION()
+	void OnMovementUpdated(float DeltaSeconds, FVector OldLocation, FVector OldVelocity);
+
+	TWeakObjectPtr<UToroidalWorldSystem> ToroidalWorldSystem;
 };

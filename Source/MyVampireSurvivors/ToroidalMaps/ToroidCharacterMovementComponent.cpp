@@ -37,18 +37,4 @@ void UToroidCharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, co
 			UpdatedComponent->SetWorldLocation(RefinedLocation, false, nullptr, ETeleportType::TeleportPhysics);
 		}
 	}
-
-	if (const APlayerCharacter* PlayerCharacter = GetOwner<APlayerCharacter>())
-	{
-		ToroidalWorldSystem->SetDistortionZone(FBox::BuildAABB(UpdatedComponent->GetComponentLocation(), PlayerCharacter->GetViewBox().GetExtent()));
-
-#if WITH_EDITOR
-		for (const FBox2D& DistortionZone : ToroidalWorldSystem->GetDistortionZones())
-		{
-			FVector Center = FVector(DistortionZone.GetCenter().X, DistortionZone.GetCenter().Y, 0.0);
-			FVector Extent = FVector(DistortionZone.GetExtent().X, DistortionZone.GetExtent().Y, 50.0);
-			DrawDebugBox(GetWorld(), Center, Extent, FColor::Red, false, 0.01f, 0, 20.f);
-		}
-# endif // WITH_EDITOR
-	}
 }
