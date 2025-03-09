@@ -21,22 +21,36 @@ public:
 	{
 		TArray<UE::Math::TBox2<T>> SubBoxes;
 
-		TArray<T> SortedX = VerticalLines;
-		SortedX.Add(Box.Min.X);
-		SortedX.Add(Box.Max.X);
-		SortedX.Sort();
-
-		TArray<T> SortedY = HorizontalLines;
-		SortedY.Add(Box.Min.Y);
-		SortedY.Add(Box.Max.Y);
-		SortedY.Sort();
-
-		for (int i = 0; i < SortedX.Num() - 1; ++i)
+		TArray<T> FilteredX;
+		FilteredX.Add(Box.Min.X);
+		FilteredX.Add(Box.Max.X);
+		for (const auto& X : VerticalLines)
 		{
-			for (int j = 0; j < SortedY.Num() - 1; ++j)
+			if (Box.Min.X < X && X < Box.Max.X)
 			{
-				UE::Math::TVector2<T> Min(SortedX[i], SortedY[j]);
-				UE::Math::TVector2<T> Max(SortedX[i + 1], SortedY[j + 1]);
+				FilteredX.Add(X);
+			}
+		}
+		FilteredX.Sort();
+
+		TArray<T> FilteredY;
+		FilteredY.Add(Box.Min.Y);
+		FilteredY.Add(Box.Max.Y);
+		for (const auto& Y : HorizontalLines)
+		{
+			if (Box.Min.Y < Y && Y < Box.Max.Y)
+			{
+				FilteredY.Add(Y);
+			}
+		}
+		FilteredY.Sort();
+
+		for (int i = 0; i < FilteredX.Num() - 1; ++i)
+		{
+			for (int j = 0; j < FilteredY.Num() - 1; ++j)
+			{
+				UE::Math::TVector2<T> Min(FilteredX[i], FilteredY[j]);
+				UE::Math::TVector2<T> Max(FilteredX[i + 1], FilteredY[j + 1]);
 
 				SubBoxes.Add(UE::Math::TBox2<T>(Min, Max));
 			}
