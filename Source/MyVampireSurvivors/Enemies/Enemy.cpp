@@ -9,7 +9,6 @@
 #include "Enemies/ChasingEnemyAI.h"
 #include "Items/PickableItem.h"
 #include "ToroidalMaps/ToroidalActorComponent.h"
-#include "ToroidalMaps/ToroidalNPAComponent.h"
 
 AEnemy::AEnemy()
 {

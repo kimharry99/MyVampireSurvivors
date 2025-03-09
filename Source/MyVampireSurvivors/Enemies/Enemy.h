@@ -9,7 +9,6 @@ template <class TClass> class TSubclassOf;
 
 class AEnemy;
 class APickableItem;
-class UToroidalNPAComponent;
 class UToroidalActorComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDied, AEnemy*, DiedEnemy);
