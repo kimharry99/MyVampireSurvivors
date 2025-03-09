@@ -143,14 +143,6 @@ void APlayerCharacter::HandleCharacterLevelUp()
 	}
 }
 
-void APlayerCharacter::AddTickSubsequentToroidalComponent(UToroidalActorComponent_Deprecated* Component)
-{
-	if (Component)
-	{
-		Component->AddTickPrerequisiteComponent(FollowCamera);
-	}
-}
-
 URewardManager* APlayerCharacter::GetRewardManagerFromGameMode() const
 {
 	if (UWorld* World = GetWorld())

@@ -18,7 +18,6 @@ class UPlayerPawnComponent;
 class UPlayerCharacterWidget;
 class URewardManager;
 class UToroidalActorComponent;
-class UToroidalActorComponent_Deprecated;
 class UToroidalCameraComponent;
 
 /**
@@ -50,11 +49,6 @@ public:
 	void AddExp(int GainedExp);
 
 	const UExpData* GetExpData() const;
-
-	/**
-	 * Add a toroidal actor component that needs to be ticked after the player character.
-	 */
-	void AddTickSubsequentToroidalComponent(UToroidalActorComponent_Deprecated* Component);
 
 	const UEquipmentInventoryComponent* GetInventoryComponent() const;
 
