@@ -8,15 +8,12 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "PaperFlipbookComponent.h"
-#include "PaperFlipbook.h"
 
-#include "Equipments/EquipmentInventoryComponent.h"
 #include "Equipments/EquipmentAutoActivator.h"
+#include "Equipments/EquipmentInventoryComponent.h"
 #include "GameModes/MyVamSurGameMode.h"
 #include "MyVamSurLogChannels.h"
 #include "Players/ExpData.h"
-#include "Players/MyVamSurPlayerController.h"
-#include "Players/MyVamSurPlayerState.h"
 #include "Players/PlayerPawnComponent.h"
 #include "Rewards/RewardManager.h"
 #include "ToroidalMaps/ToroidalActorComponent.h"
@@ -87,21 +84,6 @@ void APlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 
 	Super::EndPlay(EndPlayReason);
-}
-
-void APlayerCharacter::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-}
-
-void APlayerCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
-const FBox APlayerCharacter::GetViewBox() const
-{
-	return FollowCamera->GetWorldViewBox();
 }
 
 void APlayerCharacter::CreateHPBarWidget()

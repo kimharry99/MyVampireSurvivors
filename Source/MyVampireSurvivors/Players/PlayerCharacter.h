@@ -13,7 +13,6 @@ class AEquipment;
 class UEquipmentAutoActivator;
 class UEquipmentInventoryComponent;
 class UExpData;
-class UMyVamSurCameraComponent;
 class UPlayerPawnComponent;
 class UPlayerCharacterWidget;
 class URewardManager;
@@ -35,16 +34,7 @@ public:
 	//~AActor interface
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndpPlayReason) override;
-	virtual void PostInitializeComponents() override;
-	virtual void Tick(float DeltaSeconds) override;
 	//~End of AActor interface
-
-	/**
-	 * Get the view box of the camera.
-	 *
-	 * @return The view box of the camera.
-	 */
-	const FBox GetViewBox() const;
 
 	void AddExp(int GainedExp);
 
@@ -60,10 +50,6 @@ public:
 	 * @param EquipmentClass Equipment to equip.
 	 */
 	void EquipEquipment(TSubclassOf<AEquipment> EquipmentClass);
-
-protected:
-	//~AActor interface
-	//~End of AActor interface
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
@@ -86,7 +72,7 @@ private:
 	UFUNCTION()
 	void HandleCharacterLevelUp();
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "ToroidalWorld")
 	TObjectPtr<UToroidalActorComponent> ToroidalActorComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Player")
