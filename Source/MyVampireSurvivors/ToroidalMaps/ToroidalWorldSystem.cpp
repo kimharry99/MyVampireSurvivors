@@ -34,23 +34,23 @@ void UToroidalWorldSystem::SetDistortionZone(const FBox& WorldDistortionZone)
 		return;
 	}
 
-	FBox2D WorldDistortionZone2D(
-		FVector2D(WorldDistortionZone.Min.X, WorldDistortionZone.Min.Y),
-		FVector2D(WorldDistortionZone.Max.X, WorldDistortionZone.Max.Y)
+	FBox ToroidalCompleteZone = WorldDistortionZone.MoveTo(TransformToTorus(WorldDistortionZone.GetCenter()));
+	FBox2D ToroidalCompleteZone2D = FBox2D(
+		FVector2D(ToroidalCompleteZone.Min.X, ToroidalCompleteZone.Min.Y),
+		FVector2D(ToroidalCompleteZone.Max.X, ToroidalCompleteZone.Max.Y)
 	);
 	
-	FIntVector2 DeltaCompleteZone = FMyVamSurMath::GetDirectionVector(WorldDistortionZone2D.GetCenter(), TransformToTorus(WorldDistortionZone2D.GetCenter()));
-	TArray<FBox2D> SubBoxes = FMyVamSurMath::DivideBox2D(WorldDistortionZone2D, MapRange);
-	for (auto& SubBox : SubBoxes)
+	TArray<FBox2D> SubZones = FMyVamSurMath::DivideBox2D(ToroidalCompleteZone2D, MapRange);
+	for (auto& SubZone : SubZones)
 	{
-		if (SubBox.IsInsideOrOn(WorldDistortionZone2D.GetCenter()))
+		FBox2D ToroidalSubZone = SubZone.MoveTo(TransformToTorus(SubZone.GetCenter()));
+		FIntVector2 Delta = FMyVamSurMath::GetDirectionVector(SubZone.GetCenter(), ToroidalSubZone.GetCenter());
+		if (Delta.X == 0 && Delta.Y == 0)
 		{
 			continue;
 		}
 
-		FBox2D ToroidalSubBox = SubBox.MoveTo(TransformToTorus(SubBox.GetCenter()));
-		FIntVector2 Delta = FMyVamSurMath::GetDirectionVector(SubBox.GetCenter(), ToroidalSubBox.GetCenter());
-		DistortionZones.Emplace(DeltaCompleteZone - Delta, ToroidalSubBox);
+		DistortionZones.Emplace(Delta * -1, ToroidalSubZone);
 	}
 }
 
