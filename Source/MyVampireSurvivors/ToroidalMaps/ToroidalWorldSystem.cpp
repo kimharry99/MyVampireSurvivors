@@ -2,48 +2,10 @@
 
 
 #include "ToroidalMaps/ToroidalWorldSystem.h"
+
+#include "Math/MyMath.h"
 #include "ToroidalMaps/ToroidalMap.h"
 
-
-template <typename T>
-T GetClosestValue(const T Target, const T A, const T B)
-{
-	return (FMath::Abs(Target - A) < FMath::Abs(Target - B)) ? A : B;
-}
-
-TArray<FBox2D> DivideBox2D(const FBox2D& Box, const TArray<double>& VerticalLines, const TArray<double>& HorizontalLines)
-{
-	TArray<FBox2D> SubBoxes;
-
-	TArray<double> SortedX = VerticalLines;
-	SortedX.Add(Box.Min.X);
-	SortedX.Add(Box.Max.X);
-	SortedX.Sort();
-
-	TArray<double> SortedY = HorizontalLines;
-	SortedY.Add(Box.Min.Y);
-	SortedY.Add(Box.Max.Y);
-	SortedY.Sort();
-
-	for (int i = 0; i < SortedX.Num() - 1; ++i)
-	{
-		for (int j = 0; j < SortedY.Num() - 1; ++j)
-		{
-			FVector2D Min(SortedX[i], SortedY[j]);
-			FVector2D Max(SortedX[i + 1], SortedY[j + 1]);
-
-			SubBoxes.Add(FBox2D(Min, Max));
-		}
-	}
-
-	return SubBoxes;
-}
-
-FIntVector2 GetDirectionVector(const FVector2D& From, const FVector2D& To)
-{
-	const FVector2D Direction = To - From;
-	return FIntVector2(FMath::Sign(static_cast<int>(Direction.X)), FMath::Sign(static_cast<int>(Direction.Y)));
-}
 
 void UToroidalWorldSystem::Initialize(AToroidalMap* LevelToroidalMap)
 {
@@ -103,20 +65,20 @@ void UToroidalWorldSystem::SetDistortionZone(const FBox& WorldDistortionZone)
 	);
 
 	TArray<double> VerticalLines;
-	double ClosestX = GetClosestValue(WorldDistortionZone2D.GetCenter().X, MapRange.Min.X, MapRange.Max.X);
+	double ClosestX = FMyVamSurMath::GetClosestValue(WorldDistortionZone2D.GetCenter().X, MapRange.Min.X, MapRange.Max.X);
 	if (FMath::IsWithin(ClosestX, WorldDistortionZone2D.Min.X, WorldDistortionZone2D.Max.X))
 	{
 		VerticalLines.Add(ClosestX);
 	}
 
 	TArray<double> HorizontalLines;
-	double ClosestY = GetClosestValue(WorldDistortionZone2D.GetCenter().Y, MapRange.Min.Y, MapRange.Max.Y);
+	double ClosestY = FMyVamSurMath::GetClosestValue(WorldDistortionZone2D.GetCenter().Y, MapRange.Min.Y, MapRange.Max.Y);
 	if (FMath::IsWithin(ClosestY, WorldDistortionZone2D.Min.Y, WorldDistortionZone2D.Max.Y))
 	{
 		HorizontalLines.Add(ClosestY);
 	}
 
-	TArray<FBox2D> SubBoxes = DivideBox2D(WorldDistortionZone2D, VerticalLines, HorizontalLines);
+	TArray<FBox2D> SubBoxes = FMyVamSurMath::DivideBox2D(WorldDistortionZone2D, VerticalLines, HorizontalLines);
 	for (auto& SubBox : SubBoxes)
 	{
 		if (SubBox.IsInsideOrOn(WorldDistortionZone2D.GetCenter()))
@@ -124,7 +86,7 @@ void UToroidalWorldSystem::SetDistortionZone(const FBox& WorldDistortionZone)
 			continue;
 		}
 
-		FIntVector2 Delta = GetDirectionVector(SubBox.GetCenter(), TransformToTorus(SubBox.GetCenter()));
+		FIntVector2 Delta = FMyVamSurMath::GetDirectionVector(SubBox.GetCenter(), TransformToTorus(SubBox.GetCenter()));
 		DistortionZones.Emplace((Delta * -1), SubBox);
 	}
 }
