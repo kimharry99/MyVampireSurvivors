@@ -3,3 +3,12 @@
 
 #include "Math/MyMath.h"
 
+double FMyVamSurMath::GetValueCycledToRange(double Value, double RangeMin, double RangeSize)
+{
+	double WrappedValue = FMath::Fmod(Value - RangeMin, RangeSize) + RangeMin;
+	if (WrappedValue < RangeMin)
+	{
+		WrappedValue += RangeSize;
+	}
+	return WrappedValue;
+}

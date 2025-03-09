@@ -22,8 +22,8 @@ FVector UToroidalWorldSystem::WrapPosition3D(const FVector& Position) const
 
 	const double Width = MapRange.GetSize().X;
 	const double Height = MapRange.GetSize().Y;
-	const double NewPositionX = WrapValue(Position.X, MapRange.Min.X, Width);
-	const double NewPositionY = WrapValue(Position.Y, MapRange.Min.Y, Height);
+	const double NewPositionX = FMyVamSurMath::GetValueCycledToRange(Position.X, MapRange.Min.X, Width);
+	const double NewPositionY = FMyVamSurMath::GetValueCycledToRange(Position.Y, MapRange.Min.Y, Height);
 	const double NewPositionZ = Position.Z;
 
 	return FVector(NewPositionX, NewPositionY, NewPositionZ);
@@ -92,8 +92,9 @@ FVector UToroidalWorldSystem::CalculateDisplacement(const FVector& From, const F
 
 	const double Width = ToroidalMap->GetMapRange().GetSize().X;
 	const double Height = ToroidalMap->GetMapRange().GetSize().Y;
-	const double DeltaX = CalculateSignedDistance1D(WrappedFrom.X, WrappedTo.X, Width);
-	const double DeltaY = CalculateSignedDistance1D(WrappedFrom.Y, WrappedTo.Y, Height);
+
+	const double DeltaX = FMyVamSurMath::GetSignedCircularDistance(WrappedFrom.X, WrappedTo.X, Width);
+	const double DeltaY = FMyVamSurMath::GetSignedCircularDistance(WrappedFrom.Y, WrappedTo.Y, Height);
 
 	return FVector(DeltaX, DeltaY, 0.0);
 }
@@ -102,31 +103,6 @@ FVector UToroidalWorldSystem::RefineLocation(const FVector& Location, bool bActi
 {
 	FVector ToroidalLocation(TransformToTorus(Location));
 	return TransformToWorld(ToroidalLocation, bActiveDistortion);
-}
-
-double UToroidalWorldSystem::WrapValue(double Value, double RangeMin, double RangeSize) const
-{
-	double WrappedValue = FMath::Fmod(Value - RangeMin, RangeSize) + RangeMin;
-	if (WrappedValue < RangeMin)
-	{
-		WrappedValue += RangeSize;
-	}
-	return WrappedValue;
-}
-
-double UToroidalWorldSystem::CalculateDistance1D(double From, double To, double RangeSize) const
-{
-	double Distance = FMath::Abs(To - From);
-	return FMath::Min(Distance, RangeSize - Distance);
-}
-
-double UToroidalWorldSystem::CalculateSignedDistance1D(double From, double To, double RangeSize) const
-{
-	const double Displacement = To - From;
-	const double Sign = FMath::Abs(Displacement) <= RangeSize / 2.0 ? FMath::Sign(Displacement) : -FMath::Sign(Displacement);
-	
-	const double Distance = CalculateDistance1D(From, To, RangeSize);
-	return Sign * Distance;
 }
 
 FVector UToroidalWorldSystem::TransformToTorus(const FVector& Location) const
@@ -147,8 +123,8 @@ FVector2D UToroidalWorldSystem::TransformToTorus(const FVector2D& Location) cons
 
 	const double Width = MapRange.GetSize().X;
 	const double Height = MapRange.GetSize().Y;
-	const double NewLocationX = WrapValue(Location.X, MapRange.Min.X, Width);
-	const double NewLocationY = WrapValue(Location.Y, MapRange.Min.Y, Height);
+	const double NewLocationX = FMyVamSurMath::GetValueCycledToRange(Location.X, MapRange.Min.X, Width);
+	const double NewLocationY = FMyVamSurMath::GetValueCycledToRange(Location.Y, MapRange.Min.Y, Height);
 
 	return FVector2D(NewLocationX, NewLocationY);
 }

@@ -54,4 +54,23 @@ public:
 			FMath::IsNearlyZero(Direction.Y) ? 0 : static_cast<int>(FMath::Sign(Direction.Y))
 		);
 	}
+
+	static double GetValueCycledToRange(double Value, double RangeMin, double RangeSize);
+
+	template <typename T>
+	static T GetCircularDistance(T From, T To, T RangeSize)
+	{
+		T Distance = FMath::Abs(To - From);
+		return FMath::Min(Distance, RangeSize - Distance);
+	}
+
+	template <typename T>
+	static T GetSignedCircularDistance(T From, T To, T RangeSize)
+	{
+		const T Displacement = To - From;
+		const T Sign = FMath::Abs(Displacement) <= RangeSize / 2.0 ? FMath::Sign(Displacement) : -FMath::Sign(Displacement);
+
+		const T Distance = FMyVamSurMath::GetCircularDistance(From, To, RangeSize);
+		return Sign * Distance;
+	}
 };

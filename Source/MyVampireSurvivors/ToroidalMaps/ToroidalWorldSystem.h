@@ -61,16 +61,6 @@ public:
 	/** Refine location defined in world space */
 	FVector RefineLocation(const FVector& Location, const bool bActiveDistortion = true) const;
 
-private:
-	double WrapValue(double Value, double RangeMin, double RangeSize) const;
-
-	/**
-	 * Calculate the distance between two points on toroidal topology.
-	 */
-	double CalculateDistance1D(double From, double To, double RangeSize) const;
-
-	double CalculateSignedDistance1D(double From, double To, double RangeSize) const;
-
 	FVector TransformToTorus(const FVector& Location) const;
 	FVector2D TransformToTorus(const FVector2D& Location) const;
 
