@@ -29,25 +29,6 @@ FVector UToroidalWorldSystem::WrapPosition3D(const FVector& Position) const
 	return FVector(NewPositionX, NewPositionY, NewPositionZ);
 }
 
-bool UToroidalWorldSystem::IsInsideBoxOnTorus(const FVector& Point, const FBox& Box) const
-{
-	// Wrap the center of the Box
-	const FVector WrappedCenter = WrapPosition3D(Box.GetCenter());
-	
-	// Wrap the Point
-	const FVector WrappedPoint = WrapPosition3D(Point);
-
-	// Check if the Point is inside the Box on toroidal topology
-	const FVector Extent = Box.GetExtent();
-	const double MapWidth = ToroidalMap->GetMapRange().GetSize().X;
-	const double MapHeight = ToroidalMap->GetMapRange().GetSize().Y;
-
-	// Compare the box extent with a toroidal distance between the center and the point
-	const bool bIsInsideX = CalculateDistance1D(WrappedCenter.X, WrappedPoint.X, MapWidth) <= Extent.X;
-	const bool bIsInsideY = CalculateDistance1D(WrappedCenter.Y, WrappedPoint.Y, MapHeight) <= Extent.Y;
-	return bIsInsideX && bIsInsideY;
-}
-
 void UToroidalWorldSystem::SetDistortionZone(const FBox& WorldDistortionZone)
 {
 	DistortionZones.Empty();

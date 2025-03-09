@@ -50,11 +50,6 @@ public:
 	 */
 	FVector WrapPosition3D(const FVector& Position) const;
 
-	/**
-	 * Returns true, if the point is inside the box on toroidal topology.
-	 */
-	bool IsInsideBoxOnTorus(const FVector& Point, const FBox& Box) const;
-
 	void SetDistortionZone(const FBox& WorldDistortionZone);
 	TArray<FBox2D> GetDistortionZones() const;
 
