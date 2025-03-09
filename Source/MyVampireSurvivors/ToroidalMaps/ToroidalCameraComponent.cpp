@@ -5,18 +5,13 @@
 
 #include "GameFramework/Character.h"
 
-#include "ToroidalWorldSystem.h"
 #include "MyVamSurLogChannels.h"
+#include "ToroidalWorldSystem.h"
 
 UToroidalCameraComponent::UToroidalCameraComponent()
 {
 	ProjectionMode = ECameraProjectionMode::Orthographic;
 	OrthoWidth = 1024.0f;
-}
-
-const FBox UToroidalCameraComponent::GetWorldViewBox() const
-{
-	return WorldViewBox;
 }
 
 void UToroidalCameraComponent::BeginPlay()
@@ -37,13 +32,10 @@ void UToroidalCameraComponent::BeginPlay()
 
 void UToroidalCameraComponent::InitializeViewBox()
 {
-	const float HalfWidth = OrthoWidth * 0.5f;
-	const float HalfHeight = HalfWidth / AspectRatio;
+	const FVector Extent(OrthoFarClipPlane - OrthoNearClipPlane, OrthoWidth, OrthoWidth / AspectRatio);
+	ViewBox = FBox::BuildAABB(FVector::ZeroVector, Extent);
 
-	const FVector BoxMin = FVector::ForwardVector * OrthoNearClipPlane + FVector::RightVector * (-HalfWidth) + FVector::UpVector * (-HalfHeight);
-	const FVector BoxMax = FVector::ForwardVector * OrthoFarClipPlane + FVector::RightVector * HalfWidth + FVector::UpVector * HalfHeight;
-
-	ViewBox = FBox(BoxMin, BoxMax);
+	UpdateViewBox();
 }
 
 void UToroidalCameraComponent::UpdateViewBox()
