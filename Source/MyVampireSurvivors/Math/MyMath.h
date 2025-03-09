@@ -50,8 +50,8 @@ public:
 	{
 		UE::Math::TVector2<T> Direction = To - From;
 		return FIntVector2(
-			FMath::Sign(static_cast<int>(Direction.X)),
-			FMath::Sign(static_cast<int>(Direction.Y))
+			FMath::IsNearlyZero(Direction.X) ? 0 : static_cast<int>(FMath::Sign(Direction.X)),
+			FMath::IsNearlyZero(Direction.Y) ? 0 : static_cast<int>(FMath::Sign(Direction.Y))
 		);
 	}
 };
