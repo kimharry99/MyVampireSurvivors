@@ -92,6 +92,9 @@ private:
 	UFUNCTION()
 	void HandleCharacterLevelUp();
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UToroidalActorComponent> ToroidalActorComponent;
+
 	UPROPERTY(VisibleAnywhere, Category = "Player")
 	TObjectPtr<UPlayerPawnComponent> PlayerPawn;
 

@@ -28,13 +28,13 @@ void UToroidCharacterMovementComponent::OnMovementUpdated(float DeltaSeconds, co
 		return;
 	}
 
-	if (UpdatedComponent)
-	{
-		const FVector CurrentLocation = UpdatedComponent->GetComponentLocation();
-		const FVector RefinedLocation = ToroidalWorldSystem->RefineLocation(CurrentLocation, false);
-		if (CurrentLocation != RefinedLocation)
-		{
-			UpdatedComponent->SetWorldLocation(RefinedLocation, false, nullptr, ETeleportType::TeleportPhysics);
-		}
-	}
+	//if (UpdatedComponent)
+	//{
+	//	const FVector CurrentLocation = UpdatedComponent->GetComponentLocation();
+	//	const FVector RefinedLocation = ToroidalWorldSystem->RefineLocation(CurrentLocation);
+	//	if (CurrentLocation != RefinedLocation)
+	//	{
+	//		UpdatedComponent->SetWorldLocation(RefinedLocation, false, nullptr, ETeleportType::TeleportPhysics);
+	//	}
+	//}
 }
