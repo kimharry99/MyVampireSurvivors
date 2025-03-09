@@ -39,7 +39,6 @@ void UToroidalActorComponent::TickComponent(float DeltaTime, ELevelTick TickType
 		if (!CurrentLocation.Equals(RefinedLocation))
 		{
 			Owner->SetActorLocation(RefinedLocation, false, nullptr, ETeleportType::TeleportPhysics);
-			UE_LOG(LogMyVamSur, Log, TEXT("[%s]: Position Refined"), *GetPathNameSafe(this));
 		}
 	}
 }
