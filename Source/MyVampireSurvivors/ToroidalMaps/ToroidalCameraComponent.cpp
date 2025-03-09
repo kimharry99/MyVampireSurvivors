@@ -1,36 +1,35 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Camera/MyVamSurCameraComponent.h"
+#include "ToroidalMaps/ToroidalCameraComponent.h"
 
-UMyVamSurCameraComponent::UMyVamSurCameraComponent()
+UToroidalCameraComponent::UToroidalCameraComponent(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	PrimaryComponentTick.bCanEverTick = true;
-
 	ProjectionMode = ECameraProjectionMode::Orthographic;
 	OrthoWidth = 1024.0f;
 }
 
-void UMyVamSurCameraComponent::BeginPlay()
+const FBox UToroidalCameraComponent::GetWorldViewBox() const
+{
+	return WorldViewBox;
+}
+
+void UToroidalCameraComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
 	InitializeViewBox();
 }
 
-void UMyVamSurCameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UToroidalCameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	UpdateViewBox();
 }
 
-const FBox UMyVamSurCameraComponent::GetWorldViewBox() const
-{
-	return WorldViewBox;
-}
-
-void UMyVamSurCameraComponent::InitializeViewBox()
+void UToroidalCameraComponent::InitializeViewBox()
 {
 	const float HalfWidth = OrthoWidth * 0.5f;
 	const float HalfHeight = HalfWidth / AspectRatio;
@@ -41,7 +40,7 @@ void UMyVamSurCameraComponent::InitializeViewBox()
 	ViewBox = FBox(BoxMin, BoxMax);
 }
 
-void UMyVamSurCameraComponent::UpdateViewBox()
+void UToroidalCameraComponent::UpdateViewBox()
 {
 	const FVector CameraLocation = GetComponentLocation();
 	const FRotator CameraRotation = GetComponentRotation();

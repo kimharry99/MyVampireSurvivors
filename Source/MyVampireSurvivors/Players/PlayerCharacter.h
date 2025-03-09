@@ -19,6 +19,7 @@ class UPlayerCharacterWidget;
 class URewardManager;
 class UToroidalActorComponent;
 class UToroidalActorComponent_Deprecated;
+class UToroidalCameraComponent;
 
 /**
  * Player character class.
@@ -75,7 +76,7 @@ private:
 	TObjectPtr<USpringArmComponent> CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
-	TObjectPtr<UMyVamSurCameraComponent> FollowCamera;
+	TObjectPtr<UToroidalCameraComponent> FollowCamera;
 
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 	TSubclassOf<UPlayerCharacterWidget> HPBarWidgetClass;

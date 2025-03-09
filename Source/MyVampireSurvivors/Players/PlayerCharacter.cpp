@@ -10,7 +10,6 @@
 #include "PaperFlipbookComponent.h"
 #include "PaperFlipbook.h"
 
-#include "Camera/MyVamSurCameraComponent.h"
 #include "Equipments/EquipmentInventoryComponent.h"
 #include "Equipments/EquipmentAutoActivator.h"
 #include "GameModes/MyVamSurGameMode.h"
@@ -22,6 +21,7 @@
 #include "Rewards/RewardManager.h"
 #include "ToroidalMaps/ToroidalActorComponent.h"
 #include "ToroidalMaps/ToroidCharacterMovementComponent.h"
+#include "ToroidalMaps/ToroidalCameraComponent.h"
 #include "UI/PlayerCharacterWidget.h"
 
 
@@ -44,7 +44,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	CameraBoom->SetRelativeRotation(FRotator(-90.0f, -90.0f, 0.0f));
 	CameraBoom->bDoCollisionTest = false;
 
-	FollowCamera = CreateDefaultSubobject<UMyVamSurCameraComponent>(TEXT("FollowCamera"));
+	FollowCamera = CreateDefaultSubobject<UToroidalCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->SetProjectionMode(ECameraProjectionMode::Orthographic);
 	FollowCamera->SetOrthoWidth(1024.0f);

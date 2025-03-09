@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
-#include "MyVamSurCameraComponent.generated.h"
+#include "ToroidalCameraComponent.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MYVAMPIRESURVIVORS_API UMyVamSurCameraComponent : public UCameraComponent
+class MYVAMPIRESURVIVORS_API UToroidalCameraComponent : public UCameraComponent
 {
 	GENERATED_BODY()
 
 public:
-	UMyVamSurCameraComponent();
+	UToroidalCameraComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	const FBox GetWorldViewBox() const;
 
@@ -34,4 +34,5 @@ private:
 private:
 	void InitializeViewBox();
 	void UpdateViewBox();
+	
 };
