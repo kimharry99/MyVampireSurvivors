@@ -12,6 +12,17 @@ void UToroidalWorldSystem::Initialize(AToroidalMap* LevelToroidalMap)
 	ToroidalMap = LevelToroidalMap;
 }
 
+TArray<FBox2D> UToroidalWorldSystem::GetDistortionZones() const
+{
+	TArray<FBox2D> Result;
+	for (const auto& [_, Zone] : DistortionZones)
+	{
+		Result.Add(Zone);
+	}
+
+	return Result;
+}
+
 void UToroidalWorldSystem::SetDistortionZone(const FBox& WorldDistortionZone)
 {
 	DistortionZones.Empty();
@@ -57,17 +68,6 @@ void UToroidalWorldSystem::SetDistortionZone(const FBox& WorldDistortionZone)
 	}
 }
 
-TArray<FBox2D> UToroidalWorldSystem::GetDistortionZones() const
-{
-	TArray<FBox2D> Result;
-	for (const auto& [_, Zone] : DistortionZones)
-	{
-		Result.Add(Zone);
-	}
-
-	return Result;
-}
-
 FVector UToroidalWorldSystem::CalculateDisplacement(const FVector& From, const FVector& To) const
 {
 	const FVector FromOnTorus = TransformToTorus(From);
@@ -88,14 +88,6 @@ FVector UToroidalWorldSystem::RefineLocation(const FVector& Location, bool bActi
 	return TransformToWorld(ToroidalLocation, bActiveDistortion);
 }
 
-FVector UToroidalWorldSystem::TransformToTorus(const FVector& Location) const
-{
-	FVector2D Location2D = FVector2D(Location.X, Location.Y);
-	FVector2D ToroidalLocation = TransformToTorus(Location2D);
-
-	return FVector(ToroidalLocation.X, ToroidalLocation.Y, Location.Z);
-}
-
 FVector2D UToroidalWorldSystem::TransformToTorus(const FVector2D& Location) const
 {
 	FBox MapRange = ToroidalMap->GetMapRange();
@@ -110,6 +102,14 @@ FVector2D UToroidalWorldSystem::TransformToTorus(const FVector2D& Location) cons
 	const double NewLocationY = FMyVamSurMath::GetValueCycledToRange(Location.Y, MapRange.Min.Y, Height);
 
 	return FVector2D(NewLocationX, NewLocationY);
+}
+
+FVector UToroidalWorldSystem::TransformToTorus(const FVector& Location) const
+{
+	FVector2D Location2D = FVector2D(Location.X, Location.Y);
+	FVector2D ToroidalLocation = TransformToTorus(Location2D);
+
+	return FVector(ToroidalLocation.X, ToroidalLocation.Y, Location.Z);
 }
 
 FVector UToroidalWorldSystem::TransformToWorld(const FVector& Location, const bool bActiveDistortion) const

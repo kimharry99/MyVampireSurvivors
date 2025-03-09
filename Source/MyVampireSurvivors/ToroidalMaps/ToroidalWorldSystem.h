@@ -52,13 +52,13 @@ public:
 	FVector RefineLocation(const FVector& Location, const bool bActiveDistortion = true) const;
 
 private:
-	UPROPERTY()
-	TObjectPtr<AToroidalMap> ToroidalMap;
-
-	FVector TransformToTorus(const FVector& Location) const;
 	FVector2D TransformToTorus(const FVector2D& Location) const;
+	FVector TransformToTorus(const FVector& Location) const;
 
 	FVector TransformToWorld(const FVector& Location, const bool bActiveDistortion) const;
+
+	UPROPERTY()
+	TObjectPtr<AToroidalMap> ToroidalMap;
 
 	TArray<TPair<FIntVector2, FBox2D>> DistortionZones;
 };
