@@ -12,23 +12,6 @@ void UToroidalWorldSystem::Initialize(AToroidalMap* LevelToroidalMap)
 	ToroidalMap = LevelToroidalMap;
 }
 
-FVector UToroidalWorldSystem::WrapPosition3D(const FVector& Position) const
-{
-	FBox MapRange = ToroidalMap->GetMapRange();
-	if (MapRange.IsInsideXY(Position))
-	{
-		return Position;
-	}
-
-	const double Width = MapRange.GetSize().X;
-	const double Height = MapRange.GetSize().Y;
-	const double NewPositionX = FMyVamSurMath::GetValueCycledToRange(Position.X, MapRange.Min.X, Width);
-	const double NewPositionY = FMyVamSurMath::GetValueCycledToRange(Position.Y, MapRange.Min.Y, Height);
-	const double NewPositionZ = Position.Z;
-
-	return FVector(NewPositionX, NewPositionY, NewPositionZ);
-}
-
 void UToroidalWorldSystem::SetDistortionZone(const FBox& WorldDistortionZone)
 {
 	DistortionZones.Empty();
@@ -87,14 +70,14 @@ TArray<FBox2D> UToroidalWorldSystem::GetDistortionZones() const
 
 FVector UToroidalWorldSystem::CalculateDisplacement(const FVector& From, const FVector& To) const
 {
-	const FVector WrappedFrom = WrapPosition3D(From);
-	const FVector WrappedTo = WrapPosition3D(To);
+	const FVector FromOnTorus = TransformToTorus(From);
+	const FVector ToOnTorus = TransformToTorus(To);
 
 	const double Width = ToroidalMap->GetMapRange().GetSize().X;
 	const double Height = ToroidalMap->GetMapRange().GetSize().Y;
 
-	const double DeltaX = FMyVamSurMath::GetSignedCircularDistance(WrappedFrom.X, WrappedTo.X, Width);
-	const double DeltaY = FMyVamSurMath::GetSignedCircularDistance(WrappedFrom.Y, WrappedTo.Y, Height);
+	const double DeltaX = FMyVamSurMath::GetSignedCircularDistance(FromOnTorus.X, ToOnTorus.X, Width);
+	const double DeltaY = FMyVamSurMath::GetSignedCircularDistance(FromOnTorus.Y, ToOnTorus.Y, Height);
 
 	return FVector(DeltaX, DeltaY, 0.0);
 }

@@ -39,19 +39,9 @@ public:
 	 * @param ToroidalMap The toroidal map to use.
 	 */
 	void Initialize(AToroidalMap* LevelToroidalMap);
-
-private:
-	UPROPERTY()
-	TObjectPtr<AToroidalMap> ToroidalMap;
-
-public:
-	/**
-	 * Wrap a position in toroidal topology.
-	 */
-	FVector WrapPosition3D(const FVector& Position) const;
-
-	void SetDistortionZone(const FBox& WorldDistortionZone);
+	
 	TArray<FBox2D> GetDistortionZones() const;
+	void SetDistortionZone(const FBox& WorldDistortionZone);
 
 	/**
 	 * Calculate displacement to the closest point corresponding to the destination on a toroidal map.
@@ -60,6 +50,10 @@ public:
 
 	/** Refine location defined in world space */
 	FVector RefineLocation(const FVector& Location, const bool bActiveDistortion = true) const;
+
+private:
+	UPROPERTY()
+	TObjectPtr<AToroidalMap> ToroidalMap;
 
 	FVector TransformToTorus(const FVector& Location) const;
 	FVector2D TransformToTorus(const FVector2D& Location) const;
