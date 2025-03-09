@@ -20,18 +20,16 @@
 #include "Players/PlayerPawnComponent.h"
 #include "Rewards/RewardManager.h"
 #include "ToroidalMaps/ToroidalActorComponent.h"
-#include "ToroidalMaps/ToroidCharacterMovementComponent.h"
 #include "ToroidalMaps/ToroidalCameraComponent.h"
 #include "UI/PlayerCharacterWidget.h"
 
 
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer
-				.SetDefaultSubobjectClass<UToroidCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
+	: Super(ObjectInitializer)
 {
-	UToroidCharacterMovementComponent* MoveComp = CastChecked<UToroidCharacterMovementComponent>(GetCharacterMovement());
+	UCharacterMovementComponent* MoveComp = GetCharacterMovement();
+	check(MoveComp);
 	MoveComp->MaxWalkSpeed = 300.0f;
-	MoveComp->bIsPlayingCharacter = true;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ToroidalActor"));
 	GetCapsuleComponent()->SetCapsuleHalfHeight(50.0f);
