@@ -38,23 +38,9 @@ void UToroidalWorldSystem::SetDistortionZone(const FBox& WorldDistortionZone)
 		FVector2D(WorldDistortionZone.Min.X, WorldDistortionZone.Min.Y),
 		FVector2D(WorldDistortionZone.Max.X, WorldDistortionZone.Max.Y)
 	);
-
-	TArray<double> VerticalLines;
-	double ClosestX = FMyVamSurMath::GetClosestValue(WorldDistortionZone2D.GetCenter().X, MapRange.Min.X, MapRange.Max.X);
-	if (FMath::IsWithin(ClosestX, WorldDistortionZone2D.Min.X, WorldDistortionZone2D.Max.X))
-	{
-		VerticalLines.Add(ClosestX);
-	}
-
-	TArray<double> HorizontalLines;
-	double ClosestY = FMyVamSurMath::GetClosestValue(WorldDistortionZone2D.GetCenter().Y, MapRange.Min.Y, MapRange.Max.Y);
-	if (FMath::IsWithin(ClosestY, WorldDistortionZone2D.Min.Y, WorldDistortionZone2D.Max.Y))
-	{
-		HorizontalLines.Add(ClosestY);
-	}
-
+	
 	FIntVector2 FullZoneDelta = FMyVamSurMath::GetDirectionVector(WorldDistortionZone2D.GetCenter(), TransformToTorus(WorldDistortionZone2D.GetCenter()));
-	TArray<FBox2D> SubBoxes = FMyVamSurMath::DivideBox2D(WorldDistortionZone2D, VerticalLines, HorizontalLines);
+	TArray<FBox2D> SubBoxes = FMyVamSurMath::DivideBox2D(WorldDistortionZone2D, MapRange);
 	for (auto& SubBox : SubBoxes)
 	{
 		if (SubBox.IsInsideOrOn(WorldDistortionZone2D.GetCenter()))

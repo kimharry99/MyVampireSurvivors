@@ -59,6 +59,23 @@ public:
 		return SubBoxes;
 	}
 
+	/**
+	 * Divides the given Box into smaller boxes using the edges of Bounds.
+	 */
+	template <typename T>
+	static TArray<UE::Math::TBox2<T>> DivideBox2D(const UE::Math::TBox2<T>& Box, const UE::Math::TBox<T>& Bounds)
+	{
+		TArray<T> VerticalLines;
+		VerticalLines.Add(Bounds.Min.X);
+		VerticalLines.Add(Bounds.Max.X);
+
+		TArray<T> HorizontalLines;
+		HorizontalLines.Add(Bounds.Min.Y);
+		HorizontalLines.Add(Bounds.Max.Y);
+
+		return FMyVamSurMath::DivideBox2D(Box, VerticalLines, HorizontalLines);
+	}
+
 	template <typename T>
 	static FIntVector2 GetDirectionVector(const UE::Math::TVector2<T>& From, const UE::Math::TVector2<T>& To)
 	{
@@ -88,3 +105,5 @@ public:
 		return Sign * Distance;
 	}
 };
+
+
