@@ -8,6 +8,14 @@
 #include "Waves/WaveDataAsset.h"
 #include "Waves/WaveFactory.h"
 #include "Waves/WaveScheduleData.h"
+#include "Waves/WaveTriggerComponent.h"
+
+AWaveManager::AWaveManager(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	WaveTriggerComponent = CreateDefaultSubobject<UWaveTriggerComponent>(TEXT("WaveTriggerComponent"));
+	WaveTriggerComponent->OnWaveTriggered.AddDynamic(this, &ThisClass::HandleWaveTriggered);
+}
 
 void AWaveManager::PostInitializeComponents()
 {
@@ -21,12 +29,18 @@ void AWaveManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	WavePeriod = WaveSchedule ? WaveSchedule->WavePeriod : 3.0f;
+	if (WaveTriggerComponent)
+	{
+		WaveTriggerComponent->SetWaveSchedule(WaveSchedule);
+		WaveTriggerComponent->BeginWaveSchedule();
+	}
 
-	CurrentWaveIndex = -1;
-	UpdateUpcomingWaveData();
-	TriggerUpcomingWave();
-	SetPeriodTimer();
+	//WavePeriod = WaveSchedule ? WaveSchedule->WavePeriod : 3.0f;
+
+	//CurrentWaveIndex = -1;
+	//UpdateUpcomingWaveData();
+	//TriggerUpcomingWave();
+	//SetPeriodTimer();
 }
 
 void AWaveManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -49,19 +63,14 @@ void AWaveManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 int AWaveManager::GetCurrentWaveNumber() const
 {
-	return CurrentWaveIndex;
+	check(WaveTriggerComponent);
+	return WaveTriggerComponent->GetCurrentWaveIndex();
 }
 
 float AWaveManager::GetTimeUntilNextWave() const
 {
-	if (UWorld* World = GetWorld())
-	{
-		if (World->GetTimerManager().IsTimerActive(WavePeriodTimerHandle))
-		{
-			return World->GetTimerManager().GetTimerRemaining(WavePeriodTimerHandle);
-		}
-	}
-	return -1.0f;
+	check(WaveTriggerComponent);
+	return WaveTriggerComponent->GetTimeUntilNextWave();
 }
 
 bool AWaveManager::IsAllWavesTriggered() const
@@ -136,6 +145,15 @@ void AWaveManager::PostPeriodTimerComplete()
 	}
 }
 
+void AWaveManager::HandleWaveTriggered(AWave* Wave)
+{
+	if (Wave)
+	{
+		Wave->OnWaveCleared.AddDynamic(this, &ThisClass::HandleWaveClear);
+		TriggeredWaves.Add(Wave);
+	}
+}
+
 void AWaveManager::HandleWaveClear(AWave* ClearedWave)
 {
 	if (TriggeredWaves.Contains(ClearedWave))
@@ -143,7 +161,8 @@ void AWaveManager::HandleWaveClear(AWave* ClearedWave)
 		TriggeredWaves.Remove(ClearedWave);
 	}
 
-	if (TriggeredWaves.Num() == 0 && IsAllWavesTriggered())
+	check(WaveTriggerComponent);
+	if (TriggeredWaves.Num() == 0 && WaveTriggerComponent->IsAllWavesTriggered())
 	{
 		HandleAllWavesCleared();
 	}

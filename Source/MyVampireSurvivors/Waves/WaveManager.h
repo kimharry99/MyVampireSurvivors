@@ -10,6 +10,7 @@ class AWave;
 class UWaveDataAsset;
 class UWaveFactory;
 class UWaveScheduleData;
+class UWaveTriggerComponent;
 
 /**
  * WaveManager_Deprecated handles ordered waves.
@@ -21,6 +22,9 @@ UCLASS()
 class MYVAMPIRESURVIVORS_API AWaveManager : public AActor
 {
 	GENERATED_BODY()
+
+public:
+	AWaveManager(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
 	//~AActor Interface
@@ -34,16 +38,19 @@ public:
 	float GetTimeUntilNextWave() const;
 
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Wave")
+	TObjectPtr<UWaveTriggerComponent> WaveTriggerComponent;
+
 	UPROPERTY()
 	TObjectPtr<UWaveFactory> WaveFactory;
 
-private:
 	UPROPERTY(EditDefaultsOnly, Category = "Wave")
 	TObjectPtr<const UWaveScheduleData> WaveSchedule;
 
 	UPROPERTY(Transient)
 	float WavePeriod;
 
+	UPROPERTY(Transient)
 	int CurrentWaveIndex = -1;
 
 	UPROPERTY()
@@ -54,10 +61,8 @@ private:
 
 	FTimerHandle WavePeriodTimerHandle;
 
-private:
 	bool IsAllWavesTriggered() const;
 
-private:
 	void TriggerUpcomingWave();
 	void UpdateUpcomingWaveData();
 	void SetPeriodTimer();
@@ -65,7 +70,9 @@ private:
 	UFUNCTION()
 	void PostPeriodTimerComplete();
 
-private:
+	UFUNCTION()
+	void HandleWaveTriggered(AWave* Wave);
+
 	UFUNCTION()
 	void HandleWaveClear(AWave* ClearedWave);
 
