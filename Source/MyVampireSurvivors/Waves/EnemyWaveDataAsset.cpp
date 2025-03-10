@@ -3,12 +3,15 @@
 
 #include "EnemyWaveDataAsset.h"
 
-UEnemyWaveDataAsset::UEnemyWaveDataAsset()
+#include "Enemies/EnemySpawnRecord.h"
+
+UEnemyWaveDataAsset::UEnemyWaveDataAsset(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	Super::WaveType = EWaveType::Enemy;
+	WaveType = EWaveType::Enemy;
 }
 
-const TArray<FEnemySpawnRecord>& UEnemyWaveDataAsset::GetSpawningEnemyGroup() const
+TArray<FEnemySpawnRecord> UEnemyWaveDataAsset::GetSpawningEnemyGroup() const
 {
 	return SpawningEnemyGroup;
 }
