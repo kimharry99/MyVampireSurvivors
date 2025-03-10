@@ -11,10 +11,10 @@ class UWaveScheduleData;
 class UWaveTriggerComponent;
 
 /**
- * WaveManager handles periodical event waves.
  *
- * It triggers an initial wave when the game starts.
- * After a cooldown period in the wave has passed, the class will trigger the next wave.
+ * WaveManager is responsible for handling the wave system, ensuring that waves are triggered
+ * and cleared appropriately. It utilizes UWaveClearHandlerComponent to track wave completion
+ * and UWaveTriggerComponent to schedule and start new waves.
  */
 UCLASS(ClassGroup = "Wave")
 class MYVAMPIRESURVIVORS_API AWaveManager : public AActor
@@ -43,6 +43,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Wave")
 	TObjectPtr<const UWaveScheduleData> WaveSchedule;
 
+	/** Checks if all waves have been cleared and triggers the win condition if true. */
 	void VerifyAllWavesCleared();
+
 	bool IsAllWavesCleared() const;
 };

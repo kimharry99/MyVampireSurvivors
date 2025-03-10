@@ -9,7 +9,9 @@
 class AWave;
 
 /**
- * 
+ * WaveClearHandlerComponent is responsible for monitoring active waves, handling their completion,
+ * and broadcasting an event when all waves have been cleared. It listens for wave-cleared events
+ * and maintains a list of active waves to ensure proper tracking.
  */
 UCLASS(ClassGroup = "Wave")
 class MYVAMPIRESURVIVORS_API UWaveClearHandlerComponent : public UActorComponent

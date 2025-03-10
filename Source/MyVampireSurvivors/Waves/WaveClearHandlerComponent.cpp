@@ -39,6 +39,7 @@ void UWaveClearHandlerComponent::EndPlay(const EEndPlayReason::Type EndPlayReaso
 	{
 		if (Wave.IsValid())
 		{
+			// Unbinds all wave-cleared events to prevent dangling references.
 			Wave->OnWaveCleared.RemoveAll(this);
 		}
 	}

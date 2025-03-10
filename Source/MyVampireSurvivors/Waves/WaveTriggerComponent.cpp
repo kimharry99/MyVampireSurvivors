@@ -66,10 +66,14 @@ void UWaveTriggerComponent::TriggerUpcomingWave()
 		check(WaveFactory);
 		if (AWave* UpcomingWave = WaveFactory->CreateWave(UpcomingWaveData))
 		{
+			// Starts the wave and increments the wave index.
 			UpcomingWave->Trigger();
 			++UpcomingWaveIndex;
+
+			// Broadcasts the wave start event.
 			OnWaveTriggered.Broadcast(UpcomingWave);
 
+			// If there are more waves to trigger, set up a timer for the next wave.
 			if (!IsWaveScheduleDone())
 			{
 				SetPeriodTimer();
