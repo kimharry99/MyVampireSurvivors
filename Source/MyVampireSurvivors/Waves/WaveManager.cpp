@@ -10,6 +10,8 @@
 AWaveManager::AWaveManager(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	PrimaryActorTick.bCanEverTick = false;
+
 	ClearHandlerComponent = CreateDefaultSubobject<UWaveClearHandlerComponent>(TEXT("ClearHandlerComponent"));
 	ClearHandlerComponent->OnWaveCleared.Add(FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::VerifyAllWavesCleared));
 

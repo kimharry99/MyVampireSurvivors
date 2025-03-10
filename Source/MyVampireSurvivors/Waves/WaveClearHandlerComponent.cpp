@@ -9,6 +9,7 @@
 UWaveClearHandlerComponent::UWaveClearHandlerComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 bool UWaveClearHandlerComponent::IsAnyTriggeredWaveUncleared() const
