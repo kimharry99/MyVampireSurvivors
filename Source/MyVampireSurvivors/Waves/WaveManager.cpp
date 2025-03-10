@@ -21,11 +21,9 @@ void AWaveManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (WaveTriggerComponent)
-	{
-		WaveTriggerComponent->SetWaveSchedule(WaveSchedule);
-		WaveTriggerComponent->BeginWaveSchedule();
-	}
+	check(WaveTriggerComponent);
+	WaveTriggerComponent->SetWaveSchedule(WaveSchedule);
+	WaveTriggerComponent->BeginWaveSchedule();
 }
 
 int AWaveManager::GetCurrentWaveNumber() const
