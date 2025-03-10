@@ -7,7 +7,6 @@
 #include "Spawner.generated.h"
 
 template <class TClass> class TSubclassOf;
-class AEnemy;
 
 /**
  * EnemySpanwer spawns enemies at random locations.
@@ -18,14 +17,6 @@ class MYVAMPIRESURVIVORS_API ASpawner : public AActor
 	GENERATED_BODY()
 
 public:
-	/**
-	 * Spawn an enemy at random location in spawn boundary.
-	 *
-	 * @param EnemyClass - Enemy class to spawn
-	 * @return Spawned enemy
-	 */
-	AEnemy* SpawnEnemy(TSubclassOf<AEnemy> EnemyClass) const;
-
 	/**
 	 * Spawn an actor at random location in spawn boundary.
 	 *

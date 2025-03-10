@@ -5,7 +5,6 @@
 
 #include "Kismet/GameplayStatics.h"
 
-#include "Enemies/Enemy.h"
 #include "ToroidalMaps/ToroidalMap.h"
 
 void ASpawner::BeginPlay()
@@ -23,22 +22,6 @@ void ASpawner::BeginPlay()
 	SpawnBoundary = ToroidalMap->GetMapRange();
 }
 
-AEnemy* ASpawner::SpawnEnemy(TSubclassOf<AEnemy> EnemyClass) const
-{
-	UWorld* World = GetWorld();
-	if (World != nullptr)
-	{
-		// Set spawn location
-		FVector SpawnLocation = FMath::RandPointInBox(SpawnBoundary);
-		SpawnLocation.Z = 50.0f;
-
-		// Spawn an enemy
-		return World->SpawnActor<AEnemy>(EnemyClass, SpawnLocation, FRotator::ZeroRotator);
-	}
-
-	return nullptr;
-}
-
 AActor* ASpawner::SpawnActorAtRandomInMap(TSubclassOf<AActor> ActorClass)
 {
 	if (UWorld* World = GetWorld())
@@ -52,7 +35,7 @@ AActor* ASpawner::SpawnActorAtRandomInMap(TSubclassOf<AActor> ActorClass)
 		SpawnParams.Instigator = GetInstigator();
 
 		// Spawn an enemy
-		return World->SpawnActor<AEnemy>(ActorClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+		return World->SpawnActor<AActor>(ActorClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
 	}
 
 	return nullptr;
