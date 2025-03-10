@@ -7,6 +7,16 @@
 #include "WaveDefinition.generated.h"
 
 
+/** Types of waves. */
+UENUM(BlueprintType)
+enum class EWaveType : uint8
+{
+	Undefined	UMETA(DisplayName = "Undefined"),	// Undefined wave, used in base wave class.
+	Enemy		UMETA(DisplayName = "Enemy"),		// Wave that spawns enemies. 
+	Event		UMETA(DisplayName = "Event"),		// Wave that triggers events. 
+};
+
+
 USTRUCT(BlueprintType)
 struct MYVAMPIRESURVIVORS_API FWaveActorsToSpawn
 {

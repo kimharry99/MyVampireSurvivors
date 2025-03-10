@@ -6,7 +6,6 @@
 #include "Enemies/Enemy.h"
 #include "Enemies/EnemySpawner.h"
 #include "GameModes/MyVamSurGameMode.h"
-#include "Waves/WaveDataAsset.h"
 #include "MyVamSurLogChannels.h"
 #include "Waves/WaveDefinition.h"
 
@@ -55,23 +54,6 @@ void AWave::HandleSpawnActorDestroyed(AEnemy* Actor)
 }
 
 void AWave::ClearWave()
-{
-	UE_LOG(LogMyVamSur, Warning, TEXT("Wave Cleared: %s"), *GetName());
-	OnWaveCleared.Broadcast(this);
-	Destroy();
-}
-
-void AWave_Deprecated::InitWaveData(const UWaveDataAsset* InWaveDataAsset)
-{
-	 // Empty implementation
-}
-
-void AWave_Deprecated::Trigger()
-{
-	 // Empty implementation
-}
-
-void AWave_Deprecated::ClearWave()
 {
 	UE_LOG(LogMyVamSur, Warning, TEXT("Wave Cleared: %s"), *GetName());
 	OnWaveCleared.Broadcast(this);
