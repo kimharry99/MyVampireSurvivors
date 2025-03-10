@@ -6,8 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "WaveClearHandlerComponent.generated.h"
 
-class AWave_Deprecated;
-
 /**
  * WaveClearHandlerComponent is responsible for monitoring active waves, handling their completion,
  * and broadcasting an event when all waves have been cleared. It listens for wave-cleared events
@@ -25,10 +23,10 @@ public:
 	bool IsAnyTriggeredWaveUncleared() const;
 
 	UFUNCTION()
-	void HandleWaveTriggered(AWave_Deprecated* Wave);
+	void HandleWaveTriggered(AWave* Wave);
 
 	UFUNCTION()
-	void HandleWaveClear(AWave_Deprecated* ClearedWave);
+	void HandleWaveClear(AWave* ClearedWave);
 
 	FSimpleMulticastDelegate OnWaveCleared;
 
@@ -36,5 +34,5 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
-	TSet<TWeakObjectPtr<AWave_Deprecated>> TriggeredWaves;
+	TSet<TWeakObjectPtr<AWave>> TriggeredWaves;
 };

@@ -7,9 +7,12 @@
 #include "Wave.generated.h"
 
 class AEnemySpawner;
+class AWave;
 class AWave_Deprecated;
 class UWaveDataAsset;
 struct FWaveActorsToSpawn;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveCleared, AWave*, ClearedWave);
 
 UCLASS(ClassGroup = "Wave")
 class MYVAMPIRESURVIVORS_API AWave : public AActor
@@ -22,13 +25,21 @@ public:
 public:
 	void Trigger(const TArray<FWaveActorsToSpawn>& WaveSpawningActors);
 
+	/** Delegate that is broadcasted when the wave is cleared. */
+	FOnWaveCleared OnWaveCleared;
+
 private:
 	virtual AEnemySpawner* FindSpawner() const;
 
-	TArray<TWeakObjectPtr<AActor>> SpawnedActors;
+	TSet<TWeakObjectPtr<AActor>> SpawnedActors;
+
+	UFUNCTION()
+	void HandleSpawnActorDestroyed(AEnemy* Actor);
+
+	void ClearWave();
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveCleared, AWave_Deprecated*, ClearedWave);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveCleared_Deprecated, AWave_Deprecated*, ClearedWave);
 
 UCLASS(Abstract)
 class MYVAMPIRESURVIVORS_API AWave_Deprecated : public AActor
@@ -41,7 +52,7 @@ public:
 
 public:
 	/** Delegate that is broadcasted when the wave is cleared. */
-	FOnWaveCleared OnWaveCleared;
+	FOnWaveCleared_Deprecated OnWaveCleared;
 
 protected:
 	virtual void ClearWave();

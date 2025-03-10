@@ -7,11 +7,9 @@
 #include "WaveTriggerComponent.generated.h"
 
 class AWave;
-class AWave_Deprecated;
 class UWaveDefinition;
 class UWaveScheduleData;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveTriggered_Deprecated, AWave_Deprecated*, TriggeredWave);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveTriggered, AWave*, TriggeredWave);
 
 /**
@@ -41,7 +39,6 @@ public:
 
 	bool IsWaveScheduleDone() const;
 
-	FOnWaveTriggered_Deprecated OnWaveTriggered_Deprecated;
 	FOnWaveTriggered OnWaveTriggered;
 
 private:

@@ -24,7 +24,7 @@ void AWave::Trigger(const TArray<FWaveActorsToSpawn>& WaveSpawningActors)
 		{
 			TSubclassOf<AEnemy> EnemyClass(WaveSpawningActor.ActorToSpawn);
 			AEnemy* SpawnedEnemy = Spawner->SpawnEnemy(EnemyClass);
-			//SpawnedEnemy->OnEnemyDied.AddDynamic(this, &ThisClass::HandleSpawnedEnemyDie);
+			SpawnedEnemy->OnEnemyDied.AddDynamic(this, &ThisClass::HandleSpawnActorDestroyed);
 			SpawnedActors.Add(SpawnedEnemy);
 		}
 	}
@@ -39,6 +39,26 @@ AEnemySpawner* AWave::FindSpawner() const
 	check(GameMode);
 
 	return GameMode->GetEnemySpawner();
+}
+
+void AWave::HandleSpawnActorDestroyed(AEnemy* Actor)
+{
+	if (SpawnedActors.Contains(Actor))
+	{
+		SpawnedActors.Remove(Actor);
+	}
+
+	if (SpawnedActors.Num() == 0)
+	{
+		ClearWave();
+	}
+}
+
+void AWave::ClearWave()
+{
+	UE_LOG(LogMyVamSur, Warning, TEXT("Wave Cleared: %s"), *GetName());
+	OnWaveCleared.Broadcast(this);
+	Destroy();
 }
 
 void AWave_Deprecated::InitWaveData(const UWaveDataAsset* InWaveDataAsset)
