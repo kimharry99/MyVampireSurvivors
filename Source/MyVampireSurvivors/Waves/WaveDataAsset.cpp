@@ -3,7 +3,7 @@
 
 #include "WaveDataAsset.h"
 
-UWaveDataAsset::UWaveDataAsset()
+UWaveDataAsset::UWaveDataAsset(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-
 }
