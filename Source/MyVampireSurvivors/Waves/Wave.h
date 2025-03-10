@@ -6,8 +6,27 @@
 #include "GameFramework/Actor.h"
 #include "Wave.generated.h"
 
+class AEnemySpawner;
 class AWave_Deprecated;
 class UWaveDataAsset;
+struct FWaveActorsToSpawn;
+
+UCLASS(ClassGroup = "Wave")
+class MYVAMPIRESURVIVORS_API AWave : public AActor
+{
+	GENERATED_BODY()
+
+public:
+	AWave(const FObjectInitializer& ObjectInitializer);
+
+public:
+	void Trigger(const TArray<FWaveActorsToSpawn>& WaveSpawningActors);
+
+private:
+	virtual AEnemySpawner* FindSpawner() const;
+
+	TArray<TWeakObjectPtr<AActor>> SpawnedActors;
+};
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveCleared, AWave_Deprecated*, ClearedWave);
 
