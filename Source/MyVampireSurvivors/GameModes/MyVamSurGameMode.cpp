@@ -30,7 +30,7 @@ void AMyVamSurGameMode::PreInitializeComponents()
 	Super::PreInitializeComponents();
 
 	AddToroidalWorldSystemToGame();
-	AddEnemySpawnerToGame();
+	AddSpawnerToGame();
 	AddWaveManagerToGame();
 	CreateRewardManager();
 }
@@ -40,9 +40,9 @@ UToroidalWorldSystem* AMyVamSurGameMode::GetToroidalWorldSystem() const
 	return ToroidalWorldSystem;
 }
 
-ASpawner* AMyVamSurGameMode::GetEnemySpawner() const
+ASpawner* AMyVamSurGameMode::GetSpawner() const
 {
-	return EnemySpawner;
+	return Spawner;
 }
 
 URewardManager* AMyVamSurGameMode::GetRewardManager() const
@@ -63,14 +63,14 @@ void AMyVamSurGameMode::AddToroidalWorldSystemToGame()
 	}
 }
 
-void AMyVamSurGameMode::AddEnemySpawnerToGame()
+void AMyVamSurGameMode::AddSpawnerToGame()
 {
 	// GameMode does not need to check if the world is valid
 	UWorld* World = GetWorld();
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Instigator = GetInstigator();
-	EnemySpawner = World->SpawnActor<ASpawner>(SpawnParams);
+	Spawner = World->SpawnActor<ASpawner>(SpawnParams);
 }
 
 void AMyVamSurGameMode::AddWaveManagerToGame()

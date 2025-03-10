@@ -43,7 +43,7 @@ ASpawner* AWave::FindSpawner() const
 	AMyVamSurGameMode* GameMode = World->GetAuthGameMode<AMyVamSurGameMode>();
 	check(GameMode);
 
-	return GameMode->GetEnemySpawner();
+	return GameMode->GetSpawner();
 }
 
 void AWave::HandleSpawnActorDestroyed(AEnemy* Actor)
