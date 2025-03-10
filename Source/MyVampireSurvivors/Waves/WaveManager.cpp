@@ -5,13 +5,17 @@
 
 #include "MyVamSurLogChannels.h"
 #include "Waves/Wave.h"
+#include "Waves/WaveClearHandlerComponent.h"
 #include "Waves/WaveTriggerComponent.h"
 
 AWaveManager::AWaveManager(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	ClearHandlerComponent = CreateDefaultSubobject<UWaveClearHandlerComponent>(TEXT("ClearHandlerComponent"));
+	ClearHandlerComponent->OnWaveCleared.Add(FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::DetermineAllWaveCleared));
+
 	WaveTriggerComponent = CreateDefaultSubobject<UWaveTriggerComponent>(TEXT("WaveTriggerComponent"));
-	WaveTriggerComponent->OnWaveTriggered.AddDynamic(this, &ThisClass::HandleWaveTriggered);
+	WaveTriggerComponent->OnWaveTriggered.AddDynamic(ClearHandlerComponent, &UWaveClearHandlerComponent::HandleWaveTriggered);
 }
 
 void AWaveManager::BeginPlay()
@@ -77,4 +81,15 @@ void AWaveManager::HandleAllWavesCleared()
 {
 	// Call game winning function
 	UE_LOG(LogMyVamSur, Warning, TEXT("You Win!"));
+}
+
+void AWaveManager::DetermineAllWaveCleared()
+{
+	check(ClearHandlerComponent);
+	check(WaveTriggerComponent);
+
+	if (!ClearHandlerComponent->IsTriggeringWaveRemaining() && WaveTriggerComponent->IsAllWavesTriggered())
+	{
+		UE_LOG(LogMyVamSur, Warning, TEXT("You Win!"));
+	}
 }

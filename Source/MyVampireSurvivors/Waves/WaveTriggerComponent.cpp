@@ -67,10 +67,13 @@ void UWaveTriggerComponent::TriggerUpcomingWave()
 		if (AWave* UpcomingWave = WaveFactory->CreateWave(UpcomingWaveData))
 		{
 			UpcomingWave->Trigger();
+			++UpcomingWaveIndex;
 			OnWaveTriggered.Broadcast(UpcomingWave);
 
-			++UpcomingWaveIndex;
-			SetPeriodTimer();
+			if (!IsAllWavesTriggered())
+			{
+				SetPeriodTimer();
+			}
 		}
 	}
 }

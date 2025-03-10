@@ -7,6 +7,7 @@
 #include "WaveManager.generated.h"
 
 class AWave;
+class UWaveClearHandlerComponent;
 class UWaveScheduleData;
 class UWaveTriggerComponent;
 
@@ -38,6 +39,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Wave")
 	TObjectPtr<UWaveTriggerComponent> WaveTriggerComponent;
 
+	UPROPERTY(VisibleAnywhere, Category = "Wave")
+	TObjectPtr<UWaveClearHandlerComponent> ClearHandlerComponent;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Wave")
 	TObjectPtr<const UWaveScheduleData> WaveSchedule;
 
@@ -51,4 +55,6 @@ private:
 	void HandleWaveClear(AWave* ClearedWave);
 
 	void HandleAllWavesCleared();
+
+	void DetermineAllWaveCleared();
 };
