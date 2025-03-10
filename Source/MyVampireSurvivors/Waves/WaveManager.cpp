@@ -11,7 +11,7 @@ AWaveManager::AWaveManager(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	ClearHandlerComponent = CreateDefaultSubobject<UWaveClearHandlerComponent>(TEXT("ClearHandlerComponent"));
-	ClearHandlerComponent->OnWaveCleared.Add(FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::DetermineAllWaveCleared));
+	ClearHandlerComponent->OnWaveCleared.Add(FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::VerifyAllWavesCleared));
 
 	WaveTriggerComponent = CreateDefaultSubobject<UWaveTriggerComponent>(TEXT("WaveTriggerComponent"));
 	WaveTriggerComponent->OnWaveTriggered.AddDynamic(ClearHandlerComponent, &UWaveClearHandlerComponent::HandleWaveTriggered);
@@ -40,13 +40,17 @@ float AWaveManager::GetTimeUntilNextWave() const
 	return WaveTriggerComponent->GetTimeUntilNextWave();
 }
 
-void AWaveManager::DetermineAllWaveCleared()
+void AWaveManager::VerifyAllWavesCleared()
 {
-	check(ClearHandlerComponent);
-	check(WaveTriggerComponent);
-
-	if (!ClearHandlerComponent->IsTriggeringWaveRemaining() && WaveTriggerComponent->IsAllWavesTriggered())
+	if (IsAllWavesCleared())
 	{
 		UE_LOG(LogMyVamSur, Warning, TEXT("You Win!"));
 	}
+}
+
+bool AWaveManager::IsAllWavesCleared() const
+{
+	check(ClearHandlerComponent);
+	check(WaveTriggerComponent);
+	return !ClearHandlerComponent->IsAnyTriggeredWaveUncleared() && WaveTriggerComponent->IsWaveScheduleDone();
 }

@@ -20,7 +20,7 @@ public:
 	UWaveClearHandlerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
-	bool IsTriggeringWaveRemaining() const;
+	bool IsAnyTriggeredWaveUncleared() const;
 
 	UFUNCTION()
 	void HandleWaveTriggered(AWave* Wave);

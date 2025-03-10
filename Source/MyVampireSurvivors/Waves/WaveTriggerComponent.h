@@ -29,7 +29,7 @@ public:
 	int GetCurrentWaveIndex() const;
 	float GetTimeUntilNextWave() const;
 
-	bool IsAllWavesTriggered() const;
+	bool IsWaveScheduleDone() const;
 
 	FOnWaveTriggered OnWaveTriggered;
 

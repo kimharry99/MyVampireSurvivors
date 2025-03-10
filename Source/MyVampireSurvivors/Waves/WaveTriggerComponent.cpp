@@ -53,7 +53,7 @@ float UWaveTriggerComponent::GetTimeUntilNextWave() const
 	return -1.0f;
 }
 
-bool UWaveTriggerComponent::IsAllWavesTriggered() const
+bool UWaveTriggerComponent::IsWaveScheduleDone() const
 {
 	return UpcomingWaveIndex >= WaveSequence.Num();
 }
@@ -70,7 +70,7 @@ void UWaveTriggerComponent::TriggerUpcomingWave()
 			++UpcomingWaveIndex;
 			OnWaveTriggered.Broadcast(UpcomingWave);
 
-			if (!IsAllWavesTriggered())
+			if (!IsWaveScheduleDone())
 			{
 				SetPeriodTimer();
 			}
@@ -93,7 +93,7 @@ void UWaveTriggerComponent::OnPeriodTimerCompleted()
 		World->GetTimerManager().ClearTimer(WavePeriodTimerHandle);
 	}
 
-	if (!IsAllWavesTriggered())
+	if (!IsWaveScheduleDone())
 	{
 		TriggerUpcomingWave();
 		SetPeriodTimer();

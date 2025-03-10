@@ -43,5 +43,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Wave")
 	TObjectPtr<const UWaveScheduleData> WaveSchedule;
 
-	void DetermineAllWaveCleared();
+	void VerifyAllWavesCleared();
+	bool IsAllWavesCleared() const;
 };

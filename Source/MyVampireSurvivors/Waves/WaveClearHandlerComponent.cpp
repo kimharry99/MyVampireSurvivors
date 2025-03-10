@@ -11,7 +11,7 @@ UWaveClearHandlerComponent::UWaveClearHandlerComponent(const FObjectInitializer&
 {
 }
 
-bool UWaveClearHandlerComponent::IsTriggeringWaveRemaining() const
+bool UWaveClearHandlerComponent::IsAnyTriggeredWaveUncleared() const
 {
 	return !TriggeredWaves.IsEmpty();
 }
