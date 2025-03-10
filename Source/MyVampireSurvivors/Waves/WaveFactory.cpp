@@ -2,36 +2,38 @@
 
 
 #include "WaveFactory.h"
+
 #include "MyVamSurLogChannels.h"
 #include "Waves/EnemyWave.h"
 #include "Waves/WaveDataAsset.h"
 
-AWave* UWaveFactory::CreateWave(const UWaveDataAsset* WaveDataAsset) const
+AWave* FWaveFactory::CreateWave(const UWaveDataAsset* WaveDataAsset, AActor* WaveOwner)
 {
-	if (WaveDataAsset == nullptr)
-	{
-		UE_LOG(LogMyVamSur, Error, TEXT("Input WaveDataAsset is nullptr"));
-		return nullptr;
-	}
+	check(WaveDataAsset);
+	check(WaveOwner);
 
 	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = Cast<AActor>(GetOuter());
-	SpawnParams.Instigator = nullptr;
+	SpawnParams.Owner = WaveOwner;
+	SpawnParams.Instigator = WaveOwner->GetInstigator();
 
-	if (UWorld* World = GetWorld())
+	if (UWorld* World = WaveOwner->GetWorld())
 	{
-		AWave* Wave = nullptr;
 		switch (WaveDataAsset->WaveType)
 		{
-			case EWaveType::Enemy:
-				Wave = World->SpawnActor<AEnemyWave>(AEnemyWave::StaticClass(), SpawnParams);
+		case EWaveType::Enemy:
+			if (AWave* Wave = World->SpawnActor<AEnemyWave>(AEnemyWave::StaticClass(), SpawnParams))
+			{
 				Wave->InitWaveData(WaveDataAsset);
-				break;
-			default:
-				UE_LOG(LogMyVamSur, Error, TEXT("Unknown wave type"));
-				break;
+				return Wave;
+			}
+		default:
+			UE_LOG(LogMyVamSur, Warning, TEXT("Unknown wave type"));
+			break;
 		}
-		return Wave;
+	}
+	else
+	{
+		UE_LOG(LogMyVamSur, Error, TEXT("FWaveFactory::CreateWave - Failed to get World from WaveOwner: %s."), *GetPathNameSafe(WaveOwner));
 	}
 
 	return nullptr;

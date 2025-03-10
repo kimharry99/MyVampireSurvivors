@@ -8,7 +8,6 @@
 
 class AWave;
 class UWaveDataAsset;
-class UWaveFactory;
 class UWaveScheduleData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveTriggered, AWave*, TriggeredWave);
@@ -43,9 +42,6 @@ public:
 	FOnWaveTriggered OnWaveTriggered;
 
 private:
-	UPROPERTY(Instanced)
-	TObjectPtr<UWaveFactory> WaveFactory;
-
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<const UWaveDataAsset>> WaveSequence;
 

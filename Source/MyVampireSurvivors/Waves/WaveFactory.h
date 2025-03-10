@@ -3,17 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-#include "WaveFactory.generated.h"
 
 class AWave;
 class UWaveDataAsset;
 
-UCLASS()
-class MYVAMPIRESURVIVORS_API UWaveFactory : public UObject
+struct MYVAMPIRESURVIVORS_API FWaveFactory
 {
-	GENERATED_BODY()
+private:
+	FWaveFactory() = default;
 
 public:
-	AWave* CreateWave(const UWaveDataAsset* WaveDataAsset) const;
+	static AWave* CreateWave(const UWaveDataAsset* WaveDataAsset, AActor* WaveOwner);
 };

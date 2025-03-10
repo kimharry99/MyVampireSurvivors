@@ -13,8 +13,6 @@ UWaveTriggerComponent::UWaveTriggerComponent(const FObjectInitializer& ObjectIni
 	: Super(ObjectInitializer)
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
-	WaveFactory = CreateDefaultSubobject<UWaveFactory>(TEXT("WaveFactory"));
 }
 
 void UWaveTriggerComponent::SetWaveSchedule(const UWaveScheduleData* NewWaveScheduleData)
@@ -62,22 +60,27 @@ void UWaveTriggerComponent::TriggerUpcomingWave()
 {
 	if (WaveSequence.IsValidIndex(UpcomingWaveIndex))
 	{
-		const UWaveDataAsset* UpcomingWaveData = WaveSequence[UpcomingWaveIndex];
-		check(WaveFactory);
-		if (AWave* UpcomingWave = WaveFactory->CreateWave(UpcomingWaveData))
+		if (const UWaveDataAsset* UpcomingWaveData = WaveSequence[UpcomingWaveIndex])
 		{
-			// Starts the wave and increments the wave index.
-			UpcomingWave->Trigger();
-			++UpcomingWaveIndex;
-
-			// Broadcasts the wave start event.
-			OnWaveTriggered.Broadcast(UpcomingWave);
-
-			// If there are more waves to trigger, set up a timer for the next wave.
-			if (!IsWaveScheduleDone())
+			if (AWave* UpcomingWave = FWaveFactory::CreateWave(UpcomingWaveData, GetOwner()))
 			{
-				SetPeriodTimer();
+				// Starts the wave and increments the wave index.
+				UpcomingWave->Trigger();
+
+				// Broadcasts the wave start event.
+				OnWaveTriggered.Broadcast(UpcomingWave);
 			}
+		}
+		else
+		{
+			UE_LOG(LogMyVamSur, Warning, TEXT("UWaveTriggerComponent::WaveSequence[%d] is null."), UpcomingWaveIndex);
+		}
+
+		++UpcomingWaveIndex;
+		// If there are more waves to trigger, set up a timer for the next wave.
+		if (!IsWaveScheduleDone())
+		{
+			SetPeriodTimer();
 		}
 	}
 }
