@@ -6,6 +6,7 @@
 #include "Enemies/Enemy.h"
 #include "GameModes/MyVamSurGameMode.h"
 #include "MyVamSurLogChannels.h"
+#include "Waves/WaveParticipantInterface.h"
 #include "Waves/Spawner.h"
 #include "Waves/WaveDefinition.h"
 
@@ -27,10 +28,13 @@ void AWave::Trigger(const TArray<FWaveActorsToSpawn>& WaveSpawningActors)
 				{
 					SpawnedEnemy->OnEnemyDied.AddDynamic(this, &ThisClass::HandleSpawnActorDestroyed);
 				}
+				if (IWaveParticipantInterface* SpawnedWaveActor = Cast<IWaveParticipantInterface>(SpawnedActor))
+				{
+					SpawnedWaveActor->GetOnWaveActorDestroyedDelegate()->AddUObject(this, &ThisClass::HandleWaveActorDestroyed);
+				}
 
 				SpawnedActors.Add(SpawnedActor);
 			}
-
 		}
 	}
 }
@@ -54,6 +58,19 @@ void AWave::HandleSpawnActorDestroyed(AEnemy* Actor)
 	}
 
 	if (SpawnedActors.Num() == 0)
+	{
+		ClearWave();
+	}
+}
+
+void AWave::HandleWaveActorDestroyed(IWaveParticipantInterface* WaveActor)
+{
+	if (SpawnedWaveActors.Contains(WaveActor))
+	{
+		SpawnedWaveActors.Remove(WaveActor);
+	}
+
+	if (SpawnedWaveActors.Num() == 0)
 	{
 		ClearWave();
 	}

@@ -9,6 +9,7 @@
 class AEnemy;
 class ASpawner;
 class AWave;
+class IWaveParticipantInterface;
 struct FWaveActorsToSpawn;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveCleared, AWave*, ClearedWave);
@@ -31,9 +32,12 @@ private:
 	virtual ASpawner* FindSpawner() const;
 
 	TSet<TWeakObjectPtr<AActor>> SpawnedActors;
+	TSet<IWaveParticipantInterface*> SpawnedWaveActors;
 
 	UFUNCTION()
 	void HandleSpawnActorDestroyed(AEnemy* Actor);
+
+	void HandleWaveActorDestroyed(IWaveParticipantInterface* WaveActor);
 
 	void ClearWave();
 };
