@@ -2,10 +2,12 @@
 
 
 #include "WaveManager.h"
+
+#include "MyVamSurLogChannels.h"
 #include "Waves/Wave.h"
 #include "Waves/WaveDataAsset.h"
 #include "Waves/WaveFactory.h"
-#include "MyVamSurLogChannels.h"
+#include "Waves/WaveScheduleData.h"
 
 void AWaveManager::PostInitializeComponents()
 {
@@ -18,6 +20,8 @@ void AWaveManager::PostInitializeComponents()
 void AWaveManager::BeginPlay()
 {
 	Super::BeginPlay();
+
+	WavePeriod = WaveSchedule ? WaveSchedule->WavePeriod : 3.0f;
 
 	CurrentWaveIndex = -1;
 	UpdateUpcomingWaveData();
@@ -62,7 +66,13 @@ float AWaveManager::GetTimeUntilNextWave() const
 
 bool AWaveManager::IsAllWavesTriggered() const
 {
-	return CurrentWaveIndex >= WaveTable.Num();
+	if (!WaveSchedule)
+	{
+		UE_LOG(LogMyVamSur, Warning, TEXT("WaveSchedule is not set in IsAllWavesTriggered [%s]."), *GetPathNameSafe(this));
+		return false;
+	}
+
+	return CurrentWaveIndex >= WaveSchedule->SortedWaves.Num();
 }
 
 void AWaveManager::TriggerUpcomingWave()
@@ -86,9 +96,16 @@ void AWaveManager::TriggerUpcomingWave()
 
 void AWaveManager::UpdateUpcomingWaveData()
 {
-	if(WaveTable.IsValidIndex(++CurrentWaveIndex))
+	if (!WaveSchedule)
 	{
-		UpcomingWaveData = WaveTable[CurrentWaveIndex];
+		UE_LOG(LogMyVamSur, Warning, TEXT("WaveSchedule is not set in UpdateUpcomingWaveData [%s]."), *GetPathNameSafe(this));
+		return;
+	}
+
+	++CurrentWaveIndex;
+	if (WaveSchedule->SortedWaves.IsValidIndex(CurrentWaveIndex))
+	{
+		UpcomingWaveData = WaveSchedule->SortedWaves[CurrentWaveIndex];
 	}
 	else
 	{

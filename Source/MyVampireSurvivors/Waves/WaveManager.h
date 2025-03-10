@@ -9,6 +9,7 @@
 class AWave;
 class UWaveDataAsset;
 class UWaveFactory;
+class UWaveScheduleData;
 
 /**
  * WaveManager_Deprecated handles ordered waves.
@@ -37,22 +38,16 @@ private:
 	TObjectPtr<UWaveFactory> WaveFactory;
 
 private:
-	/**
-	 * A data table containing ordered enemy wave data.
-	 */
-	UPROPERTY(EditDefaultsOnly, Category = "Wave", meta = (PrivateAllowAccess = "true"))
-	TArray<TObjectPtr<UWaveDataAsset>> WaveTable;
+	UPROPERTY(EditDefaultsOnly, Category = "Wave")
+	TObjectPtr<const UWaveScheduleData> WaveSchedule;
 
-	/**
-	 * The period(sec) between enemy waves.
-	 */
-	UPROPERTY(EditAnywhere, Category = "Wave", meta = (AllowPrivateAccess = "true"))
-	float WavePeriod = 3.0f;
+	UPROPERTY(Transient)
+	float WavePeriod;
 
 	int CurrentWaveIndex = -1;
 
 	UPROPERTY()
-	TObjectPtr<UWaveDataAsset> UpcomingWaveData = nullptr;
+	TObjectPtr<const UWaveDataAsset> UpcomingWaveData = nullptr;
 
 	UPROPERTY()
 	TArray<TObjectPtr<AWave>> TriggeredWaves;
