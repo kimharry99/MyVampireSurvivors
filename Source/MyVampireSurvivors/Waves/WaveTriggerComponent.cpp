@@ -62,7 +62,7 @@ void UWaveTriggerComponent::TriggerUpcomingWave()
 	{
 		if (const UWaveDataAsset* UpcomingWaveData = WaveSequence[UpcomingWaveIndex])
 		{
-			if (AWave* UpcomingWave = FWaveFactory::CreateWave(UpcomingWaveData, GetOwner()))
+			if (AWave_Deprecated* UpcomingWave = FWaveFactory::CreateWave(UpcomingWaveData, GetOwner()))
 			{
 				// Starts the wave and increments the wave index.
 				UpcomingWave->Trigger();

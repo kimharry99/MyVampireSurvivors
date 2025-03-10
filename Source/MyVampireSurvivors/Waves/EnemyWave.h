@@ -11,7 +11,7 @@ class UEnemyWaveDataAsset;
 class UWaveDataAsset;
 
 UCLASS()
-class MYVAMPIRESURVIVORS_API AEnemyWave : public AWave
+class MYVAMPIRESURVIVORS_API AEnemyWave : public AWave_Deprecated
 {
 	GENERATED_BODY()
 

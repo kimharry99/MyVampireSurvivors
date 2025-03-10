@@ -6,11 +6,11 @@
 #include "Components/ActorComponent.h"
 #include "WaveTriggerComponent.generated.h"
 
-class AWave;
+class AWave_Deprecated;
 class UWaveDataAsset;
 class UWaveScheduleData;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveTriggered, AWave*, TriggeredWave);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveTriggered, AWave_Deprecated*, TriggeredWave);
 
 /**
  * WaveTriggerComponent is responsible for executing wave schedules, triggering waves at specified intervals,

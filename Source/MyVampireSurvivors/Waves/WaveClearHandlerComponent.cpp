@@ -17,7 +17,7 @@ bool UWaveClearHandlerComponent::IsAnyTriggeredWaveUncleared() const
 	return !TriggeredWaves.IsEmpty();
 }
 
-void UWaveClearHandlerComponent::HandleWaveTriggered(AWave* Wave)
+void UWaveClearHandlerComponent::HandleWaveTriggered(AWave_Deprecated* Wave)
 {
 	if (Wave)
 	{
@@ -26,7 +26,7 @@ void UWaveClearHandlerComponent::HandleWaveTriggered(AWave* Wave)
 	}
 }
 
-void UWaveClearHandlerComponent::HandleWaveClear(AWave* ClearedWave)
+void UWaveClearHandlerComponent::HandleWaveClear(AWave_Deprecated* ClearedWave)
 {
 	check(TriggeredWaves.Contains(ClearedWave));
 	TriggeredWaves.Remove(ClearedWave);
@@ -36,7 +36,7 @@ void UWaveClearHandlerComponent::HandleWaveClear(AWave* ClearedWave)
 
 void UWaveClearHandlerComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	for (TWeakObjectPtr<AWave> Wave : TriggeredWaves)
+	for (TWeakObjectPtr<AWave_Deprecated> Wave : TriggeredWaves)
 	{
 		if (Wave.IsValid())
 		{

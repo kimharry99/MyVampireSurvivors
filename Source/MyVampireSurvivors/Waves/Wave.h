@@ -6,13 +6,13 @@
 #include "GameFramework/Actor.h"
 #include "Wave.generated.h"
 
-class AWave;
+class AWave_Deprecated;
 class UWaveDataAsset;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveCleared, AWave*, ClearedWave);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveCleared, AWave_Deprecated*, ClearedWave);
 
 UCLASS(Abstract)
-class MYVAMPIRESURVIVORS_API AWave : public AActor
+class MYVAMPIRESURVIVORS_API AWave_Deprecated : public AActor
 {
 	GENERATED_BODY()
 

@@ -7,7 +7,7 @@
 #include "Waves/EnemyWave.h"
 #include "Waves/WaveDataAsset.h"
 
-AWave* FWaveFactory::CreateWave(const UWaveDataAsset* WaveDataAsset, AActor* WaveOwner)
+AWave_Deprecated* FWaveFactory::CreateWave(const UWaveDataAsset* WaveDataAsset, AActor* WaveOwner)
 {
 	check(WaveDataAsset);
 	check(WaveOwner);
@@ -21,7 +21,7 @@ AWave* FWaveFactory::CreateWave(const UWaveDataAsset* WaveDataAsset, AActor* Wav
 		switch (WaveDataAsset->WaveType)
 		{
 		case EWaveType::Enemy:
-			if (AWave* Wave = World->SpawnActor<AEnemyWave>(AEnemyWave::StaticClass(), SpawnParams))
+			if (AWave_Deprecated* Wave = World->SpawnActor<AEnemyWave>(AEnemyWave::StaticClass(), SpawnParams))
 			{
 				Wave->InitWaveData(WaveDataAsset);
 				return Wave;
