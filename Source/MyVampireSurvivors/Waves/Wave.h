@@ -6,9 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Wave.generated.h"
 
-class AEnemy;
 class ASpawner;
-class AWave;
 class IWaveParticipantInterface;
 struct FWaveActorsToSpawn;
 
@@ -31,11 +29,7 @@ public:
 private:
 	virtual ASpawner* FindSpawner() const;
 
-	TSet<TWeakObjectPtr<AActor>> SpawnedActors;
 	TSet<IWaveParticipantInterface*> SpawnedWaveActors;
-
-	UFUNCTION()
-	void HandleSpawnActorDestroyed(AEnemy* Actor);
 
 	void HandleWaveActorDestroyed(IWaveParticipantInterface* WaveActor);
 

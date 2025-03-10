@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Characters/MyVamSurCharacter.h"
+#include "Waves/WaveParticipantInterface.h"
 #include "Enemy.generated.h"
 
 template <class TClass> class TSubclassOf;
@@ -18,7 +19,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDied, AEnemy*, DiedEnemy);
  * Chase the player by default.
  */
 UCLASS()
-class MYVAMPIRESURVIVORS_API AEnemy : public AMyVamSurCharacter
+class MYVAMPIRESURVIVORS_API AEnemy : public AMyVamSurCharacter, public IWaveParticipantInterface
 {
 	GENERATED_BODY()
 
@@ -35,8 +36,13 @@ protected:
 	virtual void StartDeath() override;
 	//~End of AMyVamSurCharacter interface
 
+	//~IWaveParticipantInterface interface
+	virtual FOnWaveActorDestroyedDelegate* GetOnWaveActorDestroyedDelegate() override;
+	//~End of IWaveParticipantInterface interface
+
 public:
 	FOnEnemyDied OnEnemyDied;
+	FOnWaveActorDestroyedDelegate OnWaveActorDestroyed;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Enemy")

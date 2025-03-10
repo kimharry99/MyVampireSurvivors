@@ -39,7 +39,13 @@ void AEnemy::StartDeath()
 
 	SpawnDropItem();
 	OnEnemyDied.Broadcast(this);
+	OnWaveActorDestroyed.Broadcast(this);
 	Destroy();
+}
+
+FOnWaveActorDestroyedDelegate* AEnemy::GetOnWaveActorDestroyedDelegate()
+{
+	return &OnWaveActorDestroyed;
 }
 
 void AEnemy::SpawnDropItem()
