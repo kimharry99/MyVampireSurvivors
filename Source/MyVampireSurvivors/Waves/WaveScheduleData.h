@@ -6,7 +6,7 @@
 #include "Engine/DataAsset.h"
 #include "WaveScheduleData.generated.h"
 
-class UWaveDataAsset;
+class UWaveDefinition;
 
 /**
  *
@@ -17,8 +17,8 @@ class MYVAMPIRESURVIVORS_API UWaveScheduleData : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditInstanceOnly, Category = "Wave")
-	TArray<TObjectPtr<const UWaveDataAsset>> SortedWaves;
+	UPROPERTY(EditDefaultsOnly, Category = "Wave")
+	TArray<TObjectPtr<const UWaveDefinition>> SortedWaves;
 
 	/** The period(sec) between waves. */
 	UPROPERTY(EditInstanceOnly, Category = "Wave")

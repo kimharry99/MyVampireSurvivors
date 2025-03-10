@@ -5,8 +5,7 @@
 
 #include "MyVamSurLogChannels.h"
 #include "Waves/Wave.h"
-#include "Waves/WaveDataAsset.h"
-#include "Waves/WaveFactory.h"
+#include "Waves/WaveDefinition.h"
 #include "Waves/WaveScheduleData.h"
 
 UWaveTriggerComponent::UWaveTriggerComponent(const FObjectInitializer& ObjectInitializer)
@@ -23,8 +22,8 @@ void UWaveTriggerComponent::SetWaveSchedule(const UWaveScheduleData* NewWaveSche
 		return;
 	}
 
-	WaveSequence = NewWaveScheduleData->SortedWaves;
 	WavePeriod = NewWaveScheduleData->WavePeriod;
+	WaveSequence = NewWaveScheduleData->SortedWaves;
 }
 
 void UWaveTriggerComponent::BeginWaveSchedule()
@@ -60,15 +59,18 @@ void UWaveTriggerComponent::TriggerUpcomingWave()
 {
 	if (WaveSequence.IsValidIndex(UpcomingWaveIndex))
 	{
-		if (const UWaveDataAsset* UpcomingWaveData = WaveSequence[UpcomingWaveIndex])
+		if (const UWaveDefinition* UpcomingWaveData = WaveSequence[UpcomingWaveIndex])
 		{
-			if (AWave_Deprecated* UpcomingWave = FWaveFactory::CreateWave(UpcomingWaveData, GetOwner()))
+			if (UWorld* World = GetWorld())
 			{
-				// Starts the wave and increments the wave index.
-				UpcomingWave->Trigger();
+				FActorSpawnParameters SpawnParams;
+				SpawnParams.Owner = GetOwner();
 
-				// Broadcasts the wave start event.
-				OnWaveTriggered.Broadcast(UpcomingWave);
+				if (AWave* UpcomingWave = World->SpawnActor<AWave>(SpawnParams))
+				{
+					UpcomingWave->Trigger(UpcomingWaveData->ActorsToSpawn);
+					OnWaveTriggered.Broadcast(UpcomingWave);
+				}
 			}
 		}
 		else

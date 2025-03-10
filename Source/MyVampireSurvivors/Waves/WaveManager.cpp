@@ -16,7 +16,7 @@ AWaveManager::AWaveManager(const FObjectInitializer& ObjectInitializer)
 	ClearHandlerComponent->OnWaveCleared.Add(FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::VerifyAllWavesCleared));
 
 	WaveTriggerComponent = CreateDefaultSubobject<UWaveTriggerComponent>(TEXT("WaveTriggerComponent"));
-	WaveTriggerComponent->OnWaveTriggered.AddDynamic(ClearHandlerComponent, &UWaveClearHandlerComponent::HandleWaveTriggered);
+	WaveTriggerComponent->OnWaveTriggered_Deprecated.AddDynamic(ClearHandlerComponent, &UWaveClearHandlerComponent::HandleWaveTriggered);
 }
 
 void AWaveManager::BeginPlay()

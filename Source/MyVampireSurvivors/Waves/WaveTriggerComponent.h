@@ -6,11 +6,13 @@
 #include "Components/ActorComponent.h"
 #include "WaveTriggerComponent.generated.h"
 
+class AWave;
 class AWave_Deprecated;
-class UWaveDataAsset;
+class UWaveDefinition;
 class UWaveScheduleData;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveTriggered, AWave_Deprecated*, TriggeredWave);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveTriggered_Deprecated, AWave_Deprecated*, TriggeredWave);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveTriggered, AWave*, TriggeredWave);
 
 /**
  * WaveTriggerComponent is responsible for executing wave schedules, triggering waves at specified intervals,
@@ -39,17 +41,18 @@ public:
 
 	bool IsWaveScheduleDone() const;
 
+	FOnWaveTriggered_Deprecated OnWaveTriggered_Deprecated;
 	FOnWaveTriggered OnWaveTriggered;
 
 private:
 	UPROPERTY(Transient)
-	TArray<TObjectPtr<const UWaveDataAsset>> WaveSequence;
+	TArray<TObjectPtr<const UWaveDefinition>> WaveSequence;
 
 	UPROPERTY(Transient)
-	float WavePeriod;
+	float WavePeriod = 0.0f;
 
 	UPROPERTY(Transient)
-	int UpcomingWaveIndex;
+	int UpcomingWaveIndex = 0;
 
 	FTimerHandle WavePeriodTimerHandle;
 
