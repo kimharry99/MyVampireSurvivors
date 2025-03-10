@@ -6,7 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "WaveManager.generated.h"
 
-class AWave;
 class UWaveClearHandlerComponent;
 class UWaveScheduleData;
 class UWaveTriggerComponent;
@@ -28,7 +27,6 @@ public:
 protected:
 	//~AActor Interface
 	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	//~End of AActor Interface
 
 public:
@@ -44,17 +42,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Wave")
 	TObjectPtr<const UWaveScheduleData> WaveSchedule;
-
-	UPROPERTY()
-	TArray<TObjectPtr<AWave>> TriggeredWaves;
-
-	UFUNCTION()
-	void HandleWaveTriggered(AWave* Wave);
-
-	UFUNCTION()
-	void HandleWaveClear(AWave* ClearedWave);
-
-	void HandleAllWavesCleared();
 
 	void DetermineAllWaveCleared();
 };

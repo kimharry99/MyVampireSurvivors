@@ -4,7 +4,6 @@
 #include "WaveManager.h"
 
 #include "MyVamSurLogChannels.h"
-#include "Waves/Wave.h"
 #include "Waves/WaveClearHandlerComponent.h"
 #include "Waves/WaveTriggerComponent.h"
 
@@ -29,19 +28,6 @@ void AWaveManager::BeginPlay()
 	}
 }
 
-void AWaveManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-
-	for (AWave* Wave : TriggeredWaves)
-	{
-		if (Wave)
-		{
-			Wave->OnWaveCleared.RemoveAll(this);
-		}
-	}
-}
-
 int AWaveManager::GetCurrentWaveNumber() const
 {
 	check(WaveTriggerComponent);
@@ -52,35 +38,6 @@ float AWaveManager::GetTimeUntilNextWave() const
 {
 	check(WaveTriggerComponent);
 	return WaveTriggerComponent->GetTimeUntilNextWave();
-}
-
-void AWaveManager::HandleWaveTriggered(AWave* Wave)
-{
-	if (Wave)
-	{
-		Wave->OnWaveCleared.AddDynamic(this, &ThisClass::HandleWaveClear);
-		TriggeredWaves.Add(Wave);
-	}
-}
-
-void AWaveManager::HandleWaveClear(AWave* ClearedWave)
-{
-	if (TriggeredWaves.Contains(ClearedWave))
-	{
-		TriggeredWaves.Remove(ClearedWave);
-	}
-
-	check(WaveTriggerComponent);
-	if (TriggeredWaves.Num() == 0 && WaveTriggerComponent->IsAllWavesTriggered())
-	{
-		HandleAllWavesCleared();
-	}
-}
-
-void AWaveManager::HandleAllWavesCleared()
-{
-	// Call game winning function
-	UE_LOG(LogMyVamSur, Warning, TEXT("You Win!"));
 }
 
 void AWaveManager::DetermineAllWaveCleared()
