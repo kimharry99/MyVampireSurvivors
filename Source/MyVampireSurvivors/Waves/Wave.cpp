@@ -4,9 +4,9 @@
 #include "Wave.h"
 
 #include "Enemies/Enemy.h"
-#include "Enemies/EnemySpawner.h"
 #include "GameModes/MyVamSurGameMode.h"
 #include "MyVamSurLogChannels.h"
+#include "Waves/Spawner.h"
 #include "Waves/WaveDefinition.h"
 
 AWave::AWave(const FObjectInitializer& ObjectInitializer)
@@ -16,20 +16,26 @@ AWave::AWave(const FObjectInitializer& ObjectInitializer)
 
 void AWave::Trigger(const TArray<FWaveActorsToSpawn>& WaveSpawningActors)
 {
-	AEnemySpawner* Spawner = FindSpawner();
+	ASpawner* Spawner = FindSpawner();
 	for (const auto& WaveSpawningActor : WaveSpawningActors)
 	{
 		for (int i = 0; i < WaveSpawningActor.Count; ++i)
 		{
-			TSubclassOf<AEnemy> EnemyClass(WaveSpawningActor.ActorToSpawn);
-			AEnemy* SpawnedEnemy = Spawner->SpawnEnemy(EnemyClass);
-			SpawnedEnemy->OnEnemyDied.AddDynamic(this, &ThisClass::HandleSpawnActorDestroyed);
-			SpawnedActors.Add(SpawnedEnemy);
+			if (AActor* SpawnedActor = Spawner->SpawnActorAtRandomInMap(WaveSpawningActor.ActorToSpawn))
+			{
+				if (AEnemy* SpawnedEnemy = CastChecked<AEnemy>(SpawnedActor))
+				{
+					SpawnedEnemy->OnEnemyDied.AddDynamic(this, &ThisClass::HandleSpawnActorDestroyed);
+				}
+
+				SpawnedActors.Add(SpawnedActor);
+			}
+
 		}
 	}
 }
 
-AEnemySpawner* AWave::FindSpawner() const
+ASpawner* AWave::FindSpawner() const
 {
 	UWorld* World = GetWorld();
 	check(World);

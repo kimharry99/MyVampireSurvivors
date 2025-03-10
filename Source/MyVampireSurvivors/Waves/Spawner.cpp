@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EnemySpawner.h"
+#include "Spawner.h"
 
 #include "Kismet/GameplayStatics.h"
 
 #include "Enemies/Enemy.h"
 #include "ToroidalMaps/ToroidalMap.h"
 
-void AEnemySpawner::BeginPlay()
+void ASpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -23,7 +23,7 @@ void AEnemySpawner::BeginPlay()
 	SpawnBoundary = ToroidalMap->GetMapRange();
 }
 
-AEnemy* AEnemySpawner::SpawnEnemy(TSubclassOf<AEnemy> EnemyClass) const
+AEnemy* ASpawner::SpawnEnemy(TSubclassOf<AEnemy> EnemyClass) const
 {
 	UWorld* World = GetWorld();
 	if (World != nullptr)
@@ -34,6 +34,25 @@ AEnemy* AEnemySpawner::SpawnEnemy(TSubclassOf<AEnemy> EnemyClass) const
 
 		// Spawn an enemy
 		return World->SpawnActor<AEnemy>(EnemyClass, SpawnLocation, FRotator::ZeroRotator);
+	}
+
+	return nullptr;
+}
+
+AActor* ASpawner::SpawnActorAtRandomInMap(TSubclassOf<AActor> ActorClass)
+{
+	if (UWorld* World = GetWorld())
+	{
+		// Set spawn location
+		FVector SpawnLocation = FMath::RandPointInBox(SpawnBoundary);
+		SpawnLocation.Z = 50.0f;
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+
+		// Spawn an enemy
+		return World->SpawnActor<AEnemy>(ActorClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
 	}
 
 	return nullptr;

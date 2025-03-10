@@ -5,7 +5,6 @@
 
 #include "EngineUtils.h"
 
-#include "Enemies/EnemySpawner.h"
 #include "GameModes/MyVamSurGameState.h"
 #include "Players/PlayerCharacter.h"
 #include "Players/MyVamSurPlayerState.h"
@@ -13,6 +12,7 @@
 #include "Rewards/RewardManager.h"
 #include "ToroidalMaps/ToroidalMap.h"
 #include "ToroidalMaps/ToroidalWorldSystem.h"
+#include "Waves/Spawner.h"
 #include "Waves/WaveManager.h"
 
 AMyVamSurGameMode::AMyVamSurGameMode()
@@ -40,7 +40,7 @@ UToroidalWorldSystem* AMyVamSurGameMode::GetToroidalWorldSystem() const
 	return ToroidalWorldSystem;
 }
 
-AEnemySpawner* AMyVamSurGameMode::GetEnemySpawner() const
+ASpawner* AMyVamSurGameMode::GetEnemySpawner() const
 {
 	return EnemySpawner;
 }
@@ -70,7 +70,7 @@ void AMyVamSurGameMode::AddEnemySpawnerToGame()
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Instigator = GetInstigator();
-	EnemySpawner = World->SpawnActor<AEnemySpawner>(SpawnParams);
+	EnemySpawner = World->SpawnActor<ASpawner>(SpawnParams);
 }
 
 void AMyVamSurGameMode::AddWaveManagerToGame()

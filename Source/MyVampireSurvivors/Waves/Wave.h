@@ -7,7 +7,7 @@
 #include "Wave.generated.h"
 
 class AEnemy;
-class AEnemySpawner;
+class ASpawner;
 class AWave;
 struct FWaveActorsToSpawn;
 
@@ -28,7 +28,7 @@ public:
 	FOnWaveCleared OnWaveCleared;
 
 private:
-	virtual AEnemySpawner* FindSpawner() const;
+	virtual ASpawner* FindSpawner() const;
 
 	TSet<TWeakObjectPtr<AActor>> SpawnedActors;
 
