@@ -18,9 +18,9 @@ class MYVAMPIRESURVIVORS_API UWaveScheduleData : public UDataAsset
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Wave")
-	TArray<TObjectPtr<const UWaveDefinition>> SortedWaves;
+	TArray<TObjectPtr<const UWaveDefinition>> WaveSequence;
 
 	/** The period(sec) between waves. */
-	UPROPERTY(EditInstanceOnly, Category = "Wave")
+	UPROPERTY(EditDefaultsOnly, Category = "Wave")
 	float WavePeriod = 3.0f;
 };

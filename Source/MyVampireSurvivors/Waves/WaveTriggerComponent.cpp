@@ -23,7 +23,7 @@ void UWaveTriggerComponent::SetWaveSchedule(const UWaveScheduleData* NewWaveSche
 	}
 
 	WavePeriod = NewWaveScheduleData->WavePeriod;
-	WaveSequence = NewWaveScheduleData->SortedWaves;
+	WaveSequence = NewWaveScheduleData->WaveSequence;
 }
 
 void UWaveTriggerComponent::BeginWaveSchedule()
