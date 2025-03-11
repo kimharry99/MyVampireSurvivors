@@ -5,7 +5,6 @@
 
 #include "EngineUtils.h"
 
-#include "Enemies/EnemySpawner.h"
 #include "GameModes/MyVamSurGameState.h"
 #include "Players/PlayerCharacter.h"
 #include "Players/MyVamSurPlayerState.h"
@@ -13,6 +12,7 @@
 #include "Rewards/RewardManager.h"
 #include "ToroidalMaps/ToroidalMap.h"
 #include "ToroidalMaps/ToroidalWorldSystem.h"
+#include "Waves/Spawner.h"
 #include "Waves/WaveManager.h"
 
 AMyVamSurGameMode::AMyVamSurGameMode()
@@ -30,7 +30,7 @@ void AMyVamSurGameMode::PreInitializeComponents()
 	Super::PreInitializeComponents();
 
 	AddToroidalWorldSystemToGame();
-	AddEnemySpawnerToGame();
+	AddSpawnerToGame();
 	AddWaveManagerToGame();
 	CreateRewardManager();
 }
@@ -40,9 +40,9 @@ UToroidalWorldSystem* AMyVamSurGameMode::GetToroidalWorldSystem() const
 	return ToroidalWorldSystem;
 }
 
-AEnemySpawner* AMyVamSurGameMode::GetEnemySpawner() const
+ASpawner* AMyVamSurGameMode::GetSpawner() const
 {
-	return EnemySpawner;
+	return Spawner;
 }
 
 URewardManager* AMyVamSurGameMode::GetRewardManager() const
@@ -63,14 +63,14 @@ void AMyVamSurGameMode::AddToroidalWorldSystemToGame()
 	}
 }
 
-void AMyVamSurGameMode::AddEnemySpawnerToGame()
+void AMyVamSurGameMode::AddSpawnerToGame()
 {
 	// GameMode does not need to check if the world is valid
 	UWorld* World = GetWorld();
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Instigator = GetInstigator();
-	EnemySpawner = World->SpawnActor<AEnemySpawner>(SpawnParams);
+	Spawner = World->SpawnActor<ASpawner>(SpawnParams);
 }
 
 void AMyVamSurGameMode::AddWaveManagerToGame()

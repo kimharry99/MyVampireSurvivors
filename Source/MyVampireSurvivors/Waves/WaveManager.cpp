@@ -2,138 +2,55 @@
 
 
 #include "WaveManager.h"
-#include "Waves/Wave.h"
-#include "Waves/WaveDataAsset.h"
-#include "Waves/WaveFactory.h"
+
 #include "MyVamSurLogChannels.h"
+#include "Waves/WaveClearHandlerComponent.h"
+#include "Waves/WaveTriggerComponent.h"
 
-void AWaveManager::PostInitializeComponents()
+AWaveManager::AWaveManager(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	Super::PostInitializeComponents();
+	PrimaryActorTick.bCanEverTick = false;
 
-	WaveFactory = NewObject<UWaveFactory>(this);
-	check(WaveFactory);
+	ClearHandlerComponent = CreateDefaultSubobject<UWaveClearHandlerComponent>(TEXT("ClearHandlerComponent"));
+	ClearHandlerComponent->OnWaveCleared.Add(FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::VerifyAllWavesCleared));
+
+	WaveTriggerComponent = CreateDefaultSubobject<UWaveTriggerComponent>(TEXT("WaveTriggerComponent"));
+	WaveTriggerComponent->OnWaveTriggered.AddDynamic(ClearHandlerComponent, &UWaveClearHandlerComponent::HandleWaveTriggered);
 }
 
 void AWaveManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentWaveIndex = -1;
-	UpdateUpcomingWaveData();
-	TriggerUpcomingWave();
-	SetPeriodTimer();
-}
-
-void AWaveManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-
-	if(UWorld* World = GetWorld())
-	{
-		World->GetTimerManager().ClearTimer(WavePeriodTimerHandle);
-	}
-
-	for (AWave* Wave : TriggeredWaves)
-	{
-		if (Wave)
-		{
-			Wave->OnWaveCleared.RemoveAll(this);
-		}
-	}
+	check(WaveTriggerComponent);
+	WaveTriggerComponent->SetWaveSchedule(WaveSchedule);
+	WaveTriggerComponent->BeginWaveSchedule();
 }
 
 int AWaveManager::GetCurrentWaveNumber() const
 {
-	return CurrentWaveIndex;
+	check(WaveTriggerComponent);
+	return WaveTriggerComponent->GetCurrentWaveIndex();
 }
 
 float AWaveManager::GetTimeUntilNextWave() const
 {
-	if (UWorld* World = GetWorld())
-	{
-		if (World->GetTimerManager().IsTimerActive(WavePeriodTimerHandle))
-		{
-			return World->GetTimerManager().GetTimerRemaining(WavePeriodTimerHandle);
-		}
-	}
-	return -1.0f;
+	check(WaveTriggerComponent);
+	return WaveTriggerComponent->GetTimeUntilNextWave();
 }
 
-bool AWaveManager::IsAllWavesTriggered() const
+void AWaveManager::VerifyAllWavesCleared()
 {
-	return CurrentWaveIndex >= WaveTable.Num();
-}
-
-void AWaveManager::TriggerUpcomingWave()
-{
-	if (UpcomingWaveData == nullptr)
+	if (IsAllWavesCleared())
 	{
-		return;
-	}
-
-	if (WaveFactory == nullptr)
-	{
-		UE_LOG(LogMyVamSur, Warning, TEXT("Wave factory is not set"));
-		return;
-	}
-
-	AWave* UpcomingWave = WaveFactory->CreateWave(UpcomingWaveData);
-	UpcomingWave->OnWaveCleared.AddDynamic(this, &ThisClass::HandleWaveClear);
-	UpcomingWave->Trigger();
-	TriggeredWaves.Add(UpcomingWave);
-}
-
-void AWaveManager::UpdateUpcomingWaveData()
-{
-	if(WaveTable.IsValidIndex(++CurrentWaveIndex))
-	{
-		UpcomingWaveData = WaveTable[CurrentWaveIndex];
-	}
-	else
-	{
-		UpcomingWaveData = nullptr;
+		UE_LOG(LogMyVamSur, Warning, TEXT("You Win!"));
 	}
 }
 
-void AWaveManager::SetPeriodTimer()
+bool AWaveManager::IsAllWavesCleared() const
 {
-	if (UWorld* World = GetWorld())
-	{
-		World->GetTimerManager().SetTimer(WavePeriodTimerHandle, this, &ThisClass::PostPeriodTimerComplete, WavePeriod);
-	}
-}
-
-void AWaveManager::PostPeriodTimerComplete()
-{
-	if (UWorld* World = GetWorld())
-	{
-		World->GetTimerManager().ClearTimer(WavePeriodTimerHandle);
-	}
-
-	if (!IsAllWavesTriggered())
-	{
-		TriggerUpcomingWave();
-		SetPeriodTimer();
-		UpdateUpcomingWaveData();
-	}
-}
-
-void AWaveManager::HandleWaveClear(AWave* ClearedWave)
-{
-	if (TriggeredWaves.Contains(ClearedWave))
-	{
-		TriggeredWaves.Remove(ClearedWave);
-	}
-
-	if (TriggeredWaves.Num() == 0 && IsAllWavesTriggered())
-	{
-		HandleAllWavesCleared();
-	}
-}
-
-void AWaveManager::HandleAllWavesCleared()
-{
-	// Call game winning function
-	UE_LOG(LogMyVamSur, Warning, TEXT("You Win!"));
+	check(ClearHandlerComponent);
+	check(WaveTriggerComponent);
+	return !ClearHandlerComponent->IsAnyTriggeredWaveUncleared() && WaveTriggerComponent->IsWaveScheduleDone();
 }

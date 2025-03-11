@@ -1,9 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "WaveDataAsset.h"
+#include "Waves/WaveScheduleData.h"
 
-UWaveDataAsset::UWaveDataAsset()
-{
-
-}

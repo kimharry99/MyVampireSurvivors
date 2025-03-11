@@ -8,7 +8,7 @@
 
 template <class TClass> class TSubclassOf;
 
-class AEnemySpawner;
+class ASpawner;
 class AWaveManager;
 class URewardManager;
 class UToroidalWorldSystem;
@@ -35,7 +35,7 @@ public:
 	 */
 	UToroidalWorldSystem* GetToroidalWorldSystem() const;
 
-	AEnemySpawner* GetEnemySpawner() const;
+	ASpawner* GetSpawner() const;
 
 	URewardManager* GetRewardManager() const;
 
@@ -44,7 +44,7 @@ private:
 	TObjectPtr<UToroidalWorldSystem> ToroidalWorldSystem;
 
 	UPROPERTY()
-	TObjectPtr<AEnemySpawner> EnemySpawner;
+	TObjectPtr<ASpawner> Spawner;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Wave")
 	TSubclassOf<AWaveManager> WaveManagerClass;
@@ -64,7 +64,7 @@ private:
 	 */
 	void AddToroidalWorldSystemToGame();
 
-	void AddEnemySpawnerToGame();
+	void AddSpawnerToGame();
 
 	/**
 	 * Add the wave manager to the game.

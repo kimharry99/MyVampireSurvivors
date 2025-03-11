@@ -53,7 +53,6 @@ bool AEquipment::IsUsable() const
 
 void AEquipment::Use()
 {
-	UE_LOG(LogMyVamSur, Log, TEXT("%s is used"), *GetName());
 	if (UsageComponent)
 	{
 		UsageComponent->ExecuteUse(StatComponent);

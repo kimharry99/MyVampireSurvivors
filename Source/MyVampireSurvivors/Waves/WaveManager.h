@@ -6,26 +6,27 @@
 #include "GameFramework/Actor.h"
 #include "WaveManager.generated.h"
 
-class AWave;
-class UWaveDataAsset;
-class UWaveFactory;
+class UWaveClearHandlerComponent;
+class UWaveScheduleData;
+class UWaveTriggerComponent;
 
 /**
- * WaveManager_Deprecated handles ordered waves.
  *
- * It triggers an initial wave when the game starts.
- * After a cooldown period in the wave has passed, the class will trigger the next wave.
+ * WaveManager is responsible for handling the wave system, ensuring that waves are triggered
+ * and cleared appropriately. It utilizes UWaveClearHandlerComponent to track wave completion
+ * and UWaveTriggerComponent to schedule and start new waves.
  */
-UCLASS()
+UCLASS(ClassGroup = "Wave")
 class MYVAMPIRESURVIVORS_API AWaveManager : public AActor
 {
 	GENERATED_BODY()
 
+public:
+	AWaveManager(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
 protected:
 	//~AActor Interface
-	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	//~End of AActor Interface
 
 public:
@@ -33,46 +34,17 @@ public:
 	float GetTimeUntilNextWave() const;
 
 private:
-	UPROPERTY()
-	TObjectPtr<UWaveFactory> WaveFactory;
+	UPROPERTY(VisibleAnywhere, Category = "Wave")
+	TObjectPtr<UWaveTriggerComponent> WaveTriggerComponent;
 
-private:
-	/**
-	 * A data table containing ordered enemy wave data.
-	 */
-	UPROPERTY(EditDefaultsOnly, Category = "Wave", meta = (PrivateAllowAccess = "true"))
-	TArray<TObjectPtr<UWaveDataAsset>> WaveTable;
+	UPROPERTY(VisibleAnywhere, Category = "Wave")
+	TObjectPtr<UWaveClearHandlerComponent> ClearHandlerComponent;
 
-	/**
-	 * The period(sec) between enemy waves.
-	 */
-	UPROPERTY(EditAnywhere, Category = "Wave", meta = (AllowPrivateAccess = "true"))
-	float WavePeriod = 3.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Wave")
+	TObjectPtr<const UWaveScheduleData> WaveSchedule;
 
-	int CurrentWaveIndex = -1;
+	/** Checks if all waves have been cleared and triggers the win condition if true. */
+	void VerifyAllWavesCleared();
 
-	UPROPERTY()
-	TObjectPtr<UWaveDataAsset> UpcomingWaveData = nullptr;
-
-	UPROPERTY()
-	TArray<TObjectPtr<AWave>> TriggeredWaves;
-
-	FTimerHandle WavePeriodTimerHandle;
-
-private:
-	bool IsAllWavesTriggered() const;
-
-private:
-	void TriggerUpcomingWave();
-	void UpdateUpcomingWaveData();
-	void SetPeriodTimer();
-
-	UFUNCTION()
-	void PostPeriodTimerComplete();
-
-private:
-	UFUNCTION()
-	void HandleWaveClear(AWave* ClearedWave);
-
-	void HandleAllWavesCleared();
+	bool IsAllWavesCleared() const;
 };
