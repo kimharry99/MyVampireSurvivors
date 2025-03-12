@@ -10,13 +10,13 @@ class AEnemy;
   * Represents a default attack action in the game.
   *
   * This class encapsulates the logic for executing a basic attack action, including
-  * tracking the instigator (attacker), checking a type(enemy) of a victim, and
+  * tracking the instigator (attacker), checking a type of a victim, and
   * applying damage to the victim.
   */
 class MYVAMPIRESURVIVORS_API FDefaultAttackAction : public ICombatAction
 {
 public:
-	FDefaultAttackAction(const AActor* InInstigator, const int InDamage);
+	FDefaultAttackAction(const AActor* InInstigator, const int InDamage, UClass* InTargetClass);
 
 	//~ICombatAction interface
 	virtual void ExecuteAction(AActor* Victim) const override;
@@ -26,6 +26,7 @@ public:
 private:
 	TWeakObjectPtr<const AActor> Instigator;
 	const int Damage;
+	UClass* TargetClass;
 
 private:
 	AController* GetInstigatorController() const;

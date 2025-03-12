@@ -99,6 +99,22 @@ void APlayerCharacter::CreateHPBarWidget()
 	HPBarWidgetInstance->BindHealthData(HPData);
 }
 
+void APlayerCharacter::ReceiveAttack(float DamageAmount, AController* Attacker)
+{
+	if (bIsInvincible)
+	{
+		return;
+	}
+
+	Super::ReceiveAttack(DamageAmount, Attacker);
+
+	bIsInvincible = true;
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
+
+	GetWorld()->GetTimerManager().SetTimer(BlinkingTimerHandle, this, &APlayerCharacter::ToggleBlinking, BlinkingInterval, true);
+	GetWorld()->GetTimerManager().SetTimer(InvincibilityTimerHandle, this, &APlayerCharacter::ResetInvincibility, InvincibilityDuration, false);
+}
+
 void APlayerCharacter::AddExp(int GainedExp)
 {
 	if (!CharacterExp)
@@ -146,5 +162,26 @@ void APlayerCharacter::EquipEquipment(TSubclassOf<AEquipment> EquipmentClass)
 	if (InventoryComponent)
 	{
 		InventoryComponent->AddEquipmentAndRegister(EquipmentClass, EquipmentActivator);
+	}
+}
+
+void APlayerCharacter::ResetInvincibility()
+{
+	bIsInvincible = false;
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("PlayerCharacter"));
+
+	GetWorld()->GetTimerManager().ClearTimer(BlinkingTimerHandle);
+	if (GetSprite())
+	{
+		GetSprite()->SetSpriteColor(FColor::White);
+	}
+}
+
+void APlayerCharacter::ToggleBlinking()
+{
+	if (GetSprite())
+	{
+		bool bCurrentlyVisible = GetSprite()->GetSpriteColor() == FColor::White;
+		GetSprite()->SetSpriteColor(bCurrentlyVisible ? FColor::FColor(16, 16, 16) : FColor::White);
 	}
 }

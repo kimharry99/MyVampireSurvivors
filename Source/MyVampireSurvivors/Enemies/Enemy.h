@@ -12,6 +12,7 @@ template <class TClass> class TSubclassOf;
 class AEnemy;
 class APickableItem;
 class ASpawner;
+class UEnemyCombatComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyDied, AEnemy*, DiedEnemy);
 
@@ -26,7 +27,7 @@ class MYVAMPIRESURVIVORS_API AEnemy : public AMyVamSurCharacter, public IPoolabl
 	GENERATED_BODY()
 
 public:
-	AEnemy();
+	AEnemy(const FObjectInitializer& ObjectInitializer);
 
 public:
 	//~IPoolableActorInterface interface
@@ -58,6 +59,9 @@ public:
 	FOnWaveActorDestroyedDelegate OnWaveActorDestroyed;
 
 private:
+	UPROPERTY(VisibleAnywhere, Category = "Enemy")
+	TObjectPtr<UEnemyCombatComponent> CombatComponent;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Enemy")
 	TSubclassOf<APickableItem> DropItemClass;
 

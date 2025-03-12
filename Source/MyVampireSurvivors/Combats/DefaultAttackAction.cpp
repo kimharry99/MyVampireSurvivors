@@ -3,19 +3,24 @@
 
 #include "DefaultAttackAction.h"
 
+#include "Characters/MyVamSurCharacter.h"
 #include "Enemies/Enemy.h"
 
-FDefaultAttackAction::FDefaultAttackAction(const AActor* InInstigator, const int InDamage)
+FDefaultAttackAction::FDefaultAttackAction(const AActor* InInstigator, const int InDamage, UClass* InTargetClass)
 	: Instigator(InInstigator)
 	, Damage(InDamage)
+	, TargetClass(InTargetClass)
 {
 }
 
 void FDefaultAttackAction::ExecuteAction(AActor* Victim) const
 {
-	if (AEnemy* AttackedEnemy = Cast<AEnemy>(Victim))
+	if (Victim && Victim->GetClass()->IsChildOf(TargetClass))
 	{
-		AttackedEnemy->ReceiveAttack(Damage, GetInstigatorController());
+		if (AMyVamSurCharacter* AttackedCharacter = Cast<AMyVamSurCharacter>(Victim))
+		{
+			AttackedCharacter->ReceiveAttack(Damage, GetInstigatorController());
+		}
 	}
 }
 

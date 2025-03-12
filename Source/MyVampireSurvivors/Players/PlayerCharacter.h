@@ -35,6 +35,10 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndpPlayReason) override;
 	//~End of AActor interface
 
+	//~AMyVamSurCharacter interface
+	virtual void ReceiveAttack(float DamageAmount, AController* Attacker) override;
+	//~End of AMyVamSurCharacter interface
+
 	void AddExp(int GainedExp);
 
 	const UExpData* GetExpData() const;
@@ -51,6 +55,20 @@ public:
 	void EquipEquipment(TSubclassOf<AEquipment> EquipmentClass);
 
 private:
+	bool bIsInvincible = false;
+
+	FTimerHandle InvincibilityTimerHandle;
+
+	FTimerHandle BlinkingTimerHandle;
+
+	float BlinkingInterval = 0.1f;
+	float InvincibilityDuration = 1.0f;
+
+	UFUNCTION()
+	void ResetInvincibility();
+
+	void ToggleBlinking();
+
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<USpringArmComponent> CameraBoom;
 

@@ -7,6 +7,7 @@
 
 #include "Combats/CombatManager.h"
 #include "Combats/DefaultAttackAction.h"
+#include "Enemies/Enemy.h"
 #include "Equipments/EquipmentCore/EquipmentAnimationData.h"
 #include "Equipments/EquipmentCore/MyFlipbookNotifierComponent.h"
 #include "Equipments/EquipmentCore/StatComponent.h"
@@ -126,7 +127,7 @@ void UMeleeWeaponUsageComponent::PerformAttack(TWeakObjectPtr<UStatComponent> St
 				Owner->GetActorLocation() + Owner->GetActorQuat().RotateVector(MeleeWeaponStats->GetHitboxOffset()),
 				TraceChannel_Weapon
 			);
-			FDefaultAttackAction WeaponAction(Owner, MeleeWeaponStats->GetDamage());
+			FDefaultAttackAction WeaponAction(Owner, MeleeWeaponStats->GetDamage(), AEnemy::StaticClass());
 
 			FCombatManager::PerformAoEAttack(Info, WeaponAction);
 		}

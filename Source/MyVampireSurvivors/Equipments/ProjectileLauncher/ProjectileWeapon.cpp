@@ -9,6 +9,7 @@
 
 #include "Combats/CombatManager.h"
 #include "Combats/DefaultAttackAction.h"
+#include "Enemies/Enemy.h"
 #include "MyVamSurLogChannels.h"
 #include "ToroidalMaps/ToroidalActorComponent.h"
 
@@ -147,7 +148,7 @@ void AProjectileWeapon::LifeSpanExpired()
 
 void AProjectileWeapon::HandleProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
-	FDefaultAttackAction DefaultAttack(GetInstigatorController(), Damage);
+	FDefaultAttackAction DefaultAttack(GetInstigatorController(), Damage, AEnemy::StaticClass());
 	FCombatManager::PerformTargetedAttack(OtherActor, DefaultAttack);
 
 	if (OnReturnToPool.IsBound())

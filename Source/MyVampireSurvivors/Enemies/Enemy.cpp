@@ -13,11 +13,12 @@
 #include "MyVamSurLogChannels.h"
 #include "Enemies/ChasingEnemyAI.h"
 #include "Enemies/EmptyEnemyAnimInstance.h"
+#include "Enemies/EnemyCombatComponent.h"
 #include "GameModes/MyVamSurGameMode.h"
 #include "Spawner/Spawner.h"
 #include "Items/PickableItem.h"
 
-AEnemy::AEnemy()
+AEnemy::AEnemy(const FObjectInitializer& ObjectInitializer)
 {
 	AIControllerClass = AChasingEnemyAI::StaticClass();
 	AutoPossessAI = EAutoPossessAI::Spawned;
@@ -33,6 +34,8 @@ AEnemy::AEnemy()
 	AnimComp->SetAnimInstanceClass(UEmptyEnemyAnimInstance::StaticClass());
 
 	GetCharacterMovement()->MaxWalkSpeed = 10.0f;
+
+	CombatComponent = CreateDefaultSubobject<UEnemyCombatComponent>(TEXT("CombatComponent"));
 }
 
 void AEnemy::ActivateFromPool()
