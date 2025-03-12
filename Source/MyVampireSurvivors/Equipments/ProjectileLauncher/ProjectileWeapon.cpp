@@ -5,13 +5,12 @@
 
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "PaperFlipbookComponent.h"
 
-#include "Combats/DefaultAttackAction.h"
 #include "Combats/CombatManager.h"
-#include "ToroidalMaps/ToroidalActorComponent.h"
+#include "Combats/DefaultAttackAction.h"
 #include "MyVamSurLogChannels.h"
+#include "ToroidalMaps/ToroidalActorComponent.h"
 
 AProjectileWeapon::AProjectileWeapon()
 {
@@ -43,18 +42,88 @@ AProjectileWeapon::AProjectileWeapon()
 	ToroidalActorComponent = CreateDefaultSubobject<UToroidalActorComponent>(TEXT("ToroidalNPAComponent"));
 }
 
-void AProjectileWeapon::PostInitializeComponents()
+void AProjectileWeapon::ActivateFromPool()
 {
-	Super::PostInitializeComponents();
-}
-
-void AProjectileWeapon::BeginPlay()
-{
-	Super::BeginPlay();
+	bIsInUse = true;
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
 
 	SetLifeSpan(LifeTime);
+}
 
-	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+void AProjectileWeapon::DeactivateToPool()
+{
+	bIsInUse = false;
+
+	if (ProjectileMovementComponent)
+	{
+		ProjectileMovementComponent->StopMovementImmediately();
+	}
+	if (SphereComponent->IsSimulatingPhysics())
+	{
+		SphereComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
+		SphereComponent->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
+	}
+
+	SetLifeSpan(-1.0f); // Clear TimerHandle_LifeSpanExpired
+
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+}
+
+FReturnToPoolDelegate* AProjectileWeapon::GetReturnToPoolDelegate()
+{
+	return &OnReturnToPool;
+}
+
+bool AProjectileWeapon::IsInUse() const
+{
+	return bIsInUse;
+}
+
+void AProjectileWeapon::CopyFromActualClass(TSubclassOf<AProjectileWeapon> ActualClass)
+{
+	check(ActualClass);
+	
+	const AProjectileWeapon* ProjectileCDO = ActualClass->GetDefaultObject<AProjectileWeapon>();
+	if (ensure(ProjectileCDO))
+	{
+		Damage = ProjectileCDO->Damage;
+
+		UPaperFlipbookComponent* CDOSpriteComp = ProjectileCDO->SpriteComponent;
+		if (SpriteComponent && CDOSpriteComp)
+		{
+			SpriteComponent->SetRelativeScale3D(CDOSpriteComp->GetRelativeScale3D());
+			SpriteComponent->SetFlipbook(CDOSpriteComp->GetFlipbook());
+		}
+	}
+}
+
+void AProjectileWeapon::SetInitialSpeed(const float InitialSpeed)
+{
+	if (!ProjectileMovementComponent)
+	{
+		return;
+	}
+
+	if (SphereComponent)
+	{
+		FVector Velocity = FVector::ForwardVector;
+		Velocity = SphereComponent->GetComponentToWorld().TransformVectorNoScale(Velocity);
+		Velocity = InitialSpeed * Velocity;
+
+		ProjectileMovementComponent->Velocity = Velocity;
+		ProjectileMovementComponent->UpdateComponentVelocity();
+		if (SphereComponent->IsSimulatingPhysics())
+		{
+			SphereComponent->SetPhysicsLinearVelocity(Velocity);
+		}
+	}
+}
+
+UProjectileMovementComponent* AProjectileWeapon::GetProjectileMovementComponent() const
+{
+	return ProjectileMovementComponent;
 }
 
 void AProjectileWeapon::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -64,15 +133,29 @@ void AProjectileWeapon::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	SphereComponent->OnComponentHit.RemoveAll(this);
 }
 
-UProjectileMovementComponent* AProjectileWeapon::GetProjectileMovementComponent() const
+void AProjectileWeapon::LifeSpanExpired()
 {
-	return ProjectileMovementComponent;
+	if (OnReturnToPool.IsBound())
+	{
+		OnReturnToPool.Execute(this);
+	}
+	else
+	{
+		Super::LifeSpanExpired();
+	}
 }
 
 void AProjectileWeapon::HandleProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
 	FDefaultAttackAction DefaultAttack(GetInstigatorController(), Damage);
 	FCombatManager::PerformTargetedAttack(OtherActor, DefaultAttack);
-	
-	Destroy();
+
+	if (OnReturnToPool.IsBound())
+	{
+		OnReturnToPool.Execute(this);
+	}
+	else
+	{
+		Destroy();
+	}
 }

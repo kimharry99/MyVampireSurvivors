@@ -7,9 +7,10 @@
 
 #include "Equipments/EquipmentCore/StatComponent.h"
 #include "IProjectileLauncherStats.h"
-#include "ProjectileWeapon.h"
-#include "ProjectileSpawnStrategy.h"
 #include "MyVamSurLogChannels.h"
+#include "ObjectPools/ActorPool.h"
+#include "ProjectileSpawnStrategy.h"
+#include "ProjectileWeapon.h"
 
 namespace
 {
@@ -22,35 +23,30 @@ namespace
 
 		return SpawnStrategy->GetSpawnTransform(OriginActor->GetActorTransform(), Count);
 	}
-
-	AProjectileWeapon* SpawnProjectile(UWorld* World, AActor* Owner, TSubclassOf<AProjectileWeapon> ProjectileClass, const FTransform& SpawnTransform)
-	{
-		if (!World || !Owner || !ProjectileClass)
-		{
-			return nullptr;
-		}
-
-		FActorSpawnParameters SpawnInfo;
-		SpawnInfo.Owner = Owner;
-		SpawnInfo.Instigator = Owner->GetInstigator();
-
-		return World->SpawnActor<AProjectileWeapon>(ProjectileClass, SpawnTransform, SpawnInfo);
-	}
-
-	void InitializeProjectileMovement(UProjectileMovementComponent* MovementComponent, const float Speed)
-	{
-		if (!MovementComponent)
-		{
-			return;
-		}
-
-		const FVector Direction = MovementComponent->Velocity.GetSafeNormal();
-		if (!Direction.IsZero())
-		{
-			MovementComponent->Velocity *= Direction * Speed;
-		}
-	}
 };
+
+void UProjectileLauncherUsageComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (UWorld* World = GetWorld())
+	{
+		FActorSpawnParameters SpawnParams;
+		if (AActor* Owner = GetOwner())
+		{
+			SpawnParams.Owner = GetOwner();
+			SpawnParams.Instigator = GetOwner()->GetInstigator();
+		}
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParams.bHideFromSceneOutliner = true;
+
+		ProjectilePool = World->SpawnActor<AActorPool>(SpawnParams);
+		if (ProjectilePool)
+		{
+			ProjectilePool->SetActorClass(AProjectileWeapon::StaticClass());
+		}
+	}
+}
 
 void UProjectileLauncherUsageComponent::ExecuteUseInternal(UStatComponent* StatComponent)
 {
@@ -84,14 +80,33 @@ void UProjectileLauncherUsageComponent::Launch(IProjectileLauncherStats* Stats)
 	TArray<FTransform> SpawnTransforms = ComputeSpawnTransforms(Stats->GetSpawnStrategy(), GetOwner(), Stats->GetProjectileCount());
 	for (const auto& SpawnTransform : SpawnTransforms)
 	{
-		if (AProjectileWeapon* Projectile = SpawnProjectile(GetWorld(), GetOwner(), Stats->GetProjectileWeaponClass(), SpawnTransform))
-		{
-			InitializeProjectileMovement(Projectile->GetProjectileMovementComponent(), Stats->GetProjectileSpeed());
-		}
+		SpawnProjectile(Stats->GetProjectileWeaponClass(), SpawnTransform, Stats->GetProjectileSpeed());
 	}
 }
 
 void UProjectileLauncherUsageComponent::HandleCooldownEnded()
 {
 	OnCooldownEnded.Broadcast();
+}
+
+AProjectileWeapon* UProjectileLauncherUsageComponent::SpawnProjectile(TSubclassOf<AProjectileWeapon> ProjectileClass, const FTransform& SpawnTransform, const float InitialSpeed)
+{
+	check(ProjectileClass);
+
+	if (ProjectilePool)
+	{
+		if (AActor* SpawnedActor = ProjectilePool->GetPooledActor())
+		{
+			AProjectileWeapon* SpawnedProjectile = Cast<AProjectileWeapon>(SpawnedActor);
+			checkf(SpawnedProjectile, TEXT("ProjectilePool doesn't create AProjectileWeapon type instance."));
+
+			SpawnedProjectile->CopyFromActualClass(ProjectileClass);
+			SpawnedProjectile->SetActorTransform(SpawnTransform);
+			SpawnedProjectile->SetInitialSpeed(InitialSpeed);
+
+			return SpawnedProjectile;
+		}
+	}
+
+	return nullptr;
 }

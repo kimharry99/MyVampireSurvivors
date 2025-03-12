@@ -5,8 +5,9 @@
 #include "Equipments/EquipmentCore/UsageComponent.h"
 #include "ProjectileLauncherUsageComponent.generated.h"
 
+class AActorPool;
+class AProjectileWeapon;
 class IProjectileLauncherStats;
-class UProjectileSpawnStrategy;
 
 /**
  * 
@@ -19,6 +20,11 @@ class MYVAMPIRESURVIVORS_API UProjectileLauncherUsageComponent : public UUsageCo
 public:
 	FSimpleMulticastDelegate OnCooldownEnded;
 
+protected:
+	//~UActorComponent interface
+	virtual void BeginPlay() override;
+	//~End of UActorComponent interface
+
 private:
 	//~UUsageComponent interface
 	virtual void ExecuteUseInternal(UStatComponent* StatComponent) override;
@@ -30,4 +36,9 @@ private:
 	void Launch(IProjectileLauncherStats* Stats);
 
 	void HandleCooldownEnded();
+
+	UPROPERTY()
+	TObjectPtr<AActorPool> ProjectilePool;
+	
+	AProjectileWeapon* SpawnProjectile(TSubclassOf<AProjectileWeapon> ProjectileClass, const FTransform& SpawnTransform, const float InitialSpeed);
 };

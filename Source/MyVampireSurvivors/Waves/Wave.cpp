@@ -6,7 +6,7 @@
 #include "Enemies/Enemy.h"
 #include "GameModes/MyVamSurGameMode.h"
 #include "MyVamSurLogChannels.h"
-#include "Waves/Spawner.h"
+#include "Spawner/Spawner.h"
 #include "Waves/WaveDefinition.h"
 #include "Waves/WaveParticipantInterface.h"
 

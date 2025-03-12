@@ -48,6 +48,8 @@ protected:
 
 	FORCEINLINE UHealthData* GetHealthData() const { return HealthData; };
 
+	FORCEINLINE float GetDefaultMaxHealth() const { return DefaultMaxHealth; };
+
 private:
 	UPROPERTY()
 	TObjectPtr<UHealthData> HealthData;

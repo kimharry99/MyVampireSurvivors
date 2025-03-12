@@ -65,6 +65,8 @@ void UWaveTriggerComponent::TriggerUpcomingWave()
 			{
 				FActorSpawnParameters SpawnParams;
 				SpawnParams.Owner = GetOwner();
+				SpawnParams.bHideFromSceneOutliner = true;
+				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 				if (AWave* UpcomingWave = World->SpawnActor<AWave>(SpawnParams))
 				{

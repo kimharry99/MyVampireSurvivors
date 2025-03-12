@@ -6,7 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Spawner.generated.h"
 
-template <class TClass> class TSubclassOf;
+class AEnemy;
+class AActorPool;
 
 /**
  * EnemySpanwer spawns enemies at random locations.
@@ -24,11 +25,22 @@ public:
 	 * @return Spawned actor
 	 */
 	AActor* SpawnActorAtRandomInMap(TSubclassOf<AActor> ActorClass);
+	AActor* SpawnActor(TSubclassOf<AActor> ActorClass, const FTransform& SpawnTransform);
 
 protected:
+	//~AActor interface
 	virtual void BeginPlay() override;
+	//~End of AActor interface
 
 private:
 	/** Boundary of spawn area */
 	FBox SpawnBoundary = FBox();
+
+	UPROPERTY(VisibleAnywhere, Category = "Enemy")
+	TObjectPtr<AActorPool> EnemyPool;
+
+	void InitializeEnemyPool();
+
+	AActor* SpawnActorByType(TSubclassOf<AActor> ActorClass);
+	AEnemy* SpawnEnemy(TSubclassOf<AEnemy> EnemyClass);
 };

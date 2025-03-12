@@ -6,13 +6,13 @@
 #include "EngineUtils.h"
 
 #include "GameModes/MyVamSurGameState.h"
-#include "Players/PlayerCharacter.h"
-#include "Players/MyVamSurPlayerState.h"
 #include "Players/MyVamSurPlayerController.h"
+#include "Players/MyVamSurPlayerState.h"
+#include "Players/PlayerCharacter.h"
 #include "Rewards/RewardManager.h"
 #include "ToroidalMaps/ToroidalMap.h"
 #include "ToroidalMaps/ToroidalWorldSystem.h"
-#include "Waves/Spawner.h"
+#include "Spawner/Spawner.h"
 #include "Waves/WaveManager.h"
 
 AMyVamSurGameMode::AMyVamSurGameMode()
@@ -70,6 +70,9 @@ void AMyVamSurGameMode::AddSpawnerToGame()
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Instigator = GetInstigator();
+	SpawnParams.bHideFromSceneOutliner = true;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
 	Spawner = World->SpawnActor<ASpawner>(SpawnParams);
 }
 
