@@ -21,6 +21,7 @@ public class MyVampireSurvivors : ModuleRules
 				"Engine",
 				"InputCore",
 				"EnhancedInput",
+				"NavigationSystem",
 				"UMG",
 				"CommonUI"
 			}

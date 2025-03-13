@@ -82,11 +82,20 @@ void UToroidalMapBackgroundComponent::SetBackgroundMarginTileMapFormat()
 	BackgroundMarginTileMapComponent->TileMap->ResizeMap(MapWidth, MapHeight);
 
 	// Set tilemap collision
-	check(BackgroundMarginTileMapComponent->TileMap->TileLayers.Num() == 1);
-	BackgroundMarginTileMapComponent->TileMap->TileLayers.RemoveAt(0);
-	BackgroundMarginTileMapComponent->TileMap->AddNewLayer();
-	BackgroundMarginTileMapComponent->TileMap->SetCollisionThickness(0.0f);
-	BackgroundMarginTileMapComponent->TileMap->TileLayers[0]->SetLayerCollides(true);
+	UPaperTileMap* BackgroundTM = BackgroundTileMapComponent->TileMap;
+	UPaperTileMap* MarginTM = BackgroundMarginTileMapComponent->TileMap;
+	MarginTM->TileLayers.Empty();
+	for (const auto TileLayer : BackgroundTM->TileLayers)
+	{
+		UPaperTileLayer* NewLayer = MarginTM->AddNewLayer();
+		NewLayer->SetLayerCollides(true);
+	}
+	MarginTM->SetCollisionThickness(0.0f);
+	if (!MarginTM->TileLayers.IsEmpty())
+	{
+		MarginTM->TileLayers[0]->SetLayerCollides(false);
+		MarginTM->TileLayers[1]->SetLayerCollisionThickness(true, 200.0f);
+	}
 }
 
 void UToroidalMapBackgroundComponent::FillMarginTilesFromOriginal()
@@ -116,28 +125,30 @@ void UToroidalMapBackgroundComponent::FillMarginTilesFromOriginal()
 		MarginTileCount.Y * 2 + BackgroundHeight
 	};
 
-	check(TileMap->TileLayers.Num() == 1);
-	UPaperTileLayer* FillingLayer = TileMap->TileLayers[0];
-	for (int i = 0; i < 4; ++i)
+	for (int LayerIndex = 0; LayerIndex < BackgroundTileMapComponent->TileMap->TileLayers.Num(); ++LayerIndex)
 	{
-		int DestinationStartX = DestinationStartXs[i];
-		int DestinationStartY = DestinationStartYs[i];
-		int DestinationEndX = DestinationEndXs[i];
-		int DestinationEndY = DestinationEndYs[i];
-		// Copy tiles
-		for (int y = DestinationStartY; y < DestinationEndY; ++y)
+		UPaperTileLayer* FillingLayer = TileMap->TileLayers[LayerIndex];
+		for (int MarginRegionIndex = 0; MarginRegionIndex < 4; ++MarginRegionIndex)
 		{
-			for (int x = DestinationStartX; x < DestinationEndX; ++x)
+			int DestinationStartX = DestinationStartXs[MarginRegionIndex];
+			int DestinationStartY = DestinationStartYs[MarginRegionIndex];
+			int DestinationEndX = DestinationEndXs[MarginRegionIndex];
+			int DestinationEndY = DestinationEndYs[MarginRegionIndex];
+			// Copy tiles
+			for (int y = DestinationStartY; y < DestinationEndY; ++y)
 			{
-				// Get tile
-				int SourceX = (x - MarginTileCount.X) % BackgroundWidth;
-				SourceX = SourceX < 0 ? SourceX + BackgroundWidth : SourceX;
-				int SourceY = (y - MarginTileCount.Y) % BackgroundHeight;
-				SourceY = SourceY < 0 ? SourceY + BackgroundHeight : SourceY;
-				FPaperTileInfo Tile = BackgroundTileMapComponent->GetTile(SourceX, SourceY, 0);
+				for (int x = DestinationStartX; x < DestinationEndX; ++x)
+				{
+					// Get tile
+					int SourceX = (x - MarginTileCount.X) % BackgroundWidth;
+					SourceX = SourceX < 0 ? SourceX + BackgroundWidth : SourceX;
+					int SourceY = (y - MarginTileCount.Y) % BackgroundHeight;
+					SourceY = SourceY < 0 ? SourceY + BackgroundHeight : SourceY;
+					FPaperTileInfo Tile = BackgroundTileMapComponent->GetTile(SourceX, SourceY, LayerIndex);
 
-				// Set tile
-				FillingLayer->SetCell(x, y, Tile);
+					// Set tile
+					FillingLayer->SetCell(x, y, Tile);
+				}
 			}
 		}
 	}

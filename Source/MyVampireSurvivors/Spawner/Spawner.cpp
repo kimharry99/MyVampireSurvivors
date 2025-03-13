@@ -3,6 +3,7 @@
 
 #include "Spawner.h"
 
+#include "NavigationSystem.h"
 #include "Kismet/GameplayStatics.h"
 
 #include "Enemies/Enemy.h"
@@ -29,26 +30,35 @@ void ASpawner::BeginPlay()
 
 AActor* ASpawner::SpawnActorAtRandomInMap(TSubclassOf<AActor> ActorClass)
 {
-	check(ActorClass);
-	AActor* NewActor = SpawnActorByType(ActorClass);
-	if (NewActor)
+	FVector SpawnLocation;
+	if (const UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(this))
 	{
 		// Set spawn location
-		FVector SpawnLocation = FMath::RandPointInBox(SpawnBoundary);
-		SpawnLocation.Z = 50.0f;
-		NewActor->SetActorLocation(SpawnLocation);
+		FNavLocation NavLocation;
+		if (NavSystem->GetRandomPointInNavigableRadius(SpawnBoundary.GetCenter(), SpawnBoundary.GetExtent().GetMax(), NavLocation))
+		{
+			SpawnLocation = NavLocation.Location;
+		}
+	}
+	else
+	{
+		SpawnLocation = FMath::RandPointInBox(SpawnBoundary);
 	}
 
-	return NewActor;
+	return SpawnActor(ActorClass, FTransform(FRotator::ZeroRotator, SpawnLocation));
 }
 
-AActor* ASpawner::SpawnActor(TSubclassOf<AActor> ActorClass, const FTransform& SpawnTransform)
+AActor* ASpawner::SpawnActor(TSubclassOf<AActor> ActorClass, FTransform SpawnTransform)
 {
-	check(ActorClass);
 	AActor* NewActor = SpawnActorByType(ActorClass);
 	if (NewActor)
 	{
-		NewActor->SetActorTransform(SpawnTransform);
+		FVector SpawnLocation = SpawnTransform.GetLocation();
+		SpawnLocation.Z = NewActor->GetComponentsBoundingBox().GetExtent().Z;
+
+		SpawnTransform.SetLocation(SpawnLocation);
+
+		NewActor->SetActorTransform(SpawnTransform, false, nullptr, ETeleportType::TeleportPhysics);
 	}
 
 	return NewActor;
@@ -69,7 +79,6 @@ void ASpawner::InitializeEnemyPool()
 AActor* ASpawner::SpawnActorByType(TSubclassOf<AActor> ActorClass)
 {
 	check(ActorClass);
-
 	if (ActorClass->IsChildOf(AEnemy::StaticClass()))
 	{
 		return SpawnEnemy(TSubclassOf<AEnemy>(ActorClass));

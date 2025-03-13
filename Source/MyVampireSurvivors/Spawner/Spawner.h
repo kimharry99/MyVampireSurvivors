@@ -25,7 +25,7 @@ public:
 	 * @return Spawned actor
 	 */
 	AActor* SpawnActorAtRandomInMap(TSubclassOf<AActor> ActorClass);
-	AActor* SpawnActor(TSubclassOf<AActor> ActorClass, const FTransform& SpawnTransform);
+	AActor* SpawnActor(TSubclassOf<AActor> ActorClass, FTransform SpawnTransform);
 
 protected:
 	//~AActor interface
