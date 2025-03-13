@@ -3,6 +3,7 @@
 
 #include "Spawner.h"
 
+#include "NavigationSystem.h"
 #include "Kismet/GameplayStatics.h"
 
 #include "Enemies/Enemy.h"
@@ -30,24 +31,52 @@ void ASpawner::BeginPlay()
 AActor* ASpawner::SpawnActorAtRandomInMap(TSubclassOf<AActor> ActorClass)
 {
 	check(ActorClass);
+
 	AActor* NewActor = SpawnActorByType(ActorClass);
 	if (NewActor)
 	{
-		// Set spawn location
-		FVector SpawnLocation = FMath::RandPointInBox(SpawnBoundary);
-		SpawnLocation.Z = 50.0f;
+		FVector SpawnLocation;
+		if (const UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(this))
+		{
+			// Set spawn location
+			FNavLocation NavLocation;
+			if (NavSystem->GetRandomPointInNavigableRadius(SpawnBoundary.GetCenter(), SpawnBoundary.GetExtent().GetMax(), NavLocation))
+			{
+				SpawnLocation = NavLocation.Location;
+				SpawnLocation.Z = 50.0;
+				NewActor->SetActorLocation(SpawnLocation);
+
+				return NewActor;
+			}
+		}
+
+		SpawnLocation = FMath::RandPointInBox(SpawnBoundary);
+		SpawnLocation.Z = 50.0;
 		NewActor->SetActorLocation(SpawnLocation);
 	}
 
 	return NewActor;
 }
 
-AActor* ASpawner::SpawnActor(TSubclassOf<AActor> ActorClass, const FTransform& SpawnTransform)
+AActor* ASpawner::SpawnActor(TSubclassOf<AActor> ActorClass, FTransform SpawnTransform)
 {
 	check(ActorClass);
 	AActor* NewActor = SpawnActorByType(ActorClass);
 	if (NewActor)
 	{
+		if (const UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(this))
+		{
+			FNavLocation NavLocation;
+			FVector QueryExtent = NewActor->GetPlacementExtent();
+			if (NavSystem->ProjectPointToNavigation(SpawnTransform.GetLocation(), NavLocation, QueryExtent))
+			{
+				FVector ProjectedLocation = NavLocation.Location;
+				ProjectedLocation.Z = SpawnTransform.GetLocation().Z;
+
+				SpawnTransform.SetLocation(ProjectedLocation);
+			}
+		}
+
 		NewActor->SetActorTransform(SpawnTransform);
 	}
 

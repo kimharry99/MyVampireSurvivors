@@ -88,13 +88,14 @@ void UToroidalMapBackgroundComponent::SetBackgroundMarginTileMapFormat()
 	for (const auto TileLayer : BackgroundTM->TileLayers)
 	{
 		UPaperTileLayer* NewLayer = MarginTM->AddNewLayer();
-		NewLayer->SetLayerCollides(false);
-	}
-	if (!MarginTM->TileLayers.IsEmpty())
-	{
-		MarginTM->TileLayers.Last()->SetLayerCollides(true);
+		NewLayer->SetLayerCollides(true);
 	}
 	MarginTM->SetCollisionThickness(0.0f);
+	if (!MarginTM->TileLayers.IsEmpty())
+	{
+		MarginTM->TileLayers[0]->SetLayerCollides(false);
+		MarginTM->TileLayers[1]->SetLayerCollisionThickness(true, 200.0f);
+	}
 }
 
 void UToroidalMapBackgroundComponent::FillMarginTilesFromOriginal()
