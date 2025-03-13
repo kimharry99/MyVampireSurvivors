@@ -50,6 +50,12 @@ protected:
 
 	FORCEINLINE float GetDefaultMaxHealth() const { return DefaultMaxHealth; };
 
+	FLinearColor InitialSpriteColor;
+	void StartBlinking(const float Duration);
+	void BlinkOnce();
+	void ToggleBlinking();
+	void StopBlinking();
+
 private:
 	UPROPERTY()
 	TObjectPtr<UHealthData> HealthData;
@@ -61,4 +67,9 @@ private:
 	TObjectPtr<UToroidalActorComponent> ToroidalActorComponent;
 
 	static float GROUND_HEIGHT;
+
+	FTimerHandle BlinkingTimerHandle;
+	FTimerHandle DurationTimerHandle;
+
+	float BlinkingInterval = 0.08f;
 };

@@ -37,6 +37,10 @@ public:
 	virtual bool IsInUse() const override;
 	//~End of IPoolableActorInterface interface
 
+	//~AMyVamSurCharacter interface
+	virtual void ReceiveAttack(float DamageAmount, AController* Attacker) override;
+	//~End of AMyVamSurCharacter interface
+
 	void CopyFromActualClass(TSubclassOf<AEnemy> ActualClass);
 
 protected:
