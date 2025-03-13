@@ -30,54 +30,35 @@ void ASpawner::BeginPlay()
 
 AActor* ASpawner::SpawnActorAtRandomInMap(TSubclassOf<AActor> ActorClass)
 {
-	check(ActorClass);
-
-	AActor* NewActor = SpawnActorByType(ActorClass);
-	if (NewActor)
+	FVector SpawnLocation;
+	if (const UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(this))
 	{
-		FVector SpawnLocation;
-		if (const UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(this))
+		// Set spawn location
+		FNavLocation NavLocation;
+		if (NavSystem->GetRandomPointInNavigableRadius(SpawnBoundary.GetCenter(), SpawnBoundary.GetExtent().GetMax(), NavLocation))
 		{
-			// Set spawn location
-			FNavLocation NavLocation;
-			if (NavSystem->GetRandomPointInNavigableRadius(SpawnBoundary.GetCenter(), SpawnBoundary.GetExtent().GetMax(), NavLocation))
-			{
-				SpawnLocation = NavLocation.Location;
-				SpawnLocation.Z = 50.0;
-				NewActor->SetActorLocation(SpawnLocation);
-
-				return NewActor;
-			}
+			SpawnLocation = NavLocation.Location;
 		}
-
+	}
+	else
+	{
 		SpawnLocation = FMath::RandPointInBox(SpawnBoundary);
-		SpawnLocation.Z = 50.0;
-		NewActor->SetActorLocation(SpawnLocation);
 	}
 
-	return NewActor;
+	return SpawnActor(ActorClass, FTransform(FRotator::ZeroRotator, SpawnLocation));
 }
 
 AActor* ASpawner::SpawnActor(TSubclassOf<AActor> ActorClass, FTransform SpawnTransform)
 {
-	check(ActorClass);
 	AActor* NewActor = SpawnActorByType(ActorClass);
 	if (NewActor)
 	{
-		if (const UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(this))
-		{
-			FNavLocation NavLocation;
-			FVector QueryExtent = NewActor->GetPlacementExtent();
-			if (NavSystem->ProjectPointToNavigation(SpawnTransform.GetLocation(), NavLocation, QueryExtent))
-			{
-				FVector ProjectedLocation = NavLocation.Location;
-				ProjectedLocation.Z = SpawnTransform.GetLocation().Z;
+		FVector SpawnLocation = SpawnTransform.GetLocation();
+		SpawnLocation.Z = NewActor->GetComponentsBoundingBox().GetExtent().Z;
 
-				SpawnTransform.SetLocation(ProjectedLocation);
-			}
-		}
+		SpawnTransform.SetLocation(SpawnLocation);
 
-		NewActor->SetActorTransform(SpawnTransform);
+		NewActor->SetActorTransform(SpawnTransform, false, nullptr, ETeleportType::TeleportPhysics);
 	}
 
 	return NewActor;
@@ -98,7 +79,6 @@ void ASpawner::InitializeEnemyPool()
 AActor* ASpawner::SpawnActorByType(TSubclassOf<AActor> ActorClass)
 {
 	check(ActorClass);
-
 	if (ActorClass->IsChildOf(AEnemy::StaticClass()))
 	{
 		return SpawnEnemy(TSubclassOf<AEnemy>(ActorClass));
