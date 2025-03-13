@@ -51,10 +51,6 @@ private:
 	UPROPERTY()
 	TObjectPtr<UPaperTileMapComponent> BackgroundMarginTileMapComponent;
 
-	/** Length of background margin. */
-	UPROPERTY(EditAnywhere, Category = "Background")
-	float MarginLength = 1024.0f;
-
 	/**
 	 * Update background tile map component.
 	 * Set tile map asset to the component.
