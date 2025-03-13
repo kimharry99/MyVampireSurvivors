@@ -28,8 +28,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	MoveComp->MaxWalkSpeed = 300.0f;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ToroidalActor"));
-	GetCapsuleComponent()->SetCapsuleHalfHeight(50.0f);
-
+	
 	GetSprite()->SetCollisionProfileName(TEXT("NoCollision"));
 	GetSprite()->SetRelativeRotation(FRotator(0.0f, 0.0f, -90.0f));
 

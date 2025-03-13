@@ -83,8 +83,8 @@ void AEnemy::CopyFromActualClass(TSubclassOf<AEnemy> ActualClass)
 	const UCapsuleComponent* CDOCapsuleComp = EnemyCDO->GetCapsuleComponent();
 	if (CapsuleComp && CDOCapsuleComp)
 	{
-		CapsuleComp->SetCapsuleHalfHeight(CDOCapsuleComp->GetUnscaledCapsuleHalfHeight());
 		CapsuleComp->SetCapsuleRadius(CDOCapsuleComp->GetUnscaledCapsuleRadius());
+		CapsuleComp->SetCapsuleHalfHeight(CDOCapsuleComp->GetUnscaledCapsuleHalfHeight());
 	}
 
 	UPaperFlipbookComponent* SpriteComp = GetSprite();

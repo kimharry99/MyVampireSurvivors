@@ -59,4 +59,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "ToroidalWorld")
 	TObjectPtr<UToroidalActorComponent> ToroidalActorComponent;
+
+	static float GROUND_HEIGHT;
 };
