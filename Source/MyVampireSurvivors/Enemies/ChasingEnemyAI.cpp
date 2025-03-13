@@ -29,9 +29,7 @@ void AChasingEnemyAI::ChasePlayer()
 	if(APawn* ControlledPawn = GetPawn())
 	{
 		const FVector Destination = PlayerPawn->GetActorLocation();
-		const FVector EnemyPosition = ControlledPawn->GetActorLocation();
-		const FVector ToroidalDisplacement = ToroidalWorldSystem->ComputeToroidalDisplacement(EnemyPosition, Destination);
-		ControlledPawn->AddMovementInput(ToroidalDisplacement);
+		MoveToLocation(CalculateVirtualDestination(Destination));
 	}
 }
 
