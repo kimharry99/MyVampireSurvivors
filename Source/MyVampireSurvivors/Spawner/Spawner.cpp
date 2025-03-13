@@ -56,6 +56,11 @@ AActor* ASpawner::SpawnActor(TSubclassOf<AActor> ActorClass, FTransform SpawnTra
 		FVector SpawnLocation = SpawnTransform.GetLocation();
 		SpawnLocation.Z = NewActor->GetComponentsBoundingBox().GetExtent().Z;
 
+		if (UWorld* World = GetWorld())
+		{
+			World->FindTeleportSpot(NewActor, SpawnLocation, FRotator::ZeroRotator);
+		}
+
 		SpawnTransform.SetLocation(SpawnLocation);
 
 		NewActor->SetActorTransform(SpawnTransform, false, nullptr, ETeleportType::TeleportPhysics);

@@ -58,16 +58,10 @@ private:
 	bool bIsInvincible = false;
 
 	FTimerHandle InvincibilityTimerHandle;
-
-	FTimerHandle BlinkingTimerHandle;
-
-	float BlinkingInterval = 0.1f;
 	float InvincibilityDuration = 1.0f;
 
 	UFUNCTION()
 	void ResetInvincibility();
-
-	void ToggleBlinking();
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	TObjectPtr<USpringArmComponent> CameraBoom;

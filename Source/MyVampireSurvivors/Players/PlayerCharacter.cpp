@@ -28,8 +28,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	MoveComp->MaxWalkSpeed = 300.0f;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("ToroidalActor"));
-	GetCapsuleComponent()->SetCapsuleHalfHeight(50.0f);
-
+	
 	GetSprite()->SetCollisionProfileName(TEXT("NoCollision"));
 	GetSprite()->SetRelativeRotation(FRotator(0.0f, 0.0f, -90.0f));
 
@@ -111,7 +110,7 @@ void APlayerCharacter::ReceiveAttack(float DamageAmount, AController* Attacker)
 	bIsInvincible = true;
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
 
-	GetWorld()->GetTimerManager().SetTimer(BlinkingTimerHandle, this, &APlayerCharacter::ToggleBlinking, BlinkingInterval, true);
+	StartBlinking(InvincibilityDuration);
 	GetWorld()->GetTimerManager().SetTimer(InvincibilityTimerHandle, this, &APlayerCharacter::ResetInvincibility, InvincibilityDuration, false);
 }
 
@@ -170,18 +169,5 @@ void APlayerCharacter::ResetInvincibility()
 	bIsInvincible = false;
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("PlayerCharacter"));
 
-	GetWorld()->GetTimerManager().ClearTimer(BlinkingTimerHandle);
-	if (GetSprite())
-	{
-		GetSprite()->SetSpriteColor(FColor::White);
-	}
-}
-
-void APlayerCharacter::ToggleBlinking()
-{
-	if (GetSprite())
-	{
-		bool bCurrentlyVisible = GetSprite()->GetSpriteColor() == FColor::White;
-		GetSprite()->SetSpriteColor(bCurrentlyVisible ? FColor::FColor(16, 16, 16) : FColor::White);
-	}
+	StopBlinking();
 }

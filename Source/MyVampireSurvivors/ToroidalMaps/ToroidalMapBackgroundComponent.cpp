@@ -2,8 +2,10 @@
 
 
 #include "ToroidalMapBackgroundComponent.h"
-#include "PaperTileLayer.h"
+
 #include "MyVamSurLogChannels.h"
+#include "PaperTileLayer.h"
+#include "ToroidalMaps/ToroidalCameraComponent.h"
 
 UToroidalMapBackgroundComponent::UToroidalMapBackgroundComponent()
 {		
@@ -34,10 +36,6 @@ void UToroidalMapBackgroundComponent::PostEditChangeProperty(FPropertyChangedEve
 		UpdateBackgroundTileMapComponent();
 	}
 	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UToroidalMapBackgroundComponent, BackgroundMarginTileMap))
-	{
-		UpdateBackgroundMarginTileMapComponent();
-	}
-	if (PropertyChangedEvent.GetPropertyName() == GET_MEMBER_NAME_CHECKED(UToroidalMapBackgroundComponent, MarginLength))
 	{
 		UpdateBackgroundMarginTileMapComponent();
 	}
@@ -192,7 +190,9 @@ const FIntVector2 UToroidalMapBackgroundComponent::ConvertUnrealUnitLengthToTile
 
 const FVector2D UToroidalMapBackgroundComponent::GetMarginLengthPair() const
 {
-	return FVector2D(MarginLength, MarginLength);
+	float Width = UToroidalCameraComponent::StaticClass()->GetDefaultObject<UToroidalCameraComponent>()->OrthoWidth;
+	float Height = Width / UToroidalCameraComponent::StaticClass()->GetDefaultObject<UToroidalCameraComponent>()->AspectRatio;
+	return FVector2D(Width, Height);
 }
 
 const FVector UToroidalMapBackgroundComponent::GetBackgroundMarginTileMapComponentOffset() const

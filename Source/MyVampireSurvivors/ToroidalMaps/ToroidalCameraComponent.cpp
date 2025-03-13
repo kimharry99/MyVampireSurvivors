@@ -33,7 +33,7 @@ void UToroidalCameraComponent::BeginPlay()
 void UToroidalCameraComponent::InitializeViewBox()
 {
 	const FVector Extent(OrthoFarClipPlane - OrthoNearClipPlane, OrthoWidth, OrthoWidth / AspectRatio);
-	ViewBox = FBox::BuildAABB(FVector::ZeroVector, Extent * 1.1f);
+	ViewBox = FBox::BuildAABB(FVector::ZeroVector, Extent * 1.05f);
 
 	UpdateViewBox();
 }

@@ -74,6 +74,13 @@ FReturnToPoolDelegate* AEnemy::GetReturnToPoolDelegate()
 	return &OnReturnToPool;
 }
 
+void AEnemy::ReceiveAttack(float DamageAmount, AController* Attacker)
+{
+	Super::ReceiveAttack(DamageAmount, Attacker);
+
+	BlinkOnce();
+}
+
 void AEnemy::CopyFromActualClass(TSubclassOf<AEnemy> ActualClass)
 {
 	check(ActualClass);
@@ -83,8 +90,8 @@ void AEnemy::CopyFromActualClass(TSubclassOf<AEnemy> ActualClass)
 	const UCapsuleComponent* CDOCapsuleComp = EnemyCDO->GetCapsuleComponent();
 	if (CapsuleComp && CDOCapsuleComp)
 	{
-		CapsuleComp->SetCapsuleHalfHeight(CDOCapsuleComp->GetUnscaledCapsuleHalfHeight());
 		CapsuleComp->SetCapsuleRadius(CDOCapsuleComp->GetUnscaledCapsuleRadius());
+		CapsuleComp->SetCapsuleHalfHeight(CDOCapsuleComp->GetUnscaledCapsuleHalfHeight());
 	}
 
 	UPaperFlipbookComponent* SpriteComp = GetSprite();
@@ -94,6 +101,7 @@ void AEnemy::CopyFromActualClass(TSubclassOf<AEnemy> ActualClass)
 		SpriteComp->SetRelativeRotation(CDOSpriteComp->GetRelativeRotation());
 		SpriteComp->SetFlipbook(CDOSpriteComp->GetFlipbook());
 		SpriteComp->SetSpriteColor(CDOSpriteComp->GetSpriteColor());
+		InitialSpriteColor = CDOSpriteComp->GetSpriteColor();
 	}
 
 	UPaperZDAnimationComponent* AnimComp = GetAnimationComponent();
